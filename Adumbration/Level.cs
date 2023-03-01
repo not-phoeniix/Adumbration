@@ -19,30 +19,27 @@ namespace Adumbration
         // Methods
 
         /// <summary>
-        /// Abstract ResetLevel method to be reset a level.
-        /// The contents are in the child classes.
+        /// Resets a level.
         /// </summary>
-        private void ResetLevel()
+        public void ResetLevel()
         {
 
         }
 
         /// <summary>
-        /// Abstract Update method to update the state of the game.
-        /// The contents are in the child classes.
+        /// Updates the state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        private void Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
 
         }
 
         /// <summary>
-        /// Abstract Draw method to draw object(s).
-        /// The contents are in the child classes.
+        /// Draws object(s).
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        private void Draw(GameTime gameTime)
+        public void Draw(GameTime gameTime)
         {
 
         }
