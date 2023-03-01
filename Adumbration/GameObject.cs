@@ -20,6 +20,15 @@ namespace Adumbration
         protected Rectangle sourceRect;
         protected Rectangle recPosition;
 
+
+        //property that can be accessed by all child classes
+        public Rectangle RecPosition
+        {
+            get { return recPosition; }
+            set { recPosition = value; }
+        }
+
+
         //a default constructor for this class
         //*will change later when the spritesheet is added to make things easier
         public GameObject()
