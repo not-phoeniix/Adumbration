@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Adumbration
@@ -9,6 +12,8 @@ namespace Adumbration
     public class Door : GameObject
     {
         // Fields
+        private bool isOpen;
+        private Rectangle sourceClosedRect;
 
         // Properties
 
@@ -16,6 +21,43 @@ namespace Adumbration
         public Door() : base()
         {
 
+        }
+
+        // Methods
+
+        /// <summary>
+        /// Updates the game's doors.
+        /// </summary>
+        /// <param name="gameTime">State of the game's time.</param>
+        public override void Update(GameTime gameTime)
+        {
+            
+        }
+
+        /// <summary>
+        /// Draws the game's doors.
+        /// </summary>
+        /// <param name="gameTime">State of the game's time.</param>
+        public override void Draw(GameTime gameTime)
+        {
+            
+        }
+
+        /// <summary>
+        /// Checks for a collision between an object and a door.
+        /// </summary>
+        /// <param name="obj">References the object that may collide with a door.</param>
+        /// <returns>True if collision occurs, false otherwise.</returns>
+        public override bool isColliding(GameObject obj)
+        {
+            if (obj.RecPosition.Intersects(this.RecPosition))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

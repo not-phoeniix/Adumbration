@@ -27,7 +27,7 @@ namespace Adumbration
         }
 
         /// <summary>
-        /// Updates the state of the game.
+        /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
         public void Update(GameTime gameTime)

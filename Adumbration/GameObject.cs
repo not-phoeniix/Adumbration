@@ -39,12 +39,12 @@ namespace Adumbration
         /// <summary>
         /// will be changed to update anything that happens to this SPECIFIC sprite
         /// </summary>
-        public abstract void Update();
+        public abstract void Update(GameTime gameTime);
 
         /// <summary>
         /// will be changed to draw the specific object
         /// </summary>
-        public abstract void Draw();
+        public abstract void Draw(GameTime gameTime);
 
         /// <summary>
         /// is here to check if a specific object is colliding with another object
