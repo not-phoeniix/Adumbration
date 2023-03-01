@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 namespace Adumbration
 {
     /// <summary>
-    /// Creates the Levels
+    /// Alexander Gough
+    /// Purpose: Creates the Levels
     /// </summary>
     public class LevelManager
     {

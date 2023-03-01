@@ -9,7 +9,7 @@ namespace Adumbration
 {
     /// <summary>
     /// Alexander Gough & Nikki Murello
-    /// Purpose
+    /// Purpose: Set up each level
     /// </summary>
     public class Level
     {
