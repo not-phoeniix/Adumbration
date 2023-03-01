@@ -30,19 +30,19 @@ namespace Adumbration
         /// <summary>
         /// will be changed to update anything that happens to this SPECIFIC sprite
         /// </summary>
-        protected abstract void Update();
+        public abstract void Update();
 
         /// <summary>
         /// will be changed to draw the specific object
         /// </summary>
-        protected abstract void Draw();
+        public abstract void Draw();
 
         /// <summary>
         /// is here to check if a specific object is colliding with another object
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        protected abstract bool isColliding(GameObject obj);
+        public abstract bool isColliding(GameObject obj);
 
 
     }
