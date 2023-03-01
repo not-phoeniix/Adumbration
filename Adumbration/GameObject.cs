@@ -13,7 +13,7 @@ namespace Adumbration
     /// parent class that almost EVERY
     /// object will use 
     /// </summary>
-    internal abstract class GameObject
+    public abstract class GameObject
     {
         //all the protected fields that will be used in every child class
         protected Texture2D spriteSheet;
