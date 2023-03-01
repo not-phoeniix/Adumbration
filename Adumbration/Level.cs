@@ -7,31 +7,41 @@ using System.Threading.Tasks;
 
 namespace Adumbration
 {
-    public abstract class Level
+    /// <summary>
+    /// Alexander Gough & Nikki Murello
+    /// Purpose
+    /// </summary>
+    public class Level
     {
         // Fields
-        protected GameObject[,] tileList;
+        private GameObject[,] tileList;
 
         // Methods
 
         /// <summary>
-        /// Abstract ResetLevel method to be reset a level.
-        /// The contents are in the child classes.
+        /// Resets a level.
         /// </summary>
-        protected abstract void ResetLevel();
+        public void ResetLevel()
+        {
+
+        }
 
         /// <summary>
-        /// Abstract Update method to update the state of the game.
-        /// The contents are in the child classes.
+        /// Updates the state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        protected abstract void Update(GameTime gameTime);
+        public void Update(GameTime gameTime)
+        {
+
+        }
 
         /// <summary>
-        /// Abstract Draw method to draw object(s).
-        /// The contents are in the child classes.
+        /// Draws object(s).
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        protected abstract void Draw(GameTime gameTime);
+        public void Draw(GameTime gameTime)
+        {
+
+        }
     }
 }
