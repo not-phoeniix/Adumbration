@@ -17,10 +17,18 @@ namespace Adumbration
 
         // Properties
 
-        // Constructor(s)
-        public Door() : base()
+        /// <summary>
+        /// Property that allows boolean isOpen to be instantiated from the constructor.
+        /// </summary>
+        public bool IsOpen
         {
+            get { return isOpen; }
+        }
 
+        // Constructor(s)
+        public Door(bool isOpen) : base()
+        {
+            this.isOpen = isOpen;
         }
 
         // Methods

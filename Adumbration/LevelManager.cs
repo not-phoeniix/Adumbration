@@ -11,7 +11,7 @@ namespace Adumbration
     /// Alexander Gough
     /// Purpose: Creates the Levels
     /// </summary>
-    public class LevelManager
+    sealed class LevelManager
     {
         // Fields
         private Level[] allLevels;
