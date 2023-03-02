@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,7 +47,7 @@ namespace Adumbration
         /// Draws the game's doors.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        public override void Draw(GameTime gameTime)
+        public override void Draw(SpriteBatch sb)
         {
             
         }
@@ -56,9 +57,9 @@ namespace Adumbration
         /// </summary>
         /// <param name="obj">References the object that may collide with a door.</param>
         /// <returns>True if collision occurs, false otherwise.</returns>
-        public override bool isColliding(GameObject obj)
+        public override bool IsColliding(GameObject obj)
         {
-            if (obj.RecPosition.Intersects(this.RecPosition))
+            if (obj.Position.Intersects(this.Position))
             {
                 return true;
             }
