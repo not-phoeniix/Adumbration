@@ -27,7 +27,7 @@ namespace Adumbration
         }
 
         // Constructor(s)
-        public Door(bool isOpen) : base()
+        public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position) : base(spriteSheet, sourceRect, position)
         {
             this.isOpen = isOpen;
         }

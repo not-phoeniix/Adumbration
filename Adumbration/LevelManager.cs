@@ -15,13 +15,14 @@ namespace Adumbration
     public sealed class LevelManager
     {
         // Fields
-        private string creationTime;
         private LevelManager instance = null;
         private Level[] allLevels;
 
         // Properties
 
-
+        /// <summary>
+        /// Get only for the singleton instance.
+        /// </summary>
         public LevelManager Instance
         {
             get { return instance; }
