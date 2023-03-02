@@ -13,7 +13,7 @@ namespace Adumbration
     /// You're still here? What in god's green earth are you looking at.
     /// BRO GO DO YOUR CODE IT'S LITERALLY A FLOOR
     /// </summary>
-    internal class Floor //: GameObject
+    public class Floor //: GameObject
     {
     }
 }
