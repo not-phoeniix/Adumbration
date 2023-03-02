@@ -59,5 +59,13 @@ namespace Adumbration
                 return false;
             }
         }
+
+        /// <summary>
+        /// Loads the next level.
+        /// </summary>
+        public void Interact()
+        {
+
+        }
     }
 }
