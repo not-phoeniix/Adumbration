@@ -52,7 +52,7 @@ namespace Adumbration
         public abstract void Update(GameTime gameTime);
 
         /// <summary>
-        /// Draws this GameObject to the screen
+        /// Draws this GameObject to the screen with given position
         /// </summary>
         public virtual void Draw(SpriteBatch sb) 
         {
@@ -60,11 +60,20 @@ namespace Adumbration
         }
 
         /// <summary>
+        /// Draws this GameObject to the screen with custom position, setting position afterwards
+        /// </summary>
+        public virtual void Draw(SpriteBatch sb, Rectangle position) 
+        {
+            sb.Draw(spriteSheet, position, sourceRect, Color.White);
+            recPosition = position;
+        }
+
+        /// <summary>
         /// is here to check if a specific object is colliding with another object
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public abstract bool isColliding(GameObject obj);
+        public abstract bool IsColliding(GameObject obj);
 
 
     }
