@@ -9,12 +9,23 @@ namespace Adumbration
 {
     /// <summary>
     /// Alexander Gough
-    /// Purpose: Creates the Levels (Singleton)
+    /// Purpose: It is a Singleton that creates the Levels
+    /// Restrictions: Since it is a sealed class, no classes inherit from it.
     /// </summary>
-    sealed class LevelManager
+    public sealed class LevelManager
     {
         // Fields
+        private string creationTime;
+        private LevelManager instance = null;
         private Level[] allLevels;
+
+        // Properties
+
+
+        public LevelManager Instance
+        {
+            get { return instance; }
+        }
 
         // Methods
 
