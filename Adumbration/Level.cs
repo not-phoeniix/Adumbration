@@ -36,7 +36,7 @@ namespace Adumbration
         }
 
         /// <summary>
-        /// Draws object(s).
+        /// Draws object(s) in level.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
         public void Draw(GameTime gameTime)

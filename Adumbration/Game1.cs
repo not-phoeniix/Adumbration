@@ -2,6 +2,17 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+// 
+// ===================================
+// GAME NAME:   Adumbration
+// TEAM NAME:   TBD Games
+//      MEMBERS:    Nikki Murello
+//                  Scott Au Yeung
+//                  Julian Alvia
+//                  Alexander Gough
+// ===================================
+//
+
 namespace Adumbration
 {
     public class Game1 : Game
