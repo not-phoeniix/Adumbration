@@ -9,7 +9,7 @@ namespace Adumbration
 {
     /// <summary>
     /// Alexander Gough
-    /// Purpose: Creates the Levels
+    /// Purpose: Creates the Levels (Singleton)
     /// </summary>
     sealed class LevelManager
     {
