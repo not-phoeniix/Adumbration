@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,7 +27,7 @@ namespace Adumbration
         }
 
         // Constructor(s)
-        public Door(bool isOpen) : base()
+        public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position) : base(spriteSheet, sourceRect, position)
         {
             this.isOpen = isOpen;
         }
@@ -43,22 +44,13 @@ namespace Adumbration
         }
 
         /// <summary>
-        /// Draws the game's doors.
-        /// </summary>
-        /// <param name="gameTime">State of the game's time.</param>
-        public override void Draw(GameTime gameTime)
-        {
-            
-        }
-
-        /// <summary>
         /// Checks for a collision between an object and a door.
         /// </summary>
         /// <param name="obj">References the object that may collide with a door.</param>
         /// <returns>True if collision occurs, false otherwise.</returns>
         public override bool isColliding(GameObject obj)
         {
-            if (obj.RecPosition.Intersects(this.RecPosition))
+            if (obj.Position.Intersects(this.Position))
             {
                 return true;
             }
