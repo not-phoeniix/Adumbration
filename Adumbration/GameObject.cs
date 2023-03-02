@@ -20,19 +20,29 @@ namespace Adumbration
         protected Rectangle sourceRect;
         protected Rectangle recPosition;
 
-
-        //property that can be accessed by all child classes
-        public Rectangle RecPosition
+        /// <summary>
+        /// Full position rectangle of this GameObject, get/set,
+        /// public so it can be accessed outside class/children
+        /// </summary>
+        public Rectangle Position
         {
             get { return recPosition; }
             set { recPosition = value; }
         }
 
 
-        //a default constructor for this class
-        //*will change later when the spritesheet is added to make things easier
-        public GameObject()
-        {}
+        /// <summary>
+        /// Abstract constructor, takes in
+        /// </summary>
+        /// <param name="spriteSheet">Full Texture2D spritesheet</param>
+        /// <param name="sourceRect">Source to take from in spritesheet to be drawn</param>
+        /// <param name="position">Position in window to draw GameObject</param>
+        public GameObject(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
+        {
+            this.spriteSheet = spriteSheet;
+            this.sourceRect = sourceRect;
+            Position = position;
+        }
 
         //all the abstract methods that will be used in all of the classes
         
@@ -42,9 +52,12 @@ namespace Adumbration
         public abstract void Update(GameTime gameTime);
 
         /// <summary>
-        /// will be changed to draw the specific object
+        /// Draws this GameObject to the screen
         /// </summary>
-        public abstract void Draw(GameTime gameTime);
+        public virtual void Draw(SpriteBatch sb) 
+        {
+            sb.Draw(spriteSheet, recPosition, sourceRect, Color.White);
+        }
 
         /// <summary>
         /// is here to check if a specific object is colliding with another object
