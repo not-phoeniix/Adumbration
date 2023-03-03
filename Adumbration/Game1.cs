@@ -6,10 +6,10 @@ using Microsoft.Xna.Framework.Input;
 // ===================================
 // GAME NAME:   Adumbration
 // TEAM NAME:   TBD Games
-//      MEMBERS:    Nikki Murello
-//                  Scott Au Yeung
-//                  Julian Alvia
-//                  Alexander Gough
+// MEMBERS:     Nikki Murello
+//              Scott Au Yeung
+//              Julian Alvia
+//              Alexander Gough
 // ===================================
 //
 
@@ -19,6 +19,9 @@ namespace Adumbration
     {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        private Texture2D fullSpritesheet;
+        private Level levelTest;
 
         public Game1()
         {
@@ -38,13 +41,17 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            fullSpritesheet = Content.Load<Texture2D>("adumbration_spritesheet");
+
+            levelTest = new Level(fullSpritesheet);
         }
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape)) 
+            {
                 Exit();
+            }
 
             // TODO: Add your update logic here
 
@@ -55,7 +62,9 @@ namespace Adumbration
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            _spriteBatch.Begin();
+            levelTest.Draw(_spriteBatch);
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }
