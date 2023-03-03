@@ -27,6 +27,11 @@ namespace Adumbration
         Player player;
         private Texture2D playerTexture;
 
+        // Door Test
+        private Door door;
+        private Texture2D openDoorTexture;
+        private Texture2D closedDoorTexture;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -45,12 +50,16 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            // Full Sprite Sheet Texture
             fullSpritesheet = Content.Load<Texture2D>("spritesheet");
 
+            // Level Test Object
             levelTest = new Level(fullSpritesheet);
 
+            // Player Texture
             playerTexture = Content.Load<Texture2D>("player_spritesheet");
 
+            // Player Object
             player = new Player(playerTexture,
                 new Rectangle(0, 0, 6, 8),
                 new Rectangle(
@@ -86,6 +95,9 @@ namespace Adumbration
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
             player.Draw(_spriteBatch);
             _spriteBatch.End();
+
+            // Draw Closed Door
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
             base.Draw(gameTime);
         }
