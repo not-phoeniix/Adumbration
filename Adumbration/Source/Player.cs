@@ -18,6 +18,7 @@ namespace Adumbration
         // Fields
         private bool hasDash;
         private int speed;
+        private bool isMoving;
 
         // Properties
         /// <summary>
@@ -40,7 +41,6 @@ namespace Adumbration
         }
 
         // Methods
-
         /// <summary>
         /// Updates the player.
         /// </summary>
@@ -49,9 +49,10 @@ namespace Adumbration
         {
             // Player movement
             KeyboardState currentKbState = Keyboard.GetState();
+            KeyboardState previousKbState;
 
             // Set player speed
-            speed = 10;
+            speed = 5;
 
             // Place holder until Wall class is finished
             //if (this.recPosition.Intersects(Wall.rectPosition))
@@ -62,6 +63,11 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.W))
             {
                 recPosition.Y -= speed;
+                //isMoving = true;
+                //if (hasDash && isMoving && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)))
+                //{
+                //    recPosition.Y 
+                //}
             }
 
             if (currentKbState.IsKeyDown(Keys.A))
@@ -78,6 +84,8 @@ namespace Adumbration
             {
                 recPosition.X += speed;
             }
+
+            previousKbState = currentKbState;
         }
 
         /// <summary>
