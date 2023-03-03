@@ -11,5 +11,6 @@ namespace Adumbration
     /// </summary>
     public class Wall //: GameObject
     {
+
     }
 }

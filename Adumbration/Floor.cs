@@ -28,7 +28,8 @@ namespace Adumbration
             System.Diagnostics.Debug.WriteLine("I didn't write this yet");
         }
 
-        public override bool IsColliding(GameObject obj) {
+        public override bool IsColliding(GameObject obj) 
+        {
             return this.Position.Intersects(obj.Position);
         }
     }
