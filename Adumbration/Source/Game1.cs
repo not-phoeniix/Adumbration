@@ -65,7 +65,11 @@ namespace Adumbration
             // Deferred sort mode is default, PointClamp makes it so
             //   pixel art doesn't get blurry when upscaled
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+
+
             levelTest.Draw(_spriteBatch);
+
+
             _spriteBatch.End();
 
             base.Draw(gameTime);
