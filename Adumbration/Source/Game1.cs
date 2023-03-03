@@ -66,6 +66,9 @@ namespace Adumbration
                     _graphics.PreferredBackBufferWidth/2,
                     _graphics.PreferredBackBufferHeight/2,
                     36, 48));
+
+            // Closed Door Texture
+            //closedDoorTexture = Content.Load<Texture2D>();
         }
 
         protected override void Update(GameTime gameTime)
