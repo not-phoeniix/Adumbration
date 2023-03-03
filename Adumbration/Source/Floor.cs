@@ -25,7 +25,7 @@ namespace Adumbration
 
         public override void Update(GameTime gameTime)
         {
-            System.Diagnostics.Debug.WriteLine("I didn't write this yet");
+            //it's a floor, what is there to update yet smh
         }
 
         public override bool IsColliding(GameObject obj)
