@@ -61,7 +61,7 @@ namespace Adumbration
         /// </summary>
         /// <param name="obj">Reference to any GameObject</param>
         /// <returns>True if player is colliding with a GameObject, otherwise false.</returns>
-        public override bool isColliding(GameObject obj)
+        public override bool IsColliding(GameObject obj)
         {
             if (obj.Position.Intersects(this.Position))
             {
