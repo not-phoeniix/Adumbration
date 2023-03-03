@@ -40,7 +40,6 @@ namespace Adumbration
         public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, int windowH, int windowW)
             : base(spriteSheet, sourceRect, position)
         {
-            hasDash = false;
             windowHeight = windowH;
             windowWidth = windowW;
             hasDash = true;
@@ -69,52 +68,85 @@ namespace Adumbration
             //    speed = 0;
             //}
 
+            
             if (currentKbState.IsKeyDown(Keys.W))
             {
-                recPosition.Y -= speed;
+                // Vertical Dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
-                    recPosition.Y -= 150;
+                    recPosition.Y -= 20;
                     //hasDash = false;
                 }
-            }
-            else
-            {
-                isMoving = false;
+
+                // Keeps player in window
+                if (recPosition.Y > 0)
+                {
+                    recPosition.Y -= speed;
+                }
+                else
+                {
+                    recPosition.Y -= stop;
+                }
             }
 
             if (currentKbState.IsKeyDown(Keys.A))
             {
-                recPosition.X -= speed;
+               // Horizontal Dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
-                    recPosition.X -= 150;
+                    recPosition.X -= 20;
                     //hasDash = false;
                 }
-            }
-            else
-            {
-                isMoving = false;
+
+                // Keeps player in window
+                if (recPosition.X > 0)
+                {
+                    recPosition.X -= speed;
+                }
+                else
+                {
+                    recPosition.X -= stop;
+                }
             }
 
             if (currentKbState.IsKeyDown(Keys.S))
             {
-                recPosition.Y += speed;
+                // Horizontal Dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
-                    recPosition.Y += 150;
+                    recPosition.Y += 20;
                     //hasDash = false;
+                }
+
+                // Keeps player in window
+                if (recPosition.Y <= windowHeight - 49)
+                {
+                    recPosition.Y += speed;
+                }
+                else
+                {
+                    recPosition.Y -= stop;
                 }
             }
 
             if (currentKbState.IsKeyDown(Keys.D))
             {
-                recPosition.X += speed;
+                // Vertical Dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
-                    recPosition.X += 150;
+                    recPosition.X += 20;
                     //hasDash = false;
                 }
+
+                // Keeps player in window
+                if (recPosition.X <= windowWidth - 37)
+                {
+                    recPosition.X += speed;
+                }
+                else
+                {
+                    recPosition.X -= stop;
+                }            
             }
             
 

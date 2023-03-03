@@ -62,13 +62,11 @@ namespace Adumbration
             // Player Object
             player = new Player(playerTexture,
                 new Rectangle(0, 0, 6, 8),
-                new Rectangle(
-                    _graphics.PreferredBackBufferWidth/2,
+                new Rectangle(_graphics.PreferredBackBufferWidth/2,
                     _graphics.PreferredBackBufferHeight/2,
                     36, 48),
-                    _graphics.GraphicsDevice.Viewport.Height,
-                    _graphics.GraphicsDevice.Viewport.Width);
-                    36, 48));
+                _graphics.PreferredBackBufferHeight,
+                _graphics.PreferredBackBufferWidth);
 
             // Closed Door Texture
             //closedDoorTexture = Content.Load<Texture2D>();
@@ -107,7 +105,7 @@ namespace Adumbration
             _spriteBatch.End();
 
             // Draw Closed Door
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+            //_spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
             base.Draw(gameTime);
         }
