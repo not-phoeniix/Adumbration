@@ -41,7 +41,7 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            fullSpritesheet = Content.Load<Texture2D>("adumbration_spritesheet");
+            fullSpritesheet = Content.Load<Texture2D>("spritesheet");
 
             levelTest = new Level(fullSpritesheet);
         }
