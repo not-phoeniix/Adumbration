@@ -35,6 +35,7 @@ namespace Adumbration
         // Constructor(s)
         public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position) : base(spriteSheet, sourceRect, position)
         {
+            isOpen = false;
             this.isOpen = isOpen;
         }
 
@@ -57,11 +58,21 @@ namespace Adumbration
         {
             if (isOpen)
             {
-
+                // Draw open door if isOpen is true
+                sb.Draw(
+                    spriteSheet,
+                    Position,
+                    sourceRect,
+                    Color.White);
             }
             else
             {
-
+                // Draw closed door otherwise
+                sb.Draw(
+                    spriteSheet,
+                    Position,
+                    sourceClosedRect,
+                    Color.White);
             }
         }
 
@@ -72,7 +83,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, false otherwise.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            if (obj.Position.Intersects(this.Position))
+            if (obj.Position.Intersects(Position))
             {
                 return true;
             }

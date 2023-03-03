@@ -18,6 +18,10 @@ namespace Adumbration
         // Fields
         private bool hasDash;
         private int speed;
+        private int stop;
+        private int windowHeight;
+        private int windowWidth;
+        private bool isMoving;
 
         // Properties
         /// <summary>
@@ -33,14 +37,15 @@ namespace Adumbration
         /// Player takes completely from Parent class
         /// for the constructor
         /// </summary>
-        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
+        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, int windowH, int windowW)
             : base(spriteSheet, sourceRect, position)
         {
-            hasDash = false;
+            windowHeight = windowH;
+            windowWidth = windowW;
+            hasDash = true;
         }
 
         // Methods
-
         /// <summary>
         /// Updates the player.
         /// </summary>
@@ -49,9 +54,13 @@ namespace Adumbration
         {
             // Player movement
             KeyboardState currentKbState = Keyboard.GetState();
+            KeyboardState previousKbState = Keyboard.GetState();
 
             // Set player speed
-            speed = 10;
+            speed = 5;
+
+            //adds a stop int to make my(scott's) life easier while making the wall stuff
+            stop = 0;
 
             // Place holder until Wall class is finished
             //if (this.recPosition.Intersects(Wall.rectPosition))
@@ -59,25 +68,89 @@ namespace Adumbration
             //    speed = 0;
             //}
 
+            
             if (currentKbState.IsKeyDown(Keys.W))
             {
-                recPosition.Y -= speed;
+                // Vertical Dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    recPosition.Y -= 20;
+                    //hasDash = false;
+                }
+
+                // Keeps player in window
+                if (recPosition.Y > 0)
+                {
+                    recPosition.Y -= speed;
+                }
+                else
+                {
+                    recPosition.Y -= stop;
+                }
             }
 
             if (currentKbState.IsKeyDown(Keys.A))
             {
-                recPosition.X -= speed;
+               // Horizontal Dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    recPosition.X -= 20;
+                    //hasDash = false;
+                }
+
+                // Keeps player in window
+                if (recPosition.X > 0)
+                {
+                    recPosition.X -= speed;
+                }
+                else
+                {
+                    recPosition.X -= stop;
+                }
             }
 
             if (currentKbState.IsKeyDown(Keys.S))
             {
-                recPosition.Y += speed;
+                // Horizontal Dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    recPosition.Y += 20;
+                    //hasDash = false;
+                }
+
+                // Keeps player in window
+                if (recPosition.Y <= windowHeight - 49)
+                {
+                    recPosition.Y += speed;
+                }
+                else
+                {
+                    recPosition.Y -= stop;
+                }
             }
 
             if (currentKbState.IsKeyDown(Keys.D))
             {
-                recPosition.X += speed;
+                // Vertical Dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    recPosition.X += 20;
+                    //hasDash = false;
+                }
+
+                // Keeps player in window
+                if (recPosition.X <= windowWidth - 37)
+                {
+                    recPosition.X += speed;
+                }
+                else
+                {
+                    recPosition.X -= stop;
+                }            
             }
+            
+
+            previousKbState = currentKbState;
         }
 
         /// <summary>
