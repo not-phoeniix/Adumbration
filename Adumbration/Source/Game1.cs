@@ -56,7 +56,9 @@ namespace Adumbration
                 new Rectangle(
                     _graphics.PreferredBackBufferWidth/2,
                     _graphics.PreferredBackBufferHeight/2,
-                    36, 48));
+                    36, 48),
+                    _graphics.GraphicsDevice.Viewport.Height,
+                    _graphics.GraphicsDevice.Viewport.Width);
         }
 
         protected override void Update(GameTime gameTime)

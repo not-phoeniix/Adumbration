@@ -18,6 +18,9 @@ namespace Adumbration
         // Fields
         private bool hasDash;
         private int speed;
+        private int stop;
+        private int windowHeight;
+        private int windowWidth;
         private bool isMoving;
 
         // Properties
@@ -34,10 +37,12 @@ namespace Adumbration
         /// Player takes completely from Parent class
         /// for the constructor
         /// </summary>
-        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
+        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, int windowH, int windowW)
             : base(spriteSheet, sourceRect, position)
         {
             hasDash = false;
+            windowHeight = windowH;
+            windowWidth = windowW;
         }
 
         // Methods
@@ -54,6 +59,9 @@ namespace Adumbration
             // Set player speed
             speed = 5;
 
+            //adds a stop int to make my(scott's) life easier while making the wall stuff
+            stop = 0;
+
             // Place holder until Wall class is finished
             //if (this.recPosition.Intersects(Wall.rectPosition))
             //{
@@ -62,7 +70,14 @@ namespace Adumbration
 
             if (currentKbState.IsKeyDown(Keys.W))
             {
-                recPosition.Y -= speed;
+                if(recPosition.Y > 0)
+                {
+                    recPosition.Y -= speed;
+                }
+                else
+                {
+                    recPosition.Y -= stop;
+                }
                 //isMoving = true;
                 //if (hasDash && isMoving && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)))
                 //{
@@ -72,17 +87,38 @@ namespace Adumbration
 
             if (currentKbState.IsKeyDown(Keys.A))
             {
-                recPosition.X -= speed;
+                if (recPosition.X > 0)
+                { 
+                    recPosition.X -= speed;
+                }
+                else
+                {
+                    recPosition.X -= stop;
+                }
             }
 
             if (currentKbState.IsKeyDown(Keys.S))
             {
-                recPosition.Y += speed;
+                if (recPosition.Y <= windowHeight - 49)
+                {
+                    recPosition.Y += speed;
+                }
+                else
+                {
+                    recPosition.Y -= stop;
+                }
             }
 
             if (currentKbState.IsKeyDown(Keys.D))
             {
-                recPosition.X += speed;
+                if (recPosition.X <= windowWidth - 37)
+                {
+                    recPosition.X += speed;
+                }
+                else
+                {
+                    recPosition.X -= stop;
+                }
             }
 
             previousKbState = currentKbState;
