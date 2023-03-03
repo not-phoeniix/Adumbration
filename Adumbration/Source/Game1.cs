@@ -41,9 +41,9 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            fullSpritesheet = Content.Load<Texture2D>("adumbration_spritesheet");
+            fullSpritesheet = Content.Load<Texture2D>("spritesheet");
 
-            levelTest = new Level(fullSpritesheet);
+            levelTest = new Level(fullSpritesheet, 6, "../../../Source/LevelData/LevelTest.txt");
         }
 
         protected override void Update(GameTime gameTime)
@@ -60,7 +60,7 @@ namespace Adumbration
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.FromNonPremultiplied(24, 20, 37, 255));
 
             // Deferred sort mode is default, PointClamp makes it so
             //   pixel art doesn't get blurry when upscaled
