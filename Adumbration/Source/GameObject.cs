@@ -45,7 +45,7 @@ namespace Adumbration
         }
 
         //all the abstract methods that will be used in all of the classes
-        
+
         /// <summary>
         /// will be changed to update anything that happens to this SPECIFIC sprite
         /// </summary>
@@ -54,7 +54,7 @@ namespace Adumbration
         /// <summary>
         /// Draws this GameObject to the screen with given position
         /// </summary>
-        public virtual void Draw(SpriteBatch sb) 
+        public virtual void Draw(SpriteBatch sb)
         {
             sb.Draw(spriteSheet, recPosition, sourceRect, Color.White);
         }
@@ -62,7 +62,7 @@ namespace Adumbration
         /// <summary>
         /// Draws this GameObject to the screen with custom position, setting position afterwards
         /// </summary>
-        public virtual void Draw(SpriteBatch sb, Rectangle position) 
+        public virtual void Draw(SpriteBatch sb, Rectangle position)
         {
             sb.Draw(spriteSheet, position, sourceRect, Color.White);
             recPosition = position;

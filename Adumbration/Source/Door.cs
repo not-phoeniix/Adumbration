@@ -46,7 +46,7 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Update(GameTime gameTime)
         {
-            
+
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Draw(SpriteBatch sb)
         {
-            
+
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, false otherwise.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            if (obj.Position.Intersects(this.Position))
+            if (obj.Position.Intersects(Position))
             {
                 return true;
             }
