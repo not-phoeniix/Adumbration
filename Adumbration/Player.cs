@@ -50,9 +50,26 @@ namespace Adumbration
             // Player movement
             KeyboardState currentKbState = Keyboard.GetState();
 
+            //if(IsColliding())
+
             if (currentKbState.IsKeyDown(Keys.W))
             {
+                this.recPosition.Y -= speed;
+            }
 
+            if (currentKbState.IsKeyDown(Keys.A))
+            {
+                this.recPosition.X -= speed;
+            }
+
+            if (currentKbState.IsKeyDown(Keys.S))
+            {
+                this.recPosition.Y += speed;
+            }
+
+            if (currentKbState.IsKeyDown(Keys.D))
+            {
+                this.recPosition.X += speed;
             }
         }
 
