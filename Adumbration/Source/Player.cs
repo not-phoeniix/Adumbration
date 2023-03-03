@@ -37,7 +37,7 @@ namespace Adumbration
         public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
             : base(spriteSheet, sourceRect, position)
         {
-            hasDash = false;
+            hasDash = true;
         }
 
         // Methods
@@ -49,7 +49,7 @@ namespace Adumbration
         {
             // Player movement
             KeyboardState currentKbState = Keyboard.GetState();
-            KeyboardState previousKbState;
+            KeyboardState previousKbState = Keyboard.GetState();
 
             // Set player speed
             speed = 5;
@@ -63,27 +63,51 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.W))
             {
                 recPosition.Y -= speed;
-                //isMoving = true;
-                //if (hasDash && isMoving && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)))
-                //{
-                //    recPosition.Y 
-                //}
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    recPosition.Y -= 150;
+                    //hasDash = false;
+                }
+            }
+            else
+            {
+                isMoving = false;
             }
 
             if (currentKbState.IsKeyDown(Keys.A))
             {
                 recPosition.X -= speed;
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    recPosition.X -= 150;
+                    //hasDash = false;
+                }
+            }
+            else
+            {
+                isMoving = false;
             }
 
             if (currentKbState.IsKeyDown(Keys.S))
             {
                 recPosition.Y += speed;
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    recPosition.Y += 150;
+                    //hasDash = false;
+                }
             }
 
             if (currentKbState.IsKeyDown(Keys.D))
             {
                 recPosition.X += speed;
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    recPosition.X += 150;
+                    //hasDash = false;
+                }
             }
+            
 
             previousKbState = currentKbState;
         }
