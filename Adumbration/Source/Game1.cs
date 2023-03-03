@@ -23,6 +23,10 @@ namespace Adumbration
         private Texture2D fullSpritesheet;
         private Level levelTest;
 
+        // Player Test
+        Player player;
+        private Texture2D playerTexture;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -41,9 +45,18 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            fullSpritesheet = Content.Load<Texture2D>("adumbration_spritesheet");
+            fullSpritesheet = Content.Load<Texture2D>("spritesheet");
 
             levelTest = new Level(fullSpritesheet);
+
+            playerTexture = Content.Load<Texture2D>("player_spritesheet");
+
+            player = new Player(playerTexture,
+                new Rectangle(0, 0, 6, 8),
+                new Rectangle(
+                    _graphics.PreferredBackBufferWidth/2,
+                    _graphics.PreferredBackBufferHeight/2,
+                    36, 48));
         }
 
         protected override void Update(GameTime gameTime)
@@ -54,6 +67,7 @@ namespace Adumbration
             }
 
             // TODO: Add your update logic here
+            player.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -66,6 +80,11 @@ namespace Adumbration
             //   pixel art doesn't get blurry when upscaled
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
             levelTest.Draw(_spriteBatch);
+            _spriteBatch.End();
+
+            // Draw Player
+            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+            player.Draw(_spriteBatch);
             _spriteBatch.End();
 
             base.Draw(gameTime);
