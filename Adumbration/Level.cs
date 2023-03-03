@@ -23,24 +23,36 @@ namespace Adumbration
         {
             // testing level drawing without loading from file yet, will remove later
             
-            // this just fills the 2D array with a bunch of floor objects with the same exact texture
+            // initializing array size
             tileList = new GameObject[10, 10];
-            for(int y = 0; y < tileList.GetLength(1); y++) 
+
+            int arrayHeight = tileList.GetLength(1);
+            int arrayWidth = tileList.GetLength(0);
+
+            // fills array with floor objects
+            for(int y = 0; y < arrayHeight; y++) 
             {
-                for(int x = 0; x < tileList.GetLength(0); x++) 
-                {    
+                for(int x = 0; x < arrayWidth; x++) 
+                {
+                    Rectangle sourceRect = new Rectangle(0, 0, 16, 16);
+                    int tileScale = 6;
+
+                    // makes the top and bottom rows one sprite
+                    int sideSize = sourceRect.Width * tileScale;
+
                     tileList[x, y] = new Floor(
-                        spritesheet,
-                        new Rectangle(0, 0, spritesheet.Width, spritesheet.Height),
-                        new Rectangle(
-                            x * spritesheet.Width,
-                            y * spritesheet.Height,
-                            spritesheet.Width,
-                            spritesheet.Height)
-                        );
+                    spritesheet,                    // spritesheet
+                    sourceRect,                     // source
+                    new Rectangle(                  // position
+                        x * sideSize,
+                        y * sideSize,
+                        sideSize,
+                        sideSize)
+                    );
                 }
             }
         }
+
 
         // Methods
 
@@ -78,7 +90,6 @@ namespace Adumbration
                     tileList[x, y].Draw(sb);
                 }
             }
-
         }
     }
 }
