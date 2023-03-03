@@ -10,6 +10,12 @@ using System.Threading.Tasks;
 
 namespace Adumbration
 {
+    /// <summary>
+    /// Alexander Gough
+    /// Door class that inherits from abstract GameObject.
+    /// Will have an open and closed state.
+    /// Leads to other levels.
+    /// </summary>
     public class Door : GameObject
     {
         // Fields
