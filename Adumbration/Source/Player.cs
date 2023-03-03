@@ -61,22 +61,22 @@ namespace Adumbration
 
             if (currentKbState.IsKeyDown(Keys.W))
             {
-                this.recPosition.Y -= speed;
+                recPosition.Y -= speed;
             }
 
             if (currentKbState.IsKeyDown(Keys.A))
             {
-                this.recPosition.X -= speed;
+                recPosition.X -= speed;
             }
 
             if (currentKbState.IsKeyDown(Keys.S))
             {
-                this.recPosition.Y += speed;
+                recPosition.Y += speed;
             }
 
             if (currentKbState.IsKeyDown(Keys.D))
             {
-                this.recPosition.X += speed;
+                recPosition.X += speed;
             }
         }
 
@@ -87,7 +87,7 @@ namespace Adumbration
         /// <returns>True if player is colliding with a GameObject, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            if (obj.Position.Intersects(this.Position))
+            if (obj.Position.Intersects(Position))
             {
                 return true;
             }

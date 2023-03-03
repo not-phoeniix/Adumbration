@@ -17,20 +17,20 @@ namespace Adumbration
     /// </summary>
     internal class Floor : GameObject
     {
-        public Floor(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position) 
+        public Floor(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
             : base(spriteSheet, sourceRect, position)
         {
-            
+
         }
 
-        public override void Update(GameTime gameTime) 
+        public override void Update(GameTime gameTime)
         {
             System.Diagnostics.Debug.WriteLine("I didn't write this yet");
         }
 
-        public override bool IsColliding(GameObject obj) 
+        public override bool IsColliding(GameObject obj)
         {
-            return this.Position.Intersects(obj.Position);
+            return Position.Intersects(obj.Position);
         }
     }
 }
