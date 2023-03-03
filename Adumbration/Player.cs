@@ -50,7 +50,14 @@ namespace Adumbration
             // Player movement
             KeyboardState currentKbState = Keyboard.GetState();
 
-            //if(IsColliding())
+            // Set player speed
+            speed = 10;
+
+            // Place holder until Wall class is finished
+            //if (this.recPosition.Intersects(Wall.rectPosition))
+            //{
+            //    speed = 0;
+            //}
 
             if (currentKbState.IsKeyDown(Keys.W))
             {
