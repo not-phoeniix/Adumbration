@@ -18,6 +18,9 @@ namespace Adumbration
         // Fields
         private bool hasDash;
         private int speed;
+        private int stop;
+        private int windowHeight;
+        private int windowWidth;
         private bool isMoving;
 
         // Properties
@@ -34,9 +37,12 @@ namespace Adumbration
         /// Player takes completely from Parent class
         /// for the constructor
         /// </summary>
-        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
+        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, int windowH, int windowW)
             : base(spriteSheet, sourceRect, position)
         {
+            hasDash = false;
+            windowHeight = windowH;
+            windowWidth = windowW;
             hasDash = true;
         }
 
@@ -53,6 +59,9 @@ namespace Adumbration
 
             // Set player speed
             speed = 5;
+
+            //adds a stop int to make my(scott's) life easier while making the wall stuff
+            stop = 0;
 
             // Place holder until Wall class is finished
             //if (this.recPosition.Intersects(Wall.rectPosition))
