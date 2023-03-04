@@ -21,7 +21,7 @@ namespace Adumbration
         private int stop;
         private int windowHeight;
         private int windowWidth;
-        private bool isMoving;
+        private KeyboardState previousKbState;
 
         // Properties
         /// <summary>
@@ -52,9 +52,8 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Update(GameTime gameTime)
         {
-            // Player movement
-            KeyboardState currentKbState = Keyboard.GetState();
-            KeyboardState previousKbState = Keyboard.GetState();
+            // Player input
+            KeyboardState currentKbState = Keyboard.GetState();            
 
             // Set player speed
             speed = 5;
@@ -63,19 +62,62 @@ namespace Adumbration
             stop = 0;
 
             // Place holder until Wall class is finished
-            //if (this.recPosition.Intersects(Wall.rectPosition))
+            //if (this.recPosition.Intersects())
             //{
             //    speed = 0;
             //}
 
-            
+            #region// Diagonal Dashes           
+            // North East
+            if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&
+                hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
+            {
+                // Changes position by 50 pixels in the diagonal direction
+                recPosition.X += 35;         // X component of the vector
+                recPosition.Y -= 35;         // Y component of the vector
+                hasDash = false;
+            }
+
+            // North West
+            if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&
+               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
+            {
+                // Changes position by 50 pixels in the diagonal direction
+                recPosition.X -= 35;         // X component of the vector
+                recPosition.Y -= 35;         // Y component of the vector
+                hasDash = false;
+            }
+
+            // South East
+            if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&
+               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
+            {
+                // Changes position by 50 pixels in the diagonal direction
+                recPosition.X += 35;        // X component of the vector
+                recPosition.Y += 35;        // Y component of the vector
+                hasDash = false;
+            }
+
+            // South West
+            if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&
+               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
+            {
+                // Changes position by 50 pixels in the diagonal direction
+                recPosition.X -= 35;       // X component of the vector
+                recPosition.Y += 35;       // Y component of the vector
+                hasDash = false;
+            }
+            #endregion
+
+            #region // Movement
+            // North Movement
             if (currentKbState.IsKeyDown(Keys.W))
             {
-                // Vertical Dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                // North Dash
+                if (hasDash && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)))
                 {
-                    recPosition.Y -= 20;
-                    //hasDash = false;
+                    recPosition.Y -= 50;
+                    hasDash = false;
                 }
 
                 // Keeps player in window
@@ -87,15 +129,37 @@ namespace Adumbration
                 {
                     recPosition.Y -= stop;
                 }
+            }            
+
+            // South Movement
+            if (currentKbState.IsKeyDown(Keys.D))
+            {
+                // South Dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
+                {
+                    recPosition.X += 50;
+                    hasDash = false;
+                }
+
+                // Keeps player in window
+                if (recPosition.X <= windowWidth - 37)
+                {
+                    recPosition.X += speed;
+                }
+                else
+                {
+                    recPosition.X -= stop;
+                }
             }
 
+            // West Movement
             if (currentKbState.IsKeyDown(Keys.A))
             {
-               // Horizontal Dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+               // West Dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
                 {
-                    recPosition.X -= 20;
-                    //hasDash = false;
+                    recPosition.X -= 50;
+                    hasDash = false;
                 }
 
                 // Keeps player in window
@@ -109,13 +173,14 @@ namespace Adumbration
                 }
             }
 
+            // East Movement
             if (currentKbState.IsKeyDown(Keys.S))
             {
-                // Horizontal Dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                // East Dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
                 {
-                    recPosition.Y += 20;
-                    //hasDash = false;
+                    recPosition.Y += 50;
+
                 }
 
                 // Keeps player in window
@@ -128,27 +193,7 @@ namespace Adumbration
                     recPosition.Y -= stop;
                 }
             }
-
-            if (currentKbState.IsKeyDown(Keys.D))
-            {
-                // Vertical Dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
-                {
-                    recPosition.X += 20;
-                    //hasDash = false;
-                }
-
-                // Keeps player in window
-                if (recPosition.X <= windowWidth - 37)
-                {
-                    recPosition.X += speed;
-                }
-                else
-                {
-                    recPosition.X -= stop;
-                }            
-            }
-            
+            #endregion
 
             previousKbState = currentKbState;
         }
@@ -160,14 +205,12 @@ namespace Adumbration
         /// <returns>True if player is colliding with a GameObject, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            if (obj.Position.Intersects(Position))
+            if (this.Position.Intersects(obj.Position))
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+           
+            return false;
         }
     }
 }
