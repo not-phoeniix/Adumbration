@@ -29,8 +29,7 @@ namespace Adumbration
 
         // Door Test
         private Door door;
-        private Texture2D openDoorTexture;
-        private Texture2D closedDoorTexture;
+        private Texture2D doorTexture;
 
         public Game1()
         {
@@ -59,16 +58,38 @@ namespace Adumbration
             playerTexture = Content.Load<Texture2D>("player_spritesheet");
 
             // Player Object
-            player = new Player(playerTexture,
-                new Rectangle(0, 0, 6, 8),
-                new Rectangle(_graphics.PreferredBackBufferWidth/2,
+            player = new Player(
+                playerTexture,
+                new Rectangle(
+                    0,
+                    0,
+                    6,
+                    8),
+                new Rectangle(
+                    _graphics.PreferredBackBufferWidth/2,
                     _graphics.PreferredBackBufferHeight/2,
-                    36, 48),
+                    36,
+                    48),
                 _graphics.PreferredBackBufferHeight,
                 _graphics.PreferredBackBufferWidth);
 
-            // Closed Door Texture
-            //closedDoorTexture = Content.Load<Texture2D>();
+            // Door Texture
+            doorTexture = Content.Load<Texture2D>("door_spritesheet");
+
+            // Door Object
+            door = new Door(
+                false,
+                doorTexture,
+                new Rectangle(  // Source Rectangle
+                    64,         // - X Location
+                    0,          // - Y Location
+                    16,         // - Width
+                    10),        // - Height
+                new Rectangle(                                  // Position
+                    _graphics.PreferredBackBufferWidth / 2,     // - X Location
+                    _graphics.PreferredBackBufferHeight / 2,    // - Y Location
+                    36,                                         // - Width
+                    48));                                       // - Height
         }
 
         protected override void Update(GameTime gameTime)

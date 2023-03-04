@@ -30,12 +30,12 @@ namespace Adumbration
         public bool IsOpen
         {
             get { return isOpen; }
+            set { isOpen = value; }
         }
 
         // Constructor(s)
         public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position) : base(spriteSheet, sourceRect, position)
         {
-            isOpen = false;
             this.isOpen = isOpen;
         }
 
