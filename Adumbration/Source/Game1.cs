@@ -31,6 +31,15 @@ namespace Adumbration
         private Door door;
         private Texture2D doorTexture;
 
+        // Level Manager
+        private static LevelManager lvlMgrSingleton;
+
+        // Level Manager Property
+        public static LevelManager LevelMgrSingleton
+        {
+            get { return lvlMgrSingleton; }
+        }
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);

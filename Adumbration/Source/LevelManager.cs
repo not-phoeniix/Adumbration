@@ -15,17 +15,31 @@ namespace Adumbration
     public sealed class LevelManager
     {
         // Fields
-        private LevelManager instance = null;
-        private Level[] allLevels;
+        private static int counter = 0;
+        private static LevelManager instance = null;
 
         // Properties
 
         /// <summary>
         /// Get only for the singleton instance.
         /// </summary>
-        public LevelManager Instance
+        public static LevelManager Instance
         {
-            get { return instance; }
+            get
+            {
+                if (instance == null)
+                {
+                    instance = new LevelManager();
+                }
+                return instance;
+            }
+        }
+
+        // Private Constructor
+        private LevelManager()
+        {
+            counter++;
+            Console.WriteLine(ToString());
         }
 
         // Methods
@@ -46,6 +60,13 @@ namespace Adumbration
         public void Draw(GameTime gameTime)
         {
 
+        }
+
+        public override string ToString()
+        {
+            return String.Format(
+                "Levels: {0}",
+                counter);
         }
     }
 }
