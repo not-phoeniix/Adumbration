@@ -25,10 +25,10 @@ namespace Adumbration
             LoadFromFile(dataFilePath);
         }
 
-        //returns the list to check for collision
-        public GameObject[,] GetTileList()
+        // Properties
+        public GameObject[,] TileList
         {
-            return tileList;
+            get { return tileList; }
         }
 
         // Methods

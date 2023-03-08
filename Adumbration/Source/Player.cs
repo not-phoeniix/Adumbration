@@ -50,7 +50,7 @@ namespace Adumbration
         /// Updates the player.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Level currentLevel)
         {
             // Player input
             KeyboardState currentKbState = Keyboard.GetState();            
@@ -126,14 +126,18 @@ namespace Adumbration
                 }
 
                 // Keeps player in window
-                if (recPosition.Y > 0)
+                foreach (GameObject tile in currentLevel.TileList)
                 {
-                    recPosition.Y -= speed;
+                    if (tile is Wall)
+                    {
+                        if (recPosition.Y > 0 && !(recPosition.Intersects(tile.Position)))
+                        {
+                            recPosition.Y -= speed;
+                        }
+                    }
+                   
                 }
-                else
-                {
-                    recPosition.Y -= stop;
-                }
+                
             }            
 
             // East Movement
@@ -151,10 +155,6 @@ namespace Adumbration
                 if (recPosition.X <= windowWidth - 37)
                 {
                     recPosition.X += speed;
-                }
-                else
-                {
-                    recPosition.X -= stop;
                 }
             }
 
@@ -174,10 +174,6 @@ namespace Adumbration
                 {
                     recPosition.X -= speed;
                 }
-                else
-                {
-                    recPosition.X -= stop;
-                }
             }
 
             // South Movement
@@ -195,10 +191,6 @@ namespace Adumbration
                 if (recPosition.Y <= windowHeight - 49)
                 {
                     recPosition.Y += speed;
-                }
-                else
-                {
-                    recPosition.Y -= stop;
                 }
             }
             #endregion
