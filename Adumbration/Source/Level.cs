@@ -126,7 +126,7 @@ namespace Adumbration
                             //    textureWidth, 
                             //    textureWidth);
 
-                            Rectangle sourceRect = DetermineSprite(int.Parse(splitString[i]));
+                            Rectangle sourceRect = DetermineSprite(int.Parse(splitString[i]), new Vector2(arrayX, arrayY));
 
                             int sideSize = sourceRect.Width * levelScale;
                             
@@ -136,7 +136,9 @@ namespace Adumbration
                                 sideSize,
                                 sideSize);
 
-                            if(arrayX == 1 && arrayY == 1) {
+                            Rectangle floorSourceRect = new Rectangle(16, 16, 16, 16);
+
+                            if(sourceRect == floorSourceRect) {
                                 tileList[arrayX, arrayY] = new Floor(spritesheet, sourceRect, positionRect);
                             } else {
                                 tileList[arrayX, arrayY] = new Wall(spritesheet, sourceRect, positionRect);
@@ -165,7 +167,7 @@ namespace Adumbration
         }
 
         // "num" is the number in the file read
-        Rectangle DetermineSprite(int num) {
+        Rectangle DetermineSprite(int num, Vector2 pos) {
             int[,] neighbors = new int[3, 3];
 
             for(int y = 0; y < 3; y++) {
@@ -180,21 +182,29 @@ namespace Adumbration
 
             // n[0,0]   n[1,0]  n[2,0]
             // n[0,1]   n[1,1]  n[2,1]
-            // n[0,2]   n[1,2]  n[2,2
+            // n[0,2]   n[1,2]  n[2,2]
 
-            int coordX = 1;
-            int coordY = 1;
+            // 1 1 1
+            // 1 1 1
+            // 1 1 1
+
+            Vector2 coord = new Vector2(0, 0);
 
             // if 0, return a floor
             if(num == 0) {
-                coordX = 1;
-                coordY = 1;
+                coord.X = 1;
+                coord.Y = 1;
             } else {
-                coordX = 0;
-                coordY = 0;
+                coord.X = 0;
+                coord.Y = 0;
             }
 
-            return new Rectangle(coordX * 16, coordY * 16, 16, 16);
+            // returns calculated source rect
+            return new Rectangle(
+                (int)coord.X * 16, 
+                (int)coord.Y * 16,
+                16, 
+                16);
         }
     }
 }
