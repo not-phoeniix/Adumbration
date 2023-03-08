@@ -54,7 +54,7 @@ namespace Adumbration
             wallSpritesheet = Content.Load<Texture2D>("wall_spritesheet");
 
             // creating test level
-            levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest.txt");
+            levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest2.txt");
 
             // Player Texture
             playerTexture = Content.Load<Texture2D>("player_spritesheet");
