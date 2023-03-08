@@ -102,7 +102,7 @@ namespace Adumbration
             }
 
             // TODO: Add your update logic here
-            player.Update(gameTime);
+            player.Update(gameTime, levelTest);
 
             base.Update(gameTime);
         }

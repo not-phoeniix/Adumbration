@@ -62,10 +62,13 @@ namespace Adumbration
             stop = 0;
 
             // Place holder until Wall class is finished
-            //if (this.recPosition.Intersects())
-            //{
-            //    speed = 0;
-            //}
+            foreach (GameObject tile in currentLevel.TileList)
+            {
+                if (tile is Wall && recPosition.Intersects(tile.Position))
+                {
+                    speed = 0;
+                }
+            }
 
             #region// Diagonal Dashes           
             // North East
@@ -126,18 +129,11 @@ namespace Adumbration
                 }
 
                 // Keeps player in window
-                foreach (GameObject tile in currentLevel.TileList)
+                if (recPosition.Y > 0)
                 {
-                    if (tile is Wall)
-                    {
-                        if (recPosition.Y > 0 && !(recPosition.Intersects(tile.Position)))
-                        {
-                            recPosition.Y -= speed;
-                        }
-                    }
-                   
+                    recPosition.Y -= speed;
                 }
-                
+
             }            
 
             // East Movement
