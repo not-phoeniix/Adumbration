@@ -97,6 +97,7 @@ namespace Adumbration
                         // initializes the list
                         tileList = new GameObject[levelWidth, levelHeight];
                     }
+
                     // loading level & filling array ==========================
                     else
                     {
@@ -108,16 +109,18 @@ namespace Adumbration
                             int arrayY = lineNum - 2;
 
                             // takes the "2|0" and converts to just a "2" and a "0"
-                            string[] tileCoords = splitString[i].Trim().Split("|");
-                            int textureWidth = 16;
-                            int sourceX = int.Parse(tileCoords[0]) * textureWidth;
-                            int sourceY = int.Parse(tileCoords[1]) * textureWidth;
+                            //string[] tileCoords = splitString[i].Trim().Split("|");
+                            //int textureWidth = 16;
+                            //int sourceX = int.Parse(tileCoords[0]) * textureWidth;
+                            //int sourceY = int.Parse(tileCoords[1]) * textureWidth;
 
-                            Rectangle sourceRect = new Rectangle(
-                                sourceX, 
-                                sourceY, 
-                                textureWidth, 
-                                textureWidth);
+                            //Rectangle sourceRect = new Rectangle(
+                            //    sourceX, 
+                            //    sourceY, 
+                            //    textureWidth, 
+                            //    textureWidth);
+
+                            Rectangle sourceRect = DetermineSprite(int.Parse(splitString[i]));
 
                             int sideSize = sourceRect.Width * levelScale;
                             
@@ -144,7 +147,7 @@ namespace Adumbration
             {
                 // prints exception if there is one
                 Debug.WriteLine($"Error in file reading! Error: {ex.Message}");
-            } 
+            }
             finally
             {
                 // closes reader if it's not closed already
@@ -155,9 +158,9 @@ namespace Adumbration
             }
         }
 
-        /*
-        GameObject DetermineSprite(int num, int[,] neighbors) {
-            neighbors = new int[3, 3];
+        // "num" is the number in the file read
+        Rectangle DetermineSprite(int num) {
+            int[,] neighbors = new int[3, 3];
 
             for(int y = 0; y < 3; y++) {
                 for(int x = 0; x < 3; x++) {
@@ -166,25 +169,26 @@ namespace Adumbration
                     } else {
                         neighbors[x, y] = 1;
                     }
-
-
                 }
             }
-            
+
             // n[0,0]   n[1,0]  n[2,0]
             // n[0,1]   n[1,1]  n[2,1]
             // n[0,2]   n[1,2]  n[2,2
-            
+
+            int coordX = 1;
+            int coordY = 1;
+
             // if 0, return a floor
             if(num == 0) {
-                return new Floor(
-                    spritesheet, 
-                    new Rectangle(16, 16, 16, 16),
-                    new Rectangle(0, 0, 0, 0));
+                coordX = 1;
+                coordY = 1;
             } else {
-
+                coordX = 0;
+                coordY = 0;
             }
+
+            return new Rectangle(coordX * 16, coordY * 16, 16, 16);
         }
-        */
     }
 }
