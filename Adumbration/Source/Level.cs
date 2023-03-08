@@ -1,13 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SharpDX.Direct2D1.Effects;
-using SharpDX.MediaFoundation;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
-using System.Windows.Forms;
 
 namespace Adumbration
 {
@@ -132,25 +127,11 @@ namespace Adumbration
                                 sideSize,
                                 sideSize);
 
-                            tileList[arrayX, arrayY] = new Floor(spritesheet, sourceRect, positionRect);
-
-                            /*
-                            Rectangle sourceRect = new Rectangle(0, 0, 16, 16);
-                            int tileScale = 6;
-
-                            // makes the top and bottom rows one sprite
-                            int sideSize = sourceRect.Width * tileScale;
-
-                            tileList[x, y] = new Floor(
-                            spritesheet,                    // spritesheet
-                            sourceRect,                     // source
-                            new Rectangle(                  // position
-                                x * sideSize,
-                                y * sideSize,
-                                sideSize,
-                                sideSize)
-                            );
-                            */
+                            if(arrayX == 1 && arrayY == 1) {
+                                tileList[arrayX, arrayY] = new Floor(spritesheet, sourceRect, positionRect);
+                            } else {
+                                tileList[arrayX, arrayY] = new Wall(spritesheet, sourceRect, positionRect);
+                            }
                         }
                     }
 
@@ -167,10 +148,43 @@ namespace Adumbration
             finally
             {
                 // closes reader if it's not closed already
-                if(reader != null) {
+                if(reader != null) 
+                {
                     reader.Close();
                 }
             }
         }
+
+        /*
+        GameObject DetermineSprite(int num, int[,] neighbors) {
+            neighbors = new int[3, 3];
+
+            for(int y = 0; y < 3; y++) {
+                for(int x = 0; x < 3; x++) {
+                    if(y == 1 && x == 1) {
+                        neighbors[x, y] = 0;
+                    } else {
+                        neighbors[x, y] = 1;
+                    }
+
+
+                }
+            }
+            
+            // n[0,0]   n[1,0]  n[2,0]
+            // n[0,1]   n[1,1]  n[2,1]
+            // n[0,2]   n[1,2]  n[2,2
+            
+            // if 0, return a floor
+            if(num == 0) {
+                return new Floor(
+                    spritesheet, 
+                    new Rectangle(16, 16, 16, 16),
+                    new Rectangle(0, 0, 0, 0));
+            } else {
+
+            }
+        }
+        */
     }
 }
