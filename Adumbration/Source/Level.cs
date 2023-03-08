@@ -13,8 +13,8 @@ namespace Adumbration
     public class Level
     {
         // Fields
-        private int[,] levelLayout;
-        private GameObject[,] tileList;
+        private int[,] levelLayout;         // copy of level text file, just int's
+        private GameObject[,] tileList;     // full array of GameObject's
         private Texture2D spritesheet;
         private int levelScale;
 
@@ -26,7 +26,7 @@ namespace Adumbration
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile(dataFilePath);
-            LoadObjectsFromLayout(levelLayout);
+            tileList = LoadObjectsFromLayout(levelLayout);
         }
 
         // Properties
@@ -152,12 +152,11 @@ namespace Adumbration
         /// with various objects like walls/floors.
         /// </summary>
         /// <param name="layout"></param>
-        private void LoadObjectsFromLayout(int[,] layout) {
+        private GameObject[,] LoadObjectsFromLayout(int[,] layout) {
             int levelWidth = layout.GetLength(0);
             int levelHeight = layout.GetLength(1);
-            
-            // initializes the list
-            tileList = new GameObject[levelWidth, levelHeight];
+
+            GameObject[,] returnArray = new GameObject[levelWidth, levelHeight];
 
             for(int y = 0; y < levelHeight; y++) {
                 for(int x = 0; x < levelWidth; x++) {
@@ -178,12 +177,14 @@ namespace Adumbration
 
                     // fills array with respective objects
                     if(sourceRect == floorSourceRect) {
-                        tileList[x, y] = new Floor(spritesheet, sourceRect, positionRect);
+                        returnArray[x, y] = new Floor(spritesheet, sourceRect, positionRect);
                     } else {
-                        tileList[x, y] = new Wall(spritesheet, sourceRect, positionRect);
+                        returnArray[x, y] = new Wall(spritesheet, sourceRect, positionRect);
                     }
                 }
             }
+
+            return returnArray;
         }
 
         #endregion
