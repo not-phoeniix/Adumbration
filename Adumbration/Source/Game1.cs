@@ -21,6 +21,7 @@ namespace Adumbration
         private SpriteBatch _spriteBatch;
 
         private Texture2D fullSpritesheet;
+        private Texture2D wallSpritesheet;
         private Level levelTest;
 
         // Player Test
@@ -59,9 +60,10 @@ namespace Adumbration
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // Full Sprite Sheet Texture
-            fullSpritesheet = Content.Load<Texture2D>("spritesheet");
+            wallSpritesheet = Content.Load<Texture2D>("wall_spritesheet");
 
-            levelTest = new Level(fullSpritesheet, 6, "../../../Source/LevelData/LevelTest.txt");
+            // creating test level
+            levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest.txt");
 
             // Player Texture
             playerTexture = Content.Load<Texture2D>("player_spritesheet");
