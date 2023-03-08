@@ -25,6 +25,12 @@ namespace Adumbration
             LoadFromFile(dataFilePath);
         }
 
+        // Properties
+        public GameObject[,] TileList
+        {
+            get { return tileList; }
+        }
+
         // Methods
 
         /// <summary>
