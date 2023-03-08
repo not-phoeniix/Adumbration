@@ -25,6 +25,12 @@ namespace Adumbration
             LoadFromFile(dataFilePath);
         }
 
+        //returns the list to check for collision
+        public GameObject[,] GetTileList()
+        {
+            return tileList;
+        }
+
         // Methods
 
         /// <summary>
