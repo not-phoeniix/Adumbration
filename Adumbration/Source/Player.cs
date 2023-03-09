@@ -22,6 +22,7 @@ namespace Adumbration
         private int windowHeight;
         private int windowWidth;
         private KeyboardState previousKbState;
+        private bool isTouchingWall;
 
         // Properties
         /// <summary>
@@ -64,9 +65,17 @@ namespace Adumbration
             // Place holder until Wall class is finished
             foreach (GameObject tile in currentLevel.TileList)
             {
+                // If the player is touching a wall
                 if (tile is Wall && recPosition.Intersects(tile.Position))
                 {
-                    speed = 0;
+                    // They're touching a wall
+                    isTouchingWall = true;
+                }
+                // Otherwise
+                if (tile is Floor && recPosition.Intersects(tile.Position))
+                {
+                    // They're not
+                    isTouchingWall = false;
                 }
             }
 
@@ -129,7 +138,8 @@ namespace Adumbration
                 }
 
                 // Keeps player in window
-                if (recPosition.Y > 0)
+                // If player is not touching a top wall let them move in that direction
+                if (recPosition.Y > 0 && !isTouchingWall)
                 {
                     recPosition.Y -= speed;
                 }
