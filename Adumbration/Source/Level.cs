@@ -13,7 +13,8 @@ namespace Adumbration
     public class Level
     {
         // Fields
-        private GameObject[,] tileList;
+        private int[,] levelLayout;         // copy of level text file, just int's
+        private GameObject[,] tileList;     // full array of GameObject's
         private Texture2D spritesheet;
         private int levelScale;
 
@@ -22,7 +23,10 @@ namespace Adumbration
         {
             this.spritesheet = spritesheet;
             this.levelScale = levelScale;
-            LoadFromFile(dataFilePath);
+
+            // loads and creates level from file path
+            levelLayout = LoadLayoutFromFile(dataFilePath);
+            tileList = LoadObjectsFromLayout(levelLayout);
         }
 
         // Properties
@@ -69,12 +73,19 @@ namespace Adumbration
             }
         }
 
+        #region LevelLoading
+
         /// <summary>
-        /// Loads a level from a file and initializes array
+        /// Loads a level from a file and returns an associated array. 
+        /// The first line of the file should be "levelWidth,LevelHeight", 
+        /// and all the other lines should be the numbers associated with the tiles.
         /// </summary>
         /// <param name="filename">String of file name</param>
-        private void LoadFromFile(string filename) 
+        /// <returns>2D integer array of level</returns>
+        private int[,] LoadLayoutFromFile(string filename)
         {
+            int[,] returnLayout = new int[1, 1];
+
             StreamReader reader = null;
 
             // try catch for all stream reading in case
@@ -100,8 +111,8 @@ namespace Adumbration
                         levelWidth = int.Parse(splitString[0]);
                         levelHeight = int.Parse(splitString[1]);
 
-                        // initializes the list
-                        tileList = new GameObject[levelWidth, levelHeight];
+                        // initializes the list with given file values
+                        returnLayout = new int[levelWidth, levelHeight];
                     }
 
                     // loading level & filling array ==========================
@@ -110,46 +121,13 @@ namespace Adumbration
                         // fills row in array with the split string
                         for(int i = 0; i < splitString.Length; i++) 
                         {
-                            // current coords in array
-                            int arrayX = i;
-                            int arrayY = lineNum - 2;
-
-                            // takes the "2|0" and converts to just a "2" and a "0"
-                            //string[] tileCoords = splitString[i].Trim().Split("|");
-                            //int textureWidth = 16;
-                            //int sourceX = int.Parse(tileCoords[0]) * textureWidth;
-                            //int sourceY = int.Parse(tileCoords[1]) * textureWidth;
-
-                            //Rectangle sourceRect = new Rectangle(
-                            //    sourceX, 
-                            //    sourceY, 
-                            //    textureWidth, 
-                            //    textureWidth);
-
-                            Rectangle sourceRect = DetermineSprite(int.Parse(splitString[i]), new Vector2(arrayX, arrayY));
-
-                            int sideSize = sourceRect.Width * levelScale;
-                            
-                            Rectangle positionRect = new Rectangle(
-                                arrayX * sideSize,
-                                arrayY * sideSize,
-                                sideSize,
-                                sideSize);
-
-                            Rectangle floorSourceRect = new Rectangle(16, 16, 16, 16);
-
-                            if(sourceRect == floorSourceRect) {
-                                tileList[arrayX, arrayY] = new Floor(spritesheet, sourceRect, positionRect);
-                            } else {
-                                tileList[arrayX, arrayY] = new Wall(spritesheet, sourceRect, positionRect);
-                            }
+                            returnLayout[i, lineNum - 2] = int.Parse(splitString[i]);
                         }
                     }
 
                     // increments lineNum after each loop
                     lineNum++;
                 }
-
             } 
             catch(Exception ex)
             {
@@ -164,10 +142,59 @@ namespace Adumbration
                     reader.Close();
                 }
             }
+
+            // return the layout at the end of EVERYTHING
+            return returnLayout;
         }
 
+        /// <summary>
+        /// Loads and sets up the internal GameObject array 
+        /// with various objects like walls/floors.
+        /// </summary>
+        /// <param name="layout"></param>
+        private GameObject[,] LoadObjectsFromLayout(int[,] layout) {
+            int levelWidth = layout.GetLength(0);
+            int levelHeight = layout.GetLength(1);
+
+            GameObject[,] returnArray = new GameObject[levelWidth, levelHeight];
+
+            for(int y = 0; y < levelHeight; y++) {
+                for(int x = 0; x < levelWidth; x++) {
+
+                    Rectangle sourceRect = DetermineSprite(layout[x, y], x, y);
+
+                    int sideSize = sourceRect.Width * levelScale;
+
+                    // full pos on screen
+                    Rectangle positionRect = new Rectangle(
+                        x * sideSize,
+                        y * sideSize,
+                        sideSize,
+                        sideSize);
+
+                    // detects if rect is the coordinates of the floor sprite
+                    Rectangle floorSourceRect = new Rectangle(16, 16, 16, 16);
+
+                    // fills array with respective objects
+                    if(sourceRect == floorSourceRect) {
+                        returnArray[x, y] = new Floor(spritesheet, sourceRect, positionRect);
+                    } else {
+                        returnArray[x, y] = new Wall(spritesheet, sourceRect, positionRect);
+                    }
+                }
+            }
+
+            return returnArray;
+        }
+
+        #endregion
+
+        // returns a source rectangle in wall
+        //   spritesheet based on surrounding tiles
+        //
         // "num" is the number in the file read
-        Rectangle DetermineSprite(int num, Vector2 pos) {
+        // "pos" is position of current tile to check
+        Rectangle DetermineSprite(int num, int tilePosX, int tilePosY) {
             int[,] neighbors = new int[3, 3];
 
             for(int y = 0; y < 3; y++) {
@@ -180,13 +207,11 @@ namespace Adumbration
                 }
             }
 
-            // n[0,0]   n[1,0]  n[2,0]
-            // n[0,1]   n[1,1]  n[2,1]
-            // n[0,2]   n[1,2]  n[2,2]
+            // 1 1 1
+            // 1 0 1
+            // 1 1 1
 
-            // 1 1 1
-            // 1 1 1
-            // 1 1 1
+            // use levelLayout[]
 
             Vector2 coord = new Vector2(0, 0);
 
@@ -195,6 +220,9 @@ namespace Adumbration
                 coord.X = 1;
                 coord.Y = 1;
             } else {
+                // TODO: conditionals to check surrounding tiles in
+                //   levelLayout[] and set the correct coord numbers
+
                 coord.X = 0;
                 coord.Y = 0;
             }
