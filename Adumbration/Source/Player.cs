@@ -35,6 +35,7 @@ namespace Adumbration
         private KeyboardState previousKbState;
         private int prevX;
         private int prevY;
+        private PlayerState currentState;
 
         // Properties
         /// <summary>
