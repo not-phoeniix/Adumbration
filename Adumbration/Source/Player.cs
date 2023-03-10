@@ -310,6 +310,10 @@ namespace Adumbration
             }
             #endregion
 
+            //checks to see if the lightbeam collides with the player
+
+
+
             previousKbState = currentKbState;
 
             // In case we need to use them keep them here
@@ -331,6 +335,16 @@ namespace Adumbration
            
             return false;
         }
+
+        public void IsDead(GameObject beam)
+        {
+            if(this.IsColliding(beam))
+            {
+                recPosition.X = 150;
+                recPosition.Y = 150;
+            }
+        }
+
 
         private void NorthMovement(KeyboardState currentKbState, Level currentLevel, int currentX)
         {
@@ -362,7 +376,6 @@ namespace Adumbration
                         recPosition.X = currentX;
                     }
                 }
-
             }
         }
     }
