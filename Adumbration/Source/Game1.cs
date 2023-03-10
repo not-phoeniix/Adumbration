@@ -55,7 +55,7 @@ namespace Adumbration
             wallSpritesheet = Content.Load<Texture2D>("wall_spritesheet");
 
             // creating test level
-            levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest2.txt");
+            levelTest = new Level(wallSpritesheet, 6, "LevelTest2.txt");
 
             // Player Texture
             playerTexture = Content.Load<Texture2D>("player_spritesheet");
@@ -109,7 +109,7 @@ namespace Adumbration
                     _graphics.PreferredBackBufferWidth / 2,     // - X Location
                     _graphics.PreferredBackBufferHeight / 2,    // - Y Location
                     10,                                         // - Width
-                    10));                                       //height
+                    10));                                       // - Height
         }
 
         protected override void Update(GameTime gameTime)

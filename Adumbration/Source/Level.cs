@@ -3,13 +3,12 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Adumbration
 {
     /// <summary>
-    /// Alexander Gough & Nikki Murello
-    /// Purpose: Set up each level
+    /// Class representation of a level, has drawing and 
+    /// updating methods and loads the layout from a file.
     /// </summary>
     public class Level
     {
@@ -19,14 +18,19 @@ namespace Adumbration
         private Texture2D spritesheet;
         private int levelScale;
 
-        // Constructor
+        /// <summary>
+        /// Creates a new level object, initializing and loading from a file
+        /// </summary>
+        /// <param name="spritesheet">Texture2D wall spritesheet</param>
+        /// <param name="levelScale">Overall scale of level being drawn</param>
+        /// <param name="dataFilePath">File path of layout data file (Already in LevelData folder, only file name needed)</param>
         public Level(Texture2D spritesheet, int levelScale, string dataFilePath)
         {
             this.spritesheet = spritesheet;
             this.levelScale = levelScale;
 
             // loads and creates level from file path
-            levelLayout = LoadLayoutFromFile(dataFilePath);
+            levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
             tileList = LoadObjectsFromLayout(levelLayout);
         }
 
@@ -170,8 +174,9 @@ namespace Adumbration
             {
                 for(int x = 0; x < levelWidth; x++)
                 {
-
-                    Rectangle sourceRect = DetermineSprite(layout[x, y], x, y);
+                    // determines from below method what tile to draw,
+                    //   like whether it's an edge or a corner
+                    Rectangle sourceRect = DetermineSourceRect(layout[x, y], x, y);
 
                     int sideSize = sourceRect.Width * levelScale;
 
@@ -207,7 +212,7 @@ namespace Adumbration
         //
         // "num" is the number in the file read
         // "pos" is position of current tile to check
-        Rectangle DetermineSprite(int num, int tilePosX, int tilePosY)
+        private Rectangle DetermineSourceRect(int num, int tilePosX, int tilePosY)
         {
             // coordinates in spritesheet to multiply at end
             //   of method from where to draw the sprite.
@@ -225,103 +230,111 @@ namespace Adumbration
             // else, run thru conditionals to check for correct bounds
             else
             {
-                // TODO: conditionals to check surrounding tiles in
-                //   levelLayout[] and set the correct coord numbers
+                // size of boolean array
+                int sheetX = spritesheet.Bounds.Width / 16;
+                int sheetY = spritesheet.Bounds.Height / 16;
+
+                // 2D array same size as spritesheet zoomed out,
+                //   only one item is true at a time and that is 
+                //   the one being drawn
+                bool[,] tileIsTrue = new bool[sheetX, sheetY];
 
                 #region SurroundingTileChecks
-
-                // boolean checks
-                bool floorAbove = false;
-                bool floorBelow = false;
-                bool floorLeft = false;
-                bool floorRight = false;
-                int cornerRotNum = 0;
-
+                
                 // checking tiles ABOVE itself
                 if(tilePosY > 0)
                 {
-                    floorAbove = (levelLayout[tilePosX, tilePosY - 1] == 1);
+                    // TOP EDGE
+                    bool isBottomEdge = levelLayout[tilePosX, tilePosY - 1] == 1;
 
-                    //if(levelLayout[tilePosX, tilePosY - 1] == 1)
-                    //{
-                    //    returnRectCoord.X = 1;
-                    //    returnRectCoord.Y = 2;
-                    //}
+                    // checks for corners
+                    if(!isBottomEdge)
+                    {
+                        // BOTTOM RIGHT CORNER
+                        if(tilePosX > 0)
+                        {
+                            tileIsTrue[2, 2] = levelLayout[tilePosX - 1, tilePosY - 1] == 1;
+                        }
+                        // BOTTOM LEFT CORNER
+                        else if(tilePosX < levelLayout.GetLength(0) - 1)
+                        {
+                            tileIsTrue[0, 2] = levelLayout[tilePosX + 1, tilePosY - 1] == 1;
+                        }
+                    }
+                    // else, sets it to the edge
+                    else
+                    {
+                        tileIsTrue[1, 2] = isBottomEdge;
+                    }
                 }
 
                 // checking tiles BELOW itself
                 if(tilePosY < levelLayout.GetLength(1) - 1)
                 {
-                    floorBelow = (levelLayout[tilePosX, tilePosY + 1] == 1);
+                    // TOP EDGE
+                    bool isTopEdge = levelLayout[tilePosX, tilePosY + 1] == 1;
 
-                    //if(levelLayout[tilePosX, tilePosY - 1] == 1)
-                    //{
-                    //    returnRectCoord.X = 1;
-                    //    returnRectCoord.Y = 2;
-                    //}
+                    // checks for corners
+                    if(!isTopEdge)
+                    {
+                        // TOP RIGHT CORNER
+                        if(tilePosX > 0)
+                        {
+                            tileIsTrue[2, 0] = levelLayout[tilePosX - 1, tilePosY + 1] == 1;
+                        }
+                        // TOP LEFT CORNER
+                        else if(tilePosX < levelLayout.GetLength(0) - 1)
+                        {
+                            tileIsTrue[0, 0] = levelLayout[tilePosX + 1, tilePosY + 1] == 1;
+                        }
+                    } 
+                    // else, sets it to the edge
+                    else
+                    {
+                        tileIsTrue[1, 0] = isTopEdge;
+                    }
                 }
 
                 // checking tiles to LEFT of itself
                 if(tilePosX > 0)
                 {
-                    floorLeft = (levelLayout[tilePosX - 1, tilePosY] == 1);
-
-                    //if(levelLayout[tilePosX - 1, tilePosY] == 1)
-                    //{
-                    //    returnRectCoord.X = 2;
-                    //    returnRectCoord.Y = 1;
-                    //}
+                    // RIGHT EDGE
+                    bool isRightEdge = levelLayout[tilePosX - 1, tilePosY] == 1;
+                    if(isRightEdge)
+                    {
+                        tileIsTrue = new bool[sheetX, sheetY];
+                        tileIsTrue[2, 1] = true;
+                    }
                 }
 
                 // checking tiles to RIGHT of itself
                 if(tilePosX < levelLayout.GetLength(1) - 1)
                 {
-                    floorRight = (levelLayout[tilePosX + 1, tilePosY] == 1);
-
-                    //if(levelLayout[tilePosX + 1, tilePosY] == 1)
-                    //{
-                    //    returnRectCoord.X = 0;
-                    //    returnRectCoord.Y = 1;
-                    //}
-                }
-
-                if(!floorAbove && !floorBelow && !floorLeft && !floorRight)
-                {
-                    cornerRotNum = 0;
+                    // LEFT EDGE
+                    bool isLeftEdge = levelLayout[tilePosX + 1, tilePosY] == 1;
+                    if(isLeftEdge)
+                    {
+                        tileIsTrue = new bool[sheetX, sheetY];
+                        tileIsTrue[0, 1] = true;
+                    }
                 }
 
                 #endregion
 
-                #region RectValueSets
-
-                // 4 cardinal directions setting
-                if(floorAbove)
+                // iterates through the boolean array, only
+                //   setting coordinates for the true value
+                for(int y = 0; y < tileIsTrue.GetLength(1); y++)
                 {
-                    returnRectCoord.X = 1;
-                    returnRectCoord.Y = 2;
-                } 
-                else if(floorBelow)
-                {
-                    returnRectCoord.X = 1;
-                    returnRectCoord.Y = 0;
+                    for(int x = 0; x < tileIsTrue.GetLength(0); x++)
+                    {
+                        // only sets coordinates if true
+                        if(tileIsTrue[x, y] == true)
+                        {
+                            returnRectCoord.X = x;
+                            returnRectCoord.Y = y;
+                        }
+                    }
                 }
-                else if(floorLeft)
-                {
-                    returnRectCoord.X = 2;
-                    returnRectCoord.Y = 1;
-                }
-                else if(floorRight)
-                {
-                    returnRectCoord.X = 0;
-                    returnRectCoord.Y = 1;
-                } 
-                // else, is a corner
-                else
-                {
-
-                }
-
-                #endregion
             }
 
             // returns calculated source rect
