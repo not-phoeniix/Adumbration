@@ -106,10 +106,10 @@ namespace Adumbration
                     1,
                     1),
                 new Rectangle(
-                    _graphics.PreferredBackBufferWidth / 2 - 300,     // - X Location
-                    _graphics.PreferredBackBufferHeight / 2 ,    // - Y Location
-                    100,                                         // - Width
-                    10));                                       //height
+                    _graphics.PreferredBackBufferWidth / 2,     // - X Location
+                    _graphics.PreferredBackBufferHeight / 2,    // - Y Location
+                    10,                                         // - Width
+                    10));                                       // - Height
         }
 
         protected override void Update(GameTime gameTime)
