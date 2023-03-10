@@ -203,25 +203,10 @@ namespace Adumbration
         // "pos" is position of current tile to check
         Rectangle DetermineSprite(int num, int tilePosX, int tilePosY)
         {
-            int[,] neighbors = new int[3, 3];
-
-            for(int y = 0; y < 3; y++)
-            {
-                for(int x = 0; x < 3; x++)
-                {
-                    if(y == 1 && x == 1)
-                    {
-                        neighbors[x, y] = 0;
-                    }
-                    else
-                    {
-                        neighbors[x, y] = 1;
-                    }
-                }
-            }
-
             // coordinates in spritesheet to multiply at end
             //   of method from where to draw the sprite.
+            //
+            // by default it is the completely empty black sprite
             Vector2 returnRectCoord = new Vector2(4, 1);
 
             // if 1, use the floor coords
@@ -230,23 +215,95 @@ namespace Adumbration
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;
 
-                // else, run thru conditionals to check for correct bounds
             }
+            // else, run thru conditionals to check for correct bounds
             else
             {
                 // TODO: conditionals to check surrounding tiles in
                 //   levelLayout[] and set the correct coord numbers
 
-                // only runs if current tile pos is NOT in top row on screen
+                bool floorAbove = false;
+                bool floorBelow = false;
+                bool floorLeft = false;
+                bool floorRight = false;
+
+                #region SurroundingTileChecks
+
+                // checking tiles ABOVE itself
                 if(tilePosY > 0)
                 {
-                    // checks if above tile is a floor
-                    if(levelLayout[tilePosX, tilePosY - 1] == 1)
-                    {
-                        returnRectCoord.X = 1;
-                        returnRectCoord.Y = 2;
-                    }
+                    floorAbove = (levelLayout[tilePosX, tilePosY - 1] == 1);
+
+                    //if(levelLayout[tilePosX, tilePosY - 1] == 1)
+                    //{
+                    //    returnRectCoord.X = 1;
+                    //    returnRectCoord.Y = 2;
+                    //}
                 }
+
+                // checking tiles below itself
+                if(tilePosY < levelLayout.GetLength(1) - 1)
+                {
+                    floorBelow = (levelLayout[tilePosX, tilePosY + 1] == 1);
+
+                    //if(levelLayout[tilePosX, tilePosY - 1] == 1)
+                    //{
+                    //    returnRectCoord.X = 1;
+                    //    returnRectCoord.Y = 2;
+                    //}
+                }
+
+                // checking tiles to the LEFT of itself
+                if(tilePosX > 0)
+                {
+                    floorLeft = (levelLayout[tilePosX - 1, tilePosY] == 1);
+
+                    //if(levelLayout[tilePosX - 1, tilePosY] == 1)
+                    //{
+                    //    returnRectCoord.X = 2;
+                    //    returnRectCoord.Y = 1;
+                    //}
+                }
+
+                // checking tiles to the RIGHT of itself
+                if(tilePosX < levelLayout.GetLength(1) - 1)
+                {
+                    floorRight = (levelLayout[tilePosX + 1, tilePosY] == 1);
+
+                    //if(levelLayout[tilePosX + 1, tilePosY] == 1)
+                    //{
+                    //    returnRectCoord.X = 0;
+                    //    returnRectCoord.Y = 1;
+                    //}
+                }
+
+                #endregion
+
+                #region RectValueSets
+
+                // checking and setting values for return rect
+                if(floorAbove)
+                {
+                    returnRectCoord.X = 1;
+                    returnRectCoord.Y = 2;
+                } 
+                else if(floorBelow)
+                {
+                    returnRectCoord.X = 1;
+                    returnRectCoord.Y = 0;
+                }
+                else if(floorLeft)
+                {
+                    returnRectCoord.X = 2;
+                    returnRectCoord.Y = 1;
+                }
+                else if(floorRight)
+                {
+                    returnRectCoord.X = 0;
+                    returnRectCoord.Y = 1;
+                }
+
+                #endregion
             }
 
             // returns calculated source rect
