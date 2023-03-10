@@ -64,10 +64,10 @@ namespace Adumbration
             // this loop draws all objects in the tileList array
 
             // height/y-dimension being drawn
-            for (int y = 0; y < tileList.GetLength(1); y++)
+            for(int y = 0; y < tileList.GetLength(1); y++)
             {
                 // width/x-dimension being drawn
-                for (int x = 0; x < tileList.GetLength(0); x++)
+                for(int x = 0; x < tileList.GetLength(0); x++)
                 {
                     tileList[x, y].Draw(sb);
                 }
@@ -107,7 +107,7 @@ namespace Adumbration
                     string[] splitString = lineString.Split(",");
 
                     // sets array size & initializes ==========================
-                    if(lineNum == 1) 
+                    if(lineNum == 1)
                     {
                         levelWidth = int.Parse(splitString[0]);
                         levelHeight = int.Parse(splitString[1]);
@@ -120,7 +120,7 @@ namespace Adumbration
                     else
                     {
                         // fills row in array with the split string
-                        for(int i = 0; i < splitString.Length; i++) 
+                        for(int i = 0; i < splitString.Length; i++)
                         {
                             returnLayout[i, lineNum - 2] = int.Parse(splitString[i]);
                         }
@@ -129,7 +129,7 @@ namespace Adumbration
                     // increments lineNum after each loop
                     lineNum++;
                 }
-            } 
+            }
             catch(Exception ex)
             {
                 // prints exception if there is one
@@ -138,7 +138,7 @@ namespace Adumbration
             finally
             {
                 // closes reader if it's not closed already
-                if(reader != null) 
+                if(reader != null)
                 {
                     reader.Close();
                 }
@@ -153,14 +153,17 @@ namespace Adumbration
         /// with various objects like walls/floors.
         /// </summary>
         /// <param name="layout"></param>
-        private GameObject[,] LoadObjectsFromLayout(int[,] layout) {
+        private GameObject[,] LoadObjectsFromLayout(int[,] layout)
+        {
             int levelWidth = layout.GetLength(0);
             int levelHeight = layout.GetLength(1);
 
             GameObject[,] returnArray = new GameObject[levelWidth, levelHeight];
 
-            for(int y = 0; y < levelHeight; y++) {
-                for(int x = 0; x < levelWidth; x++) {
+            for(int y = 0; y < levelHeight; y++)
+            {
+                for(int x = 0; x < levelWidth; x++)
+                {
 
                     Rectangle sourceRect = DetermineSprite(layout[x, y], x, y);
 
@@ -177,9 +180,12 @@ namespace Adumbration
                     Rectangle floorSourceRect = new Rectangle(16, 16, 16, 16);
 
                     // fills array with respective objects
-                    if(sourceRect == floorSourceRect) {
+                    if(sourceRect == floorSourceRect)
+                    {
                         returnArray[x, y] = new Floor(spritesheet, sourceRect, positionRect);
-                    } else {
+                    }
+                    else
+                    {
                         returnArray[x, y] = new Wall(spritesheet, sourceRect, positionRect);
                     }
                 }
@@ -195,14 +201,20 @@ namespace Adumbration
         //
         // "num" is the number in the file read
         // "pos" is position of current tile to check
-        Rectangle DetermineSprite(int num, int tilePosX, int tilePosY) {
+        Rectangle DetermineSprite(int num, int tilePosX, int tilePosY)
+        {
             int[,] neighbors = new int[3, 3];
 
-            for(int y = 0; y < 3; y++) {
-                for(int x = 0; x < 3; x++) {
-                    if(y == 1 && x == 1) {
+            for(int y = 0; y < 3; y++)
+            {
+                for(int x = 0; x < 3; x++)
+                {
+                    if(y == 1 && x == 1)
+                    {
                         neighbors[x, y] = 0;
-                    } else {
+                    }
+                    else
+                    {
                         neighbors[x, y] = 1;
                     }
                 }
@@ -213,19 +225,24 @@ namespace Adumbration
             Vector2 returnRectCoord = new Vector2(4, 1);
 
             // if 1, use the floor coords
-            if(num == 1) {
+            if(num == 1)
+            {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;
 
-            // else, run thru conditionals to check for correct bounds
-            } else {
+                // else, run thru conditionals to check for correct bounds
+            }
+            else
+            {
                 // TODO: conditionals to check surrounding tiles in
                 //   levelLayout[] and set the correct coord numbers
 
                 // only runs if current tile pos is NOT in top row on screen
-                if(tilePosY > 0) {
+                if(tilePosY > 0)
+                {
                     // checks if above tile is a floor
-                    if(levelLayout[tilePosX, tilePosY - 1] == 1) {                        
+                    if(levelLayout[tilePosX, tilePosY - 1] == 1)
+                    {
                         returnRectCoord.X = 1;
                         returnRectCoord.Y = 2;
                     }
@@ -234,9 +251,9 @@ namespace Adumbration
 
             // returns calculated source rect
             return new Rectangle(
-                (int)returnRectCoord.X * 16, 
+                (int)returnRectCoord.X * 16,
                 (int)returnRectCoord.Y * 16,
-                16, 
+                16,
                 16);
         }
     }
