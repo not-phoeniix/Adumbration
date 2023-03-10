@@ -29,6 +29,7 @@ namespace Adumbration
 
         // Door Test
         private Door door;
+        private LightBeam beam;
         private Texture2D doorTexture;
 
         // Level Manager
@@ -62,10 +63,12 @@ namespace Adumbration
             wallSpritesheet = Content.Load<Texture2D>("wall_spritesheet");
 
             // creating test level
-            //levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest2.txt");
+            levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest2.txt");
 
             // Player Texture
             playerTexture = Content.Load<Texture2D>("player_spritesheet");
+
+            fullSpritesheet = Content.Load<Texture2D>("spritesheet");
 
             // Player Object
             player = new Player(
@@ -100,6 +103,21 @@ namespace Adumbration
                     _graphics.PreferredBackBufferHeight / 2,    // - Y Location
                     36,                                         // - Width
                     48));                                       // - Height
+
+
+            //light beam test
+            beam = new LightBeam(
+                fullSpritesheet,
+                new Rectangle(      //source rectangle
+                    64,
+                    0,
+                    1,
+                    1),
+                new Rectangle(
+                    _graphics.PreferredBackBufferWidth / 2,     // - X Location
+                    _graphics.PreferredBackBufferHeight / 2,    // - Y Location
+                    10,                                         // - Width
+                    10));                                       // - Height
         }
 
         protected override void Update(GameTime gameTime)
@@ -110,7 +128,8 @@ namespace Adumbration
             }
 
             // TODO: Add your update logic here
-            player.Update(gameTime);
+            player.Update(gameTime, levelTest);
+            player.IsDead(beam);
 
             base.Update(gameTime);
         }
@@ -132,6 +151,9 @@ namespace Adumbration
             // Draw Player
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
             player.Draw(_spriteBatch);
+            beam.Draw(_spriteBatch);
+            //door.Draw(_spriteBatch);
+
             _spriteBatch.End();
 
             // Draw Closed Door

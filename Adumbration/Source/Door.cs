@@ -34,7 +34,17 @@ namespace Adumbration
         }
 
         // Constructor(s)
-        public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position) : base(spriteSheet, sourceRect, position)
+
+        /// <summary>
+        /// Parameterized Constructor of Door.
+        /// Requires the base constructor parameters.
+        /// </summary>
+        /// <param name="isOpen"></param>
+        /// <param name="spriteSheet"></param>
+        /// <param name="sourceRect"></param>
+        /// <param name="position"></param>
+        public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
+             : base(spriteSheet, sourceRect, position)
         {
             this.isOpen = isOpen;
         }
@@ -80,7 +90,7 @@ namespace Adumbration
         /// Checks for a collision between an object and a door.
         /// </summary>
         /// <param name="obj">References the object that may collide with a door.</param>
-        /// <returns>True if collision occurs, false otherwise.</returns>
+        /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
             if (obj.Position.Intersects(Position))
