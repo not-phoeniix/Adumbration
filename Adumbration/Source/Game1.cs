@@ -51,16 +51,14 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // Full Sprite Sheet Texture
+            // loading sprites/textures
             wallSpritesheet = Content.Load<Texture2D>("wall_spritesheet");
+            playerTexture = Content.Load<Texture2D>("player_spritesheet");
+            fullSpritesheet = Content.Load<Texture2D>("spritesheet");
+            doorTexture = Content.Load<Texture2D>("door_spritesheet");
 
             // creating test level
             levelTest = new Level(wallSpritesheet, 6, "LevelTest2.txt");
-
-            // Player Texture
-            playerTexture = Content.Load<Texture2D>("player_spritesheet");
-
-            fullSpritesheet = Content.Load<Texture2D>("spritesheet");
 
             // Player Object
             player = new Player(
@@ -77,9 +75,6 @@ namespace Adumbration
                     48),
                 _graphics.PreferredBackBufferHeight,
                 _graphics.PreferredBackBufferWidth);
-
-            // Door Texture
-            doorTexture = Content.Load<Texture2D>("door_spritesheet");
 
             // Door Object
             door = new Door(
