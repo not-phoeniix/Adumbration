@@ -19,8 +19,10 @@ namespace Adumbration
         // Fields
         private static LevelManager instance = null;
         private static Level[] levels = new Level[4];
-        private static Texture2D wallSpritesheet = Content.Load<Texture2D>("wall_spritesheet");
-        private static Level levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest2.txt");
+
+        // Level test stuff
+        private static Texture2D wallSpritesheet;
+        private static Level levelTest;
 
         // Properties
 
@@ -40,13 +42,19 @@ namespace Adumbration
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public static Level[] GetLevels
         {
             get { return levels; }
         }
 
         // Private Constructor
-        private LevelManager() { }
+        private LevelManager()
+        {
+            levelTest = new Level(wallSpritesheet, levelScale, );
+        }
 
         // Methods
 
