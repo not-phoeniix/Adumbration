@@ -27,15 +27,22 @@ namespace Adumbration
     public class Player : GameObject
     {
         // Fields
+        // Player's input and state
+        private KeyboardState previousKbState;
+        private PlayerState currentState;
+
+        // Player variables
         private bool hasDash;
         private int speed;
-        private int stop;
+
+        // Window dimensions
         private int windowHeight;
         private int windowWidth;
-        private KeyboardState previousKbState;
+       
+        // Player's previous X and Y positions
         private int prevX;
         private int prevY;
-        private PlayerState currentState;
+        
 
         // Properties
         /// <summary>
