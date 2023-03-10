@@ -17,6 +17,13 @@ namespace Adumbration
     /// </summary>
     internal class Floor : GameObject
     {
+        /// <summary>
+        /// Parameterized Constructor for Floor class.
+        /// Requires the base constructor parameters.
+        /// </summary>
+        /// <param name="spriteSheet">Full Texture2D spritesheet.</param>
+        /// <param name="sourceRect">Source to take from in spritesheet to be drawn.</param>
+        /// <param name="position">Position in window to draw Floor.</param>
         public Floor(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
             : base(spriteSheet, sourceRect, position)
         {

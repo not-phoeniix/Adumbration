@@ -14,29 +14,22 @@ namespace Adumbration
     public class Wall : GameObject
     {
         /// <summary>
-        /// constructor for this class
+        /// Parameterized Constructor for this class
         /// </summary>
-        /// <param name="spriteSheet"></param>
-        /// <param name="sourceRect"></param>
-        /// <param name="position"></param>
+        /// <param name="spriteSheet">Full Texture2D sprite sheet.</param>
+        /// <param name="sourceRect">Source to take from in sprite sheet to be drawn.</param>
+        /// <param name="position">Position in window to draw Wall.</param>
         public Wall(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
-            : base(spriteSheet, sourceRect, position)
+             : base(spriteSheet, sourceRect, position)
         {
 
         }
-
-
-        public override void Update(GameTime gameTime)
-        {
-            //there is nothing to update inside a wall brother
-        }
-
 
         /// <summary>
-        /// this is to get a bool value inside game1
-        /// to stop the player from passing this point
+        /// This is to get a bool value inside Game1
+        /// to stop the player from passing this point.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">Reference to the colliding object.</param>
         /// <returns></returns>
         public override bool IsColliding(GameObject obj)
         {
