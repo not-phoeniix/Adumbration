@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,15 +17,18 @@ namespace Adumbration
     public sealed class LevelManager
     {
         // Fields
-        private static int counter = 0;
         private static LevelManager instance = null;
+        private static Level[] levels = new Level[4];
+        private static Texture2D wallSpritesheet = Content.Load<Texture2D>("wall_spritesheet");
+        private static Level levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest2.txt");
 
         // Properties
 
         /// <summary>
         /// Get only for the singleton instance.
+        /// If instance is null, instantiate it, then return it.
         /// </summary>
-        public static LevelManager Instance
+        public static LevelManager GetInstance
         {
             get
             {
@@ -35,38 +40,37 @@ namespace Adumbration
             }
         }
 
-        // Private Constructor
-        private LevelManager()
+        public static Level[] GetLevels
         {
-            counter++;
-            Console.WriteLine(ToString());
+            get { return levels; }
         }
+
+        // Private Constructor
+        private LevelManager() { }
 
         // Methods
 
         /// <summary>
-        /// Updates the levels
+        /// Takes the number of levels and converts to a string
         /// </summary>
-        /// <param name="gameTime">State of the game's time.</param>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return String.Format(
+                "Levels: {0}",
+                levels.Length);
+        }
+
+
         public void Update(GameTime gameTime)
         {
 
         }
 
-        /// <summary>
-        /// Draws the levels
-        /// </summary>
-        /// <param name="gameTime">State of the game's time.</param>
-        public void Draw(GameTime gameTime)
-        {
 
-        }
-
-        public override string ToString()
+        public void Draw(SpriteBatch sb)
         {
-            return String.Format(
-                "Levels: {0}",
-                counter);
+            levelTest.Draw(sb);
         }
     }
 }
