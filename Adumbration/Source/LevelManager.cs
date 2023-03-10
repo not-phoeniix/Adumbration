@@ -14,15 +14,17 @@ namespace Adumbration
     /// Purpose: It is a Singleton that creates the Levels
     /// Restrictions: Since it is a sealed class, no classes inherit from it.
     /// </summary>
-    public sealed class LevelManager
+    public class LevelManager
     {
         // Fields
-        private static LevelManager instance = null;
-        private static Level[] levels = new Level[4];
+        private int instanceCounter = 0;
+        private LevelManager instance = null;
+        private Level[] levels = new Level[4];
 
         // Level test stuff
-        private static Texture2D wallSpritesheet;
-        private static Level levelTest;
+        private Player lvlPlayer;
+        private Texture2D wallSpritesheet;
+        private Level levelTest;
 
         // Properties
 
@@ -30,13 +32,13 @@ namespace Adumbration
         /// Get only for the singleton instance.
         /// If instance is null, instantiate it, then return it.
         /// </summary>
-        public static LevelManager GetInstance
+        public LevelManager GetInstance
         {
             get
             {
                 if (instance == null)
                 {
-                    instance = new LevelManager();
+                    instance = new LevelManager(levelTest);
                 }
                 return instance;
             }
@@ -45,34 +47,25 @@ namespace Adumbration
         /// <summary>
         /// 
         /// </summary>
-        public static Level[] GetLevels
+        public Level[] GetLevels
         {
             get { return levels; }
         }
 
-        // Private Constructor
-        private LevelManager()
+        /// <summary>
+        /// Private Constructor
+        /// </summary>
+        public LevelManager(Level level)
         {
-            levelTest = new Level(wallSpritesheet, levelScale, );
+            levelTest = level;
         }
 
         // Methods
 
-        /// <summary>
-        /// Takes the number of levels and converts to a string
-        /// </summary>
-        /// <returns></returns>
-        public override string ToString()
-        {
-            return String.Format(
-                "Levels: {0}",
-                levels.Length);
-        }
-
 
         public void Update(GameTime gameTime)
         {
-
+            lvlPlayer.Update(gameTime, levelTest);
         }
 
 

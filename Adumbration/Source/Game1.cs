@@ -34,6 +34,7 @@ namespace Adumbration
 
         // Level Manager
         private static LevelManager lvlMgrSingleton;
+        private Level levelTest;
 
         // Level Manager Property
         public static LevelManager LevelMgrSingleton
@@ -66,7 +67,7 @@ namespace Adumbration
             doorTexture = Content.Load<Texture2D>("door_spritesheet");
 
             // creating test level
-            //levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest2.txt");
+            //Level levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest2.txt");
 
             // Player Object
             player = new Player(
@@ -113,6 +114,13 @@ namespace Adumbration
                     _graphics.PreferredBackBufferHeight / 2,    // - Y Location
                     10,                                         // - Width
                     10));                                       // - Height
+
+            // 
+            lvlMgrSingleton = new LevelManager(
+                new Level(
+                    wallSpritesheet,
+                    6,
+                    "../../../Source/LevelData/LevelTest2.txt"));
         }
 
         protected override void Update(GameTime gameTime)
@@ -123,7 +131,7 @@ namespace Adumbration
             }
 
             // TODO: Add your update logic here
-            player.Update(gameTime, levelTest);
+            //player.Update(gameTime, levelTest);
             player.IsDead(beam);
 
             base.Update(gameTime);

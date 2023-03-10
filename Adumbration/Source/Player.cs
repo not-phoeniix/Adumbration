@@ -43,6 +43,12 @@ namespace Adumbration
         // Player's previous X and Y positions
         private int prevX;
         private int prevY;
+
+        // Animation variables
+        private int playerCurrentFrame;
+        private double fps;
+        private double secPerFrame;
+        private double timeCounter;
         
 
         // Properties
