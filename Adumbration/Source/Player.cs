@@ -246,7 +246,7 @@ namespace Adumbration
                     {
                         // Snap player to the top of the wall
                         recPosition.Y = tile.Position.Y - recPosition.Height;
-                        recPosition.Y = currentX;
+                        recPosition.X = currentX;
                     }
                 }
 
