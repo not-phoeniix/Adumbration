@@ -245,7 +245,7 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap player to the top of the wall
-                        recPosition.Y = tile.Position.Y;
+                        recPosition.Y = tile.Position.Y - recPosition.Height;
                         recPosition.Y = currentX;
                     }
                 }
