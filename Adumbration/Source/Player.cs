@@ -187,6 +187,38 @@ namespace Adumbration
                         // Snap Player to the left side of the wall
                         recPosition.X = tile.Position.X - recPosition.Width;
                         recPosition.Y = currentY;
+
+                        // North Movement
+                        if (currentKbState.IsKeyDown(Keys.W))
+                        {
+                            // North Dash
+                            if (hasDash && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
+                                && (recPosition.Y - 50 > 0))
+                            {
+                                recPosition.Y -= 50;
+                                //hasDash = false;
+                            }
+
+                            // Keeps player in window
+                            // If player is not touching a top wall let them move in that direction
+                            if (recPosition.Y > 0)
+                            {
+                                recPosition.Y -= speed;
+                            }
+
+                            // While moving in the North direction
+                            foreach (GameObject tile2 in currentLevel.TileList)
+                            {
+                                // If it is colliding with a wall
+                                if (tile2 is Wall && IsColliding(tile2))
+                                {
+                                    // Snap the Player to the bottom of the wall
+                                    recPosition.Y = tile.Position.Height;
+                                    recPosition.X = currentX;
+                                }
+                            }
+
+                        }
                     }
                 }
             }
@@ -217,6 +249,38 @@ namespace Adumbration
                         // Snap the player to the right side of the wall
                         recPosition.X = tile.Position.Width;
                         recPosition.Y = currentY;
+
+                        // North Movement
+                        if (currentKbState.IsKeyDown(Keys.W))
+                        {
+                            // North Dash
+                            if (hasDash && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
+                                && (recPosition.Y - 50 > 0))
+                            {
+                                recPosition.Y -= 50;
+                                //hasDash = false;
+                            }
+
+                            // Keeps player in window
+                            // If player is not touching a top wall let them move in that direction
+                            if (recPosition.Y > 0)
+                            {
+                                recPosition.Y -= speed;
+                            }
+
+                            // While moving in the North direction
+                            foreach (GameObject tile2 in currentLevel.TileList)
+                            {
+                                // If it is colliding with a wall
+                                if (tile2 is Wall && IsColliding(tile2))
+                                {
+                                    // Snap the Player to the bottom of the wall
+                                    recPosition.Y = tile.Position.Height;
+                                    recPosition.X = currentX;
+                                }
+                            }
+
+                        }
                     }
                 }
             }
@@ -247,9 +311,19 @@ namespace Adumbration
                         // Snap player to the top of the wall
                         recPosition.Y = tile.Position.Y - recPosition.Height;
                         recPosition.X = currentX;
+
+                        if (currentKbState.IsKeyDown(Keys.A))
+                        {
+                            recPosition.X -= speed;
+
+                        }
+
+                        if (currentKbState.IsKeyDown(Keys.D))
+                        {
+                            recPosition.X += speed;
+                        }
                     }
                 }
-
             }
             #endregion
 
