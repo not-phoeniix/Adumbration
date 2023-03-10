@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Adumbration
 {
@@ -207,30 +208,34 @@ namespace Adumbration
                 }
             }
 
-            // 1 1 1
-            // 1 0 1
-            // 1 1 1
+            // coordinates in spritesheet to multiply at end
+            //   of method from where to draw the sprite.
+            Vector2 returnRectCoord = new Vector2(4, 1);
 
-            // use levelLayout[]
+            // if 1, use the floor coords
+            if(num == 1) {
+                returnRectCoord.X = 1;
+                returnRectCoord.Y = 1;
 
-            Vector2 coord = new Vector2(0, 0);
-
-            // if 0, return a floor
-            if(num == 0) {
-                coord.X = 1;
-                coord.Y = 1;
+            // else, run thru conditionals to check for correct bounds
             } else {
                 // TODO: conditionals to check surrounding tiles in
                 //   levelLayout[] and set the correct coord numbers
 
-                coord.X = 0;
-                coord.Y = 0;
+                // only runs if current tile pos is NOT in top row on screen
+                if(tilePosY > 0) {
+                    // checks if above tile is a floor
+                    if(levelLayout[tilePosX, tilePosY - 1] == 1) {                        
+                        returnRectCoord.X = 1;
+                        returnRectCoord.Y = 2;
+                    }
+                }
             }
 
             // returns calculated source rect
             return new Rectangle(
-                (int)coord.X * 16, 
-                (int)coord.Y * 16,
+                (int)returnRectCoord.X * 16, 
+                (int)returnRectCoord.Y * 16,
                 16, 
                 16);
         }
