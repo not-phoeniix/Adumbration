@@ -34,6 +34,7 @@ namespace Adumbration
         // Player variables
         private bool hasDash;
         private int speed;
+        private int dashSpeed;
 
         // Window dimensions
         private int windowHeight;
@@ -79,6 +80,9 @@ namespace Adumbration
             // Set player speed
             speed = 5;
 
+            // Set player dash speed
+            dashSpeed = speed * 10;
+
             // Player's current X and Y positions
             int currentX = recPosition.X;
             int currentY = recPosition.Y;
@@ -103,46 +107,46 @@ namespace Adumbration
 
             #region// Diagonal Dashes           
             // North East
-            if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&
-                hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-                && (recPosition.Y - 50 > 0) && (recPosition.X + 50 <= windowHeight - 37))
+            if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&                                     // If moving north east
+                hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)                      // and space is pressed
+                && (recPosition.Y - dashSpeed > 0) && (recPosition.X + dashSpeed <= windowHeight - 37))                     // and resultant dash isn't outside window
             {
                 // Changes position by 50 pixels in the diagonal direction
-                recPosition.X += 35;         // X component of the vector
-                recPosition.Y -= 35;         // Y component of the vector
+                recPosition.X += (int)(dashSpeed * Math.Cos(45));         // X component of the vector
+                recPosition.Y -= (int)(dashSpeed * Math.Sin(45));         // Y component of the vector
                 //hasDash = false;
             }
 
             // North West
-            if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&
-               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-               && (recPosition.Y - 50 > 0) && (recPosition.X - 50 > 0))
+            if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&                                    // If moving north west
+               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)                      // and space is pressed
+               && (recPosition.Y - dashSpeed > 0) && (recPosition.X - dashSpeed > 0))                                      // and resultant dash isn't outside window
             {
                 // Changes position by 50 pixels in the diagonal direction
-                recPosition.X -= 35;         // X component of the vector
-                recPosition.Y -= 35;         // Y component of the vector
+                recPosition.X -= (int)(dashSpeed * Math.Cos(45));         // X component of the vector
+                recPosition.Y -= (int)(dashSpeed * Math.Sin(45));         // Y component of the vector
                 //hasDash = false;
             }
 
             // South East
-            if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&
-               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-               && (recPosition.Y + 50 <= windowHeight - 49) && (recPosition.X + 50 <= windowHeight - 37))
+            if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&                                   // If moving south east
+               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)                     // and space is pressed
+               && (recPosition.Y + dashSpeed <= windowHeight - 49) && (recPosition.X + dashSpeed <= windowHeight - 37))   // and resultant dash isn't outside window
             {
                 // Changes position by 50 pixels in the diagonal direction
-                recPosition.X += 35;        // X component of the vector
-                recPosition.Y += 35;        // Y component of the vector
+                recPosition.X += (int)(dashSpeed * Math.Cos(45));        // X component of the vector
+                recPosition.Y += (int)(dashSpeed * Math.Sin(45));        // Y component of the vector
                 //hasDash = false;
             }
 
             // South West
-            if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&
-               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-               && (recPosition.Y + 50 <= windowHeight - 49) && (recPosition.X - 50 > 0))
+            if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&                                   // If moving south west
+               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)                     // and space is pressed
+               && (recPosition.Y + dashSpeed <= windowHeight - 49) && (recPosition.X - dashSpeed > 0))                    // and resultant dash isn't outside window
             {
                 // Changes position by 50 pixels in the diagonal direction
-                recPosition.X -= 35;       // X component of the vector
-                recPosition.Y += 35;       // Y component of the vector
+                recPosition.X -= (int)(dashSpeed * Math.Cos(45));       // X component of the vector
+                recPosition.Y += (int)(dashSpeed * Math.Sin(45));       // Y component of the vector
                 //hasDash = false;
             }
             #endregion
@@ -162,8 +166,6 @@ namespace Adumbration
             #endregion
 
             //checks to see if the lightbeam collides with the player
-
-
 
             previousKbState = currentKbState;
 
@@ -208,9 +210,9 @@ namespace Adumbration
             {
                 // North Dash
                 if (hasDash && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
-                    && (recPosition.Y - 50 > 0))
+                    && (recPosition.Y - dashSpeed > 0))
                 {
-                    recPosition.Y -= 50;
+                    recPosition.Y -= dashSpeed;
                     //hasDash = false;
                 }
 
@@ -248,9 +250,9 @@ namespace Adumbration
             {
                 // East Dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-                    && (recPosition.X + 50 <= windowHeight - 37))
+                    && (recPosition.X + dashSpeed <= windowHeight - 37))
                 {
-                    recPosition.X += 50;
+                    recPosition.X += dashSpeed;
                     //hasDash = false;
                 }
 
@@ -290,9 +292,9 @@ namespace Adumbration
             {
                 // West Dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-                    && (recPosition.X - 50 > 0))
+                    && (recPosition.X - dashSpeed > 0))
                 {
-                    recPosition.X -= 50;
+                    recPosition.X -= dashSpeed;
                     //hasDash = false;
                 }
 
@@ -332,9 +334,9 @@ namespace Adumbration
             {
                 // South Dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-                    && (recPosition.Y + 50 <= windowHeight - 49))
+                    && (recPosition.Y + dashSpeed <= windowHeight - 49))
                 {
-                    recPosition.Y += 50;
+                    recPosition.Y += dashSpeed;
 
                 }
 
