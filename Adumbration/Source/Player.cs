@@ -11,6 +11,17 @@ using System.Threading.Tasks;
 namespace Adumbration
 {
     /// <summary>
+    /// The states the player can be in.
+    /// </summary>
+    public enum PlayerState
+    {
+        FacingRight,
+        MovingRight,
+        FacingLeft,
+        MovingLeft
+    }
+
+    /// <summary>
     /// Representation of a player within Adumbration
     /// </summary>
     public class Player : GameObject

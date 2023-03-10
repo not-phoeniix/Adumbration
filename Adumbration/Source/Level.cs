@@ -30,13 +30,16 @@ namespace Adumbration
             tileList = LoadObjectsFromLayout(levelLayout);
         }
 
-        // Properties
+        /// <summary>
+        /// Tile List associated with the level, 
+        /// collection array of all GameObjects
+        /// </summary>
         public GameObject[,] TileList
         {
             get { return tileList; }
         }
 
-        // Methods
+        #region Methods
 
         /// <summary>
         /// Resets a level.
@@ -52,11 +55,13 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public void Update(GameTime gameTime)
         {
-
+            // This is Empty right now but should include update methods
+            //   for all objects in game, i.e. light beams and mirrors
+            //   and buttons and such.
         }
 
         /// <summary>
-        /// Draws object(s) in level.
+        /// Draws entire level.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
         public void Draw(SpriteBatch sb)
@@ -80,6 +85,7 @@ namespace Adumbration
         /// Loads a level from a file and returns an associated array. 
         /// The first line of the file should be "levelWidth,LevelHeight", 
         /// and all the other lines should be the numbers associated with the tiles.
+        /// 0 is wall, 1 is floor, more numbers will be added later.
         /// </summary>
         /// <param name="filename">String of file name</param>
         /// <returns>2D integer array of level</returns>
@@ -222,12 +228,14 @@ namespace Adumbration
                 // TODO: conditionals to check surrounding tiles in
                 //   levelLayout[] and set the correct coord numbers
 
+                #region SurroundingTileChecks
+
+                // boolean checks
                 bool floorAbove = false;
                 bool floorBelow = false;
                 bool floorLeft = false;
                 bool floorRight = false;
-
-                #region SurroundingTileChecks
+                int cornerRotNum = 0;
 
                 // checking tiles ABOVE itself
                 if(tilePosY > 0)
@@ -241,7 +249,7 @@ namespace Adumbration
                     //}
                 }
 
-                // checking tiles below itself
+                // checking tiles BELOW itself
                 if(tilePosY < levelLayout.GetLength(1) - 1)
                 {
                     floorBelow = (levelLayout[tilePosX, tilePosY + 1] == 1);
@@ -253,7 +261,7 @@ namespace Adumbration
                     //}
                 }
 
-                // checking tiles to the LEFT of itself
+                // checking tiles to LEFT of itself
                 if(tilePosX > 0)
                 {
                     floorLeft = (levelLayout[tilePosX - 1, tilePosY] == 1);
@@ -265,7 +273,7 @@ namespace Adumbration
                     //}
                 }
 
-                // checking tiles to the RIGHT of itself
+                // checking tiles to RIGHT of itself
                 if(tilePosX < levelLayout.GetLength(1) - 1)
                 {
                     floorRight = (levelLayout[tilePosX + 1, tilePosY] == 1);
@@ -277,11 +285,16 @@ namespace Adumbration
                     //}
                 }
 
+                if(!floorAbove && !floorBelow && !floorLeft && !floorRight)
+                {
+                    cornerRotNum = 0;
+                }
+
                 #endregion
 
                 #region RectValueSets
 
-                // checking and setting values for return rect
+                // 4 cardinal directions setting
                 if(floorAbove)
                 {
                     returnRectCoord.X = 1;
@@ -301,6 +314,11 @@ namespace Adumbration
                 {
                     returnRectCoord.X = 0;
                     returnRectCoord.Y = 1;
+                } 
+                // else, is a corner
+                else
+                {
+
                 }
 
                 #endregion
@@ -313,5 +331,7 @@ namespace Adumbration
                 16,
                 16);
         }
+
+        #endregion
     }
 }
