@@ -130,36 +130,7 @@ namespace Adumbration
 
             #region // Movement
             // North Movement
-            if (currentKbState.IsKeyDown(Keys.W))
-            {
-                // North Dash
-                if (hasDash && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
-                    && (recPosition.Y - 50 > 0))
-                {
-                    recPosition.Y -= 50;
-                    //hasDash = false;
-                }
-
-                // Keeps player in window
-                // If player is not touching a top wall let them move in that direction
-                if (recPosition.Y > 0)
-                {
-                    recPosition.Y -= speed;
-                }
-
-                // While moving in the North direction
-                foreach (GameObject tile in currentLevel.TileList)
-                {
-                    // If it is colliding with a wall
-                    if (tile is Wall && IsColliding(tile))
-                    {
-                        // Snap the Player to the bottom of the wall
-                        recPosition.Y = tile.Position.Height;
-                        recPosition.X = currentX;
-                    }
-                }
-
-            }
+            NorthMovement(currentKbState, currentLevel, currentX);
 
             // East Movement
             if (currentKbState.IsKeyDown(Keys.D))
@@ -347,6 +318,40 @@ namespace Adumbration
             }
            
             return false;
+        }
+
+        private void NorthMovement(KeyboardState currentKbState, Level currentLevel, int currentX)
+        {
+            if (currentKbState.IsKeyDown(Keys.W))
+            {
+                // North Dash
+                if (hasDash && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
+                    && (recPosition.Y - 50 > 0))
+                {
+                    recPosition.Y -= 50;
+                    //hasDash = false;
+                }
+
+                // Keeps player in window
+                // If player is not touching a top wall let them move in that direction
+                if (recPosition.Y > 0)
+                {
+                    recPosition.Y -= speed;
+                }
+
+                // While moving in the North direction
+                foreach (GameObject tile in currentLevel.TileList)
+                {
+                    // If it is colliding with a wall
+                    if (tile is Wall && IsColliding(tile))
+                    {
+                        // Snap the Player to the bottom of the wall
+                        recPosition.Y = tile.Position.Height;
+                        recPosition.X = currentX;
+                    }
+                }
+
+            }
         }
     }
 }
