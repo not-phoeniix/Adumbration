@@ -229,27 +229,18 @@ namespace Adumbration
             // else, run thru conditionals to check for correct bounds
             else
             {
-                // TODO: fix corners in this method, a lot has been breaking and it only draws edges right now
-
                 // 2D array same size as number of sprites in spritsheet,
-                //   only one item should be true at a time
-                bool[,] tileIsTrue = new bool[spritesheet.Bounds.Width / 16, spritesheet.Bounds.Height / 16];
+                //   holds which sprite should be drawn at end of method
+                bool[,] tileIsTrue = new bool[
+                    spritesheet.Bounds.Width / 16, 
+                    spritesheet.Bounds.Height / 16];
 
-                // used to break from loop to prevent
-                //   overlap with sprites
-                bool stopLoop = false;
+                #region RegularWalls
 
-                // loop that checks the cross tiles compared to current tile
                 for(int y = 0; y < 3; y++)
                 {
                     for(int x = 0; x < 3; x++)
                     {
-                        // breaks early if previous tile is floor
-                        if(stopLoop)
-                        {
-                            break;
-                        }
-
                         // current positions of sub-array tile in big layout array
                         int arrayX = tilePosX - 1 + x;
                         int arrayY = tilePosY - 1 + y;
@@ -271,11 +262,20 @@ namespace Adumbration
                             // true if iterated coordinate is a floor (1)
                             if(levelLayout[arrayX, arrayY] == 1)
                             {
-
+                                // if a floor is detected NOT DIAGONALLY,
+                                //   set all the diagonal values to false
                                 if(x == 1 || y == 1)
                                 {
-                                    tileIsTrue = new bool[spritesheet.Bounds.Width / 16, spritesheet.Bounds.Height / 16];
-                                    stopLoop = true;
+                                    for(int i = 0; i < tileIsTrue.GetLength(1); i++)
+                                    {
+                                        for(int j = 0; j < tileIsTrue.GetLength(0); j++)
+                                        {
+                                            if(i != 1 && j != 1 && j != 4)
+                                            {
+                                                tileIsTrue[j, i] = false;
+                                            }
+                                        }
+                                    }
                                 }
 
                                 tileIsTrue[oppX, oppY] = true;
@@ -283,6 +283,52 @@ namespace Adumbration
                         }
                     }
                 }
+
+                #endregion
+
+                #region InverseCorners
+
+                // if bottom and right are true, clear and set to inverted top left
+                if(tileIsTrue[1, 2] && tileIsTrue[2, 1])
+                {
+                    tileIsTrue = new bool[
+                    spritesheet.Bounds.Width / 16,
+                    spritesheet.Bounds.Height / 16];
+
+                    tileIsTrue[3, 0] = true;
+                }
+
+                // if bottom and left are true, clear and set to inverted top right
+                if(tileIsTrue[1, 2] && tileIsTrue[0, 1])
+                {
+                    tileIsTrue = new bool[
+                    spritesheet.Bounds.Width / 16,
+                    spritesheet.Bounds.Height / 16];
+
+                    tileIsTrue[5, 0] = true;
+                }
+
+                // if top and right are true, clear and set to inverted bottom left
+                if(tileIsTrue[1, 0] && tileIsTrue[2, 1])
+                {
+                    tileIsTrue = new bool[
+                    spritesheet.Bounds.Width / 16,
+                    spritesheet.Bounds.Height / 16];
+
+                    tileIsTrue[3, 2] = true;
+                }
+
+                // if top and left are true, clear and set to inverted bottom right
+                if(tileIsTrue[1, 0] && tileIsTrue[0, 1])
+                {
+                    tileIsTrue = new bool[
+                    spritesheet.Bounds.Width / 16,
+                    spritesheet.Bounds.Height / 16];
+
+                    tileIsTrue[5, 2] = true;
+                }
+
+                #endregion
 
                 // iteration thru bool array,
                 //   SETS FINAL RETURN COORD VALUES
