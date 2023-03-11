@@ -227,7 +227,7 @@ namespace Adumbration
                 returnRectCoord.Y = 1;
             }
             // else, run thru conditionals to check for correct bounds
-            else if(num == 2)
+            else
             {
                 // TODO: fix corners in this method, a lot has been breaking and it only draws edges right now
 
