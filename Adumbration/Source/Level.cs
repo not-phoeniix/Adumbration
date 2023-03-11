@@ -225,104 +225,49 @@ namespace Adumbration
             {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;
-
             }
             // else, run thru conditionals to check for correct bounds
-            else
+            else if(num == 2)
             {
-                // size of boolean array
-                int sheetX = spritesheet.Bounds.Width / 16;
-                int sheetY = spritesheet.Bounds.Height / 16;
+                // TODO: fix corners in this method, a lot has been breaking and it only draws edges right now
 
-                // 2D array same size as spritesheet zoomed out,
-                //   only one item is true at a time and that is 
-                //   the one being drawn
-                bool[,] tileIsTrue = new bool[sheetX, sheetY];
+                // 2D array same size as number of sprites in spritsheet,
+                //   only one item should be true at a time
+                bool[,] tileIsTrue = new bool[spritesheet.Bounds.Width / 16, spritesheet.Bounds.Height / 16];
 
-                #region SurroundingTileChecks
-                
-                // checking tiles ABOVE itself
-                if(tilePosY > 0)
+                // loop that checks the cross tiles compared to current tile
+                for(int y = 0; y < 3; y++)
                 {
-                    // TOP EDGE
-                    bool isBottomEdge = levelLayout[tilePosX, tilePosY - 1] == 1;
+                    for(int x = 0; x < 3; x++)
+                    {
+                        // current positions of sub-array tile in big layout array
+                        int arrayX = tilePosX - 1 + x;
+                        int arrayY = tilePosY - 1 + y;
 
-                    // checks for corners
-                    if(!isBottomEdge)
-                    {
-                        // BOTTOM RIGHT CORNER
-                        if(tilePosX > 0)
+                        // calculates coordinates opposite of relative location of floor
+                        int oppX = x - (2 * (x - 1));
+                        int oppY = y - (2 * (y - 1));
+
+                        // whether the current cell is in bounds of array
+                        bool inBounds = arrayX >= 0 &&
+                                        arrayX < levelLayout.GetLength(0) &&
+                                        arrayY >= 0 &&
+                                        arrayY < levelLayout.GetLength(1);
+
+                        // only checks if it's in the bounds
+                        if(inBounds && (x == 1 || y == 1))
                         {
-                            tileIsTrue[2, 2] = levelLayout[tilePosX - 1, tilePosY - 1] == 1;
+                            // true if an EDGE, detects floors (when number in layout is 1)
+                            if(levelLayout[arrayX, arrayY] == 1)
+                            {
+                                tileIsTrue[oppX, oppY] = true;
+                            }
                         }
-                        // BOTTOM LEFT CORNER
-                        else if(tilePosX < levelLayout.GetLength(0) - 1)
-                        {
-                            tileIsTrue[0, 2] = levelLayout[tilePosX + 1, tilePosY - 1] == 1;
-                        }
-                    }
-                    // else, sets it to the edge
-                    else
-                    {
-                        tileIsTrue[1, 2] = isBottomEdge;
                     }
                 }
 
-                // checking tiles BELOW itself
-                if(tilePosY < levelLayout.GetLength(1) - 1)
-                {
-                    // TOP EDGE
-                    bool isTopEdge = levelLayout[tilePosX, tilePosY + 1] == 1;
-
-                    // checks for corners
-                    if(!isTopEdge)
-                    {
-                        // TOP RIGHT CORNER
-                        if(tilePosX > 0)
-                        {
-                            tileIsTrue[2, 0] = levelLayout[tilePosX - 1, tilePosY + 1] == 1;
-                        }
-                        // TOP LEFT CORNER
-                        else if(tilePosX < levelLayout.GetLength(0) - 1)
-                        {
-                            tileIsTrue[0, 0] = levelLayout[tilePosX + 1, tilePosY + 1] == 1;
-                        }
-                    } 
-                    // else, sets it to the edge
-                    else
-                    {
-                        tileIsTrue[1, 0] = isTopEdge;
-                    }
-                }
-
-                // checking tiles to LEFT of itself
-                if(tilePosX > 0)
-                {
-                    // RIGHT EDGE
-                    bool isRightEdge = levelLayout[tilePosX - 1, tilePosY] == 1;
-                    if(isRightEdge)
-                    {
-                        tileIsTrue = new bool[sheetX, sheetY];
-                        tileIsTrue[2, 1] = true;
-                    }
-                }
-
-                // checking tiles to RIGHT of itself
-                if(tilePosX < levelLayout.GetLength(1) - 1)
-                {
-                    // LEFT EDGE
-                    bool isLeftEdge = levelLayout[tilePosX + 1, tilePosY] == 1;
-                    if(isLeftEdge)
-                    {
-                        tileIsTrue = new bool[sheetX, sheetY];
-                        tileIsTrue[0, 1] = true;
-                    }
-                }
-
-                #endregion
-
-                // iterates through the boolean array, only
-                //   setting coordinates for the true value
+                // iteration thru bool array,
+                //   SETS FINAL RETURN COORD VALUES
                 for(int y = 0; y < tileIsTrue.GetLength(1); y++)
                 {
                     for(int x = 0; x < tileIsTrue.GetLength(0); x++)
