@@ -235,11 +235,21 @@ namespace Adumbration
                 //   only one item should be true at a time
                 bool[,] tileIsTrue = new bool[spritesheet.Bounds.Width / 16, spritesheet.Bounds.Height / 16];
 
+                // used to break from loop to prevent
+                //   overlap with sprites
+                bool stopLoop = false;
+
                 // loop that checks the cross tiles compared to current tile
                 for(int y = 0; y < 3; y++)
                 {
                     for(int x = 0; x < 3; x++)
                     {
+                        // breaks early if previous tile is floor
+                        if(stopLoop)
+                        {
+                            break;
+                        }
+
                         // current positions of sub-array tile in big layout array
                         int arrayX = tilePosX - 1 + x;
                         int arrayY = tilePosY - 1 + y;
@@ -255,11 +265,19 @@ namespace Adumbration
                                         arrayY < levelLayout.GetLength(1);
 
                         // only checks if it's in the bounds
-                        if(inBounds && (x == 1 || y == 1))
+                        //if(inBounds && (x == 1 || y == 1))
+                        if(inBounds)
                         {
-                            // true if an EDGE, detects floors (when number in layout is 1)
+                            // true if iterated coordinate is a floor (1)
                             if(levelLayout[arrayX, arrayY] == 1)
                             {
+
+                                if(x == 1 || y == 1)
+                                {
+                                    tileIsTrue = new bool[spritesheet.Bounds.Width / 16, spritesheet.Bounds.Height / 16];
+                                    stopLoop = true;
+                                }
+
                                 tileIsTrue[oppX, oppY] = true;
                             }
                         }
