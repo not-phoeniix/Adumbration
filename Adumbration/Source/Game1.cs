@@ -72,9 +72,7 @@ namespace Adumbration
                     _graphics.PreferredBackBufferWidth/2,
                     _graphics.PreferredBackBufferHeight/2,
                     36,
-                    48),
-                _graphics.PreferredBackBufferHeight,
-                _graphics.PreferredBackBufferWidth);
+                    48));
 
             // Door Object
             door = new Door(

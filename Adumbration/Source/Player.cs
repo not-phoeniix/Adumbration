@@ -35,15 +35,14 @@ namespace Adumbration
         private bool hasDash;
         private int speed;
         private int dashSpeed;
+        private const float MaxDashTime = 0.5f;
+        private float currentDashTime;
+        private bool isDashing;
 
-        // Window dimensions
-        private int windowHeight;
-        private int windowWidth;
-       
         // Player's previous X and Y positions
         private int prevX;
         private int prevY;
-        
+
 
         // Properties
         /// <summary>
@@ -59,11 +58,9 @@ namespace Adumbration
         /// Player takes completely from Parent class
         /// for the constructor
         /// </summary>
-        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, int windowH, int windowW)
+        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
             : base(spriteSheet, sourceRect, position)
         {
-            windowHeight = windowH;
-            windowWidth = windowW;
             hasDash = true;
         }
 
@@ -73,9 +70,9 @@ namespace Adumbration
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
         public void Update(GameTime gameTime, Level currentLevel)
-        {    
+        {
             // Player input
-            KeyboardState currentKbState = Keyboard.GetState();            
+            KeyboardState currentKbState = Keyboard.GetState();
 
             // Set player speed
             speed = 5;
@@ -86,6 +83,19 @@ namespace Adumbration
             // Player's current X and Y positions
             int currentX = recPosition.X;
             int currentY = recPosition.Y;
+
+            if (!isDashing && currentDashTime != 0)
+            {
+                currentDashTime = 0;
+                //hasDash = false;
+            }
+            else if (isDashing)
+            {
+                currentDashTime += 0.1f;
+            }
+
+
+
 
             #region// Keeping this in case we need to go back to it
             //foreach (GameObject tile in currentLevel.TileList)
@@ -108,8 +118,7 @@ namespace Adumbration
             #region// Diagonal Dashes           
             // North East
             if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&                                     // If moving north east
-                hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)                      // and space is pressed
-                && (recPosition.Y - dashSpeed > 0) && (recPosition.X + dashSpeed <= windowHeight - 37))                     // and resultant dash isn't outside window
+                hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))                     // and space is pressed
             {
                 // Changes position by 50 pixels in the diagonal direction
                 recPosition.X += (int)(dashSpeed * Math.Cos(45));         // X component of the vector
@@ -119,8 +128,7 @@ namespace Adumbration
 
             // North West
             if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&                                    // If moving north west
-               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)                      // and space is pressed
-               && (recPosition.Y - dashSpeed > 0) && (recPosition.X - dashSpeed > 0))                                      // and resultant dash isn't outside window
+               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))                     // and space is pressed
             {
                 // Changes position by 50 pixels in the diagonal direction
                 recPosition.X -= (int)(dashSpeed * Math.Cos(45));         // X component of the vector
@@ -130,8 +138,7 @@ namespace Adumbration
 
             // South East
             if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&                                   // If moving south east
-               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)                     // and space is pressed
-               && (recPosition.Y + dashSpeed <= windowHeight - 49) && (recPosition.X + dashSpeed <= windowHeight - 37))   // and resultant dash isn't outside window
+               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))                    // and space is pressed
             {
                 // Changes position by 50 pixels in the diagonal direction
                 recPosition.X += (int)(dashSpeed * Math.Cos(45));        // X component of the vector
@@ -141,8 +148,7 @@ namespace Adumbration
 
             // South West
             if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&                                   // If moving south west
-               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)                     // and space is pressed
-               && (recPosition.Y + dashSpeed <= windowHeight - 49) && (recPosition.X - dashSpeed > 0))                    // and resultant dash isn't outside window
+               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))                    // and space is pressed                    
             {
                 // Changes position by 50 pixels in the diagonal direction
                 recPosition.X -= (int)(dashSpeed * Math.Cos(45));       // X component of the vector
@@ -185,13 +191,13 @@ namespace Adumbration
             {
                 return true;
             }
-           
+
             return false;
         }
 
         public void IsDead(GameObject beam)
         {
-            if(this.IsColliding(beam))
+            if (this.IsColliding(beam) && !isDashing)
             {
                 recPosition.X = 150;
                 recPosition.Y = 150;
@@ -209,19 +215,26 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.W))
             {
                 // North Dash
-                if (hasDash && (currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))
-                    && (recPosition.Y - dashSpeed > 0))
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
-                    recPosition.Y -= dashSpeed;
-                    //hasDash = false;
+                    if (currentDashTime < MaxDashTime)
+                    {
+                        isDashing = true;
+                        for (int i = 0; i < dashSpeed; i++)
+                        {
+                            recPosition.Y -= 1;
+                        }
+                    }
+                }
+                else
+                {
+                    isDashing = false;
                 }
 
                 // Keeps player in window
                 // If player is not touching a top wall let them move in that direction
-                if (recPosition.Y > 0)
-                {
                     recPosition.Y -= speed;
-                }
+                
 
                 // While moving in the North direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -249,18 +262,25 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.D))
             {
                 // East Dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-                    && (recPosition.X + dashSpeed <= windowHeight - 37))
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
-                    recPosition.X += dashSpeed;
-                    //hasDash = false;
+                    if (currentDashTime < MaxDashTime)
+                    {
+                        for (int i = 0; i < dashSpeed; i++)
+                        {
+                            isDashing = true;
+                            recPosition.X += 1;
+                        }
+                    }
+                }
+                else
+                {
+                    isDashing = false;
                 }
 
                 // Keeps player in window
-                if (recPosition.X <= windowWidth - 37)
-                {
                     recPosition.X += speed;
-                }
+                
 
                 // While moving in the East direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -291,18 +311,26 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.A))
             {
                 // West Dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-                    && (recPosition.X - dashSpeed > 0))
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
-                    recPosition.X -= dashSpeed;
-                    //hasDash = false;
+                    if (currentDashTime < MaxDashTime)
+                    {
+                        isDashing = true;
+                        for (int i = 0; i < dashSpeed; i++)
+                        {
+                            recPosition.X -= 1;
+                        }
+                    }
+
+                }
+                else
+                {
+                    isDashing = false;
                 }
 
                 // Keeps player in window
-                if (recPosition.X > 0)
-                {
                     recPosition.X -= speed;
-                }
+                
 
                 // While the player is moving in the West direction 
                 foreach (GameObject tile in currentLevel.TileList)
@@ -334,18 +362,24 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.S))
             {
                 // South Dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space)
-                    && (recPosition.Y + dashSpeed <= windowHeight - 49))
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
-                    recPosition.Y += dashSpeed;
-
+                    if (currentDashTime < MaxDashTime)
+                    {
+                        isDashing = true;
+                        for (int i = 0; i < dashSpeed; i++)
+                        {
+                            recPosition.Y += 1;
+                        }
+                    }
+                }
+                else
+                {
+                    isDashing = false;
                 }
 
-                // Keeps player in window
-                if (recPosition.Y <= windowHeight - 49)
-                {
-                    recPosition.Y += speed;
-                }
+                // Move Player Down
+                recPosition.Y += speed;
 
                 // While moving in the South direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -357,8 +391,10 @@ namespace Adumbration
                         recPosition.Y = tile.Position.Y - recPosition.Height;
                         recPosition.X = currentX;
 
+                        // Allow player to move west
                         WestMovement(currentKbState, currentLevel, currentX, currentY);
 
+                        // Allow player to move east
                         EastMovement(currentKbState, currentLevel, currentX, currentY);
                     }
                 }
