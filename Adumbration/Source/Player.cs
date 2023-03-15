@@ -32,9 +32,11 @@ namespace Adumbration
         private PlayerState currentState;
 
         // Player variables
-        private bool hasDash;
         private int speed;
         private int dashSpeed;
+
+        // Dashing variables
+        private bool hasDash;
         private const float MaxDashTime = 0.5f;
         private float currentDashTime;
         private bool isDashing;
@@ -42,7 +44,6 @@ namespace Adumbration
         // Player's previous X and Y positions
         private int prevX;
         private int prevY;
-
 
         // Properties
         /// <summary>
@@ -78,24 +79,23 @@ namespace Adumbration
             speed = 5;
 
             // Set player dash speed
-            dashSpeed = speed * 10;
+            dashSpeed = speed * 5;
 
             // Player's current X and Y positions
             int currentX = recPosition.X;
             int currentY = recPosition.Y;
 
+            // Reset timer
             if (!isDashing && currentDashTime != 0)
             {
                 currentDashTime = 0;
                 //hasDash = false;
             }
+            // Increase timer
             else if (isDashing)
             {
                 currentDashTime += 0.1f;
             }
-
-
-
 
             #region// Keeping this in case we need to go back to it
             //foreach (GameObject tile in currentLevel.TileList)
@@ -118,42 +118,70 @@ namespace Adumbration
             #region// Diagonal Dashes           
             // North East
             if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&                                     // If moving north east
-                hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))                     // and space is pressed
+                hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
             {
-                // Changes position by 50 pixels in the diagonal direction
-                recPosition.X += (int)(dashSpeed * Math.Cos(45));         // X component of the vector
-                recPosition.Y -= (int)(dashSpeed * Math.Sin(45));         // Y component of the vector
-                //hasDash = false;
+                if (currentDashTime < MaxDashTime)
+                {
+                    isDashing = true;
+                    for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                    {
+                        // Changes position by 50 pixels in the diagonal direction
+                        recPosition.X += 1;         // X component of the vector
+                        recPosition.Y -= 1;         // Y component of the vector
+                        //hasDash = false;
+                    }
+                }
             }
 
             // North West
             if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&                                    // If moving north west
-               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))                     // and space is pressed
+               hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
             {
-                // Changes position by 50 pixels in the diagonal direction
-                recPosition.X -= (int)(dashSpeed * Math.Cos(45));         // X component of the vector
-                recPosition.Y -= (int)(dashSpeed * Math.Sin(45));         // Y component of the vector
-                //hasDash = false;
+                if (currentDashTime < MaxDashTime)
+                {
+                    isDashing = true;
+                    for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                    {
+                        // Changes position by 50 pixels in the diagonal direction
+                        recPosition.X -= 1;         // X component of the vector
+                        recPosition.Y -= 1;         // Y component of the vector
+                        //hasDash = false;
+                    }
+                }
             }
 
             // South East
             if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&                                   // If moving south east
-               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))                    // and space is pressed
+               hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed
             {
-                // Changes position by 50 pixels in the diagonal direction
-                recPosition.X += (int)(dashSpeed * Math.Cos(45));        // X component of the vector
-                recPosition.Y += (int)(dashSpeed * Math.Sin(45));        // Y component of the vector
-                //hasDash = false;
+                if (currentDashTime < MaxDashTime)
+                {
+                    isDashing = true;
+                    for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                    {
+                        // Changes position by 50 pixels in the diagonal direction
+                        recPosition.X += 1;         // X component of the vector
+                        recPosition.Y += 1;         // Y component of the vector
+                        //hasDash = false;
+                    }
+                }
             }
 
             // South West
             if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&                                   // If moving south west
-               hasDash && currentKbState.IsKeyDown(Keys.Space) && previousKbState.IsKeyUp(Keys.Space))                    // and space is pressed                    
+               hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed                    
             {
-                // Changes position by 50 pixels in the diagonal direction
-                recPosition.X -= (int)(dashSpeed * Math.Cos(45));       // X component of the vector
-                recPosition.Y += (int)(dashSpeed * Math.Sin(45));       // Y component of the vector
-                //hasDash = false;
+                if (currentDashTime < MaxDashTime)
+                {
+                    isDashing = true;
+                    for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                    {
+                        // Changes position by 50 pixels in the diagonal direction
+                        recPosition.X -= 1;         // X component of the vector
+                        recPosition.Y += 1;         // Y component of the vector
+                        //hasDash = false;
+                    }
+                }
             }
             #endregion
 
@@ -215,10 +243,12 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.W))
             {
                 // North Dash
+                // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
                     if (currentDashTime < MaxDashTime)
                     {
+                        // They're dashing
                         isDashing = true;
                         for (int i = 0; i < dashSpeed; i++)
                         {
@@ -226,6 +256,7 @@ namespace Adumbration
                         }
                     }
                 }
+                // Otherwise they're not
                 else
                 {
                     isDashing = false;
@@ -233,8 +264,7 @@ namespace Adumbration
 
                 // Keeps player in window
                 // If player is not touching a top wall let them move in that direction
-                    recPosition.Y -= speed;
-                
+                recPosition.Y -= speed;
 
                 // While moving in the North direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -262,25 +292,28 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.D))
             {
                 // East Dash
+                // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
                     if (currentDashTime < MaxDashTime)
                     {
+                        // They're dashing
+                        isDashing = true;
                         for (int i = 0; i < dashSpeed; i++)
                         {
-                            isDashing = true;
                             recPosition.X += 1;
                         }
                     }
                 }
+                // Otherwise they're not
                 else
                 {
                     isDashing = false;
                 }
 
                 // Keeps player in window
-                    recPosition.X += speed;
-                
+                recPosition.X += speed;
+
 
                 // While moving in the East direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -311,26 +344,27 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.A))
             {
                 // West Dash
+                // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
                     if (currentDashTime < MaxDashTime)
                     {
+                        // They're dashing
                         isDashing = true;
                         for (int i = 0; i < dashSpeed; i++)
                         {
                             recPosition.X -= 1;
                         }
                     }
-
                 }
+                // Otherwise they're not
                 else
                 {
                     isDashing = false;
                 }
 
                 // Keeps player in window
-                    recPosition.X -= speed;
-                
+                recPosition.X -= speed;
 
                 // While the player is moving in the West direction 
                 foreach (GameObject tile in currentLevel.TileList)
@@ -362,10 +396,12 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.S))
             {
                 // South Dash
+                // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
                 {
                     if (currentDashTime < MaxDashTime)
                     {
+                        // They're dashing
                         isDashing = true;
                         for (int i = 0; i < dashSpeed; i++)
                         {
@@ -373,6 +409,7 @@ namespace Adumbration
                         }
                     }
                 }
+                // Otherwise they're not
                 else
                 {
                     isDashing = false;
