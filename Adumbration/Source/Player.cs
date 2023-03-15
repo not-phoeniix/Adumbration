@@ -230,7 +230,7 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap the Player to the bottom of the wall
-                        recPosition.Y = tile.Position.Height;
+                        recPosition.Y = tile.Position.Height + tile.Position.Y;
                         recPosition.X = currentX;
                     }
                 }
@@ -311,11 +311,12 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap the player to the right side of the wall
-                        recPosition.X = tile.Position.Width;
+                        recPosition.X = tile.Position.Width + tile.Position.X;
                         recPosition.Y = currentY;
 
                         // North Movement
                         NorthMovement(currentKbState, currentLevel, currentX);
+
                     }
                 }
             }
