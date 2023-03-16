@@ -67,23 +67,13 @@ namespace Adumbration
             doorTexture = Content.Load<Texture2D>("door_spritesheet");
 
             // creating test level
-            //Level levelTest = new Level(wallSpritesheet, 6, "../../../Source/LevelData/LevelTest2.txt");
+            levelTest = new Level(wallSpritesheet, 6, "BigLevelTest.txt");
 
             // Player Object
             player = new Player(
-                playerTexture,
-                new Rectangle(
-                    0,
-                    0,
-                    6,
-                    8),
-                new Rectangle(
-                    _graphics.PreferredBackBufferWidth/2,
-                    _graphics.PreferredBackBufferHeight/2,
-                    36,
-                    48),
-                _graphics.PreferredBackBufferHeight,
-                _graphics.PreferredBackBufferWidth);
+                playerTexture,                      // spritesheet
+                new Rectangle(0, 0, 6, 8),          // source
+                new Rectangle(500, 200, 36, 48));   // pos
 
             // Door Object
             door = new Door(
@@ -110,17 +100,10 @@ namespace Adumbration
                     1,
                     1),
                 new Rectangle(
-                    _graphics.PreferredBackBufferWidth / 2,     // - X Location
-                    _graphics.PreferredBackBufferHeight / 2,    // - Y Location
-                    10,                                         // - Width
-                    10));                                       // - Height
-
-            // 
-            lvlMgrSingleton = new LevelManager(
-                new Level(
-                    wallSpritesheet,
-                    6,
-                    "../../../Source/LevelData/LevelTest2.txt"));
+                    _graphics.PreferredBackBufferWidth / 2 - 200,       // - X Location
+                    _graphics.PreferredBackBufferHeight / 2 - 100,      // - Y Location
+                    10,                                                 // - Width
+                    10));                                               // - Height
         }
 
         protected override void Update(GameTime gameTime)
@@ -134,6 +117,12 @@ namespace Adumbration
             //player.Update(gameTime, levelTest);
             player.IsDead(beam);
 
+            Vector2 playerPosOffset = new Vector2(
+                -player.Position.X + player.CenterRect.X,
+                -player.Position.Y + player.CenterRect.Y);
+
+            levelTest.Update(gameTime, playerPosOffset);
+
             base.Update(gameTime);
         }
 
@@ -146,15 +135,19 @@ namespace Adumbration
             _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
 
-            lvlMgrSingleton.Draw(_spriteBatch);
-
-
-            _spriteBatch.End();
+            // Draw test level
+            levelTest.Draw(_spriteBatch);
 
             // Draw Player
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
-            player.Draw(_spriteBatch);
+            //player.Draw(_spriteBatch);
+            player.DrawCentered(
+                _spriteBatch,
+                _graphics.GraphicsDevice.Viewport.Width,
+                _graphics.GraphicsDevice.Viewport.Height);
+
+            // Draw test beam
             beam.Draw(_spriteBatch);
+            
             //door.Draw(_spriteBatch);
 
             _spriteBatch.End();

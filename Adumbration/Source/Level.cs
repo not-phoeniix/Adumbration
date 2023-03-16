@@ -13,10 +13,20 @@ namespace Adumbration
     public class Level
     {
         // Fields
-        private int[,] levelLayout;         // copy of level text file, just int's
-        private GameObject[,] tileList;     // full array of GameObject's
+        private int[,] levelLayout;             // copy of level text file, just int's
+        private GameObject[,] objectArray;      // full array of GameObject's
         private Texture2D spritesheet;
         private int levelScale;
+        private Vector2 posOffset;
+
+        /// <summary>
+        /// Offset values of drawing position of entire level on screen
+        /// </summary>
+        public Vector2 PositionOffset
+        {
+            get { return posOffset; }
+            set { posOffset = value; }
+        }
 
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
@@ -31,7 +41,10 @@ namespace Adumbration
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
-            tileList = LoadObjectsFromLayout(levelLayout);
+            objectArray = LoadObjectsFromLayout(levelLayout);
+
+            // initializes offset at zero
+            posOffset = new Vector2(0, 0);
         }
 
         /// <summary>
@@ -40,28 +53,28 @@ namespace Adumbration
         /// </summary>
         public GameObject[,] TileList
         {
-            get { return tileList; }
+            get { return objectArray; }
         }
-
-        #region Methods
 
         /// <summary>
         /// Resets a level.
         /// </summary>
         public void ResetLevel()
         {
-
+            // should reset positions of all objects inside level, it's empty for now
         }
 
         /// <summary>
         /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Vector2 posOffset)
         {
-            // This is Empty right now but should include update methods
-            //   for all objects in game, i.e. light beams and mirrors
-            //   and buttons and such.
+            // This is mostly empty right now but should include update
+            //   methods for all objects in game, i.e. light beams and
+            //   mirrors and buttons and such.
+
+            this.posOffset = posOffset;
         }
 
         /// <summary>
@@ -71,14 +84,13 @@ namespace Adumbration
         public void Draw(SpriteBatch sb)
         {
             // this loop draws all objects in the tileList array
-
-            // height/y-dimension being drawn
-            for(int y = 0; y < tileList.GetLength(1); y++)
+            for(int y = 0; y < objectArray.GetLength(1); y++)
             {
-                // width/x-dimension being drawn
-                for(int x = 0; x < tileList.GetLength(0); x++)
+                for(int x = 0; x < objectArray.GetLength(0); x++)
                 {
-                    tileList[x, y].Draw(sb);
+                    // draws object
+                    //objectArray[x, y].Draw(sb);
+                    objectArray[x, y].DrawOffset(sb, posOffset);
                 }
             }
         }
@@ -170,13 +182,19 @@ namespace Adumbration
 
             GameObject[,] returnArray = new GameObject[levelWidth, levelHeight];
 
+            // iterates through array and adds objects
             for(int y = 0; y < levelHeight; y++)
             {
                 for(int x = 0; x < levelWidth; x++)
                 {
-                    // determines from below method what tile to draw,
-                    //   like whether it's an edge or a corner
-                    Rectangle sourceRect = DetermineSourceRect(layout[x, y], x, y);
+                    // determines what source rect to add to list depending on neighboring tiles
+                    Rectangle sourceRect = DetermineSourceRect(
+                        layout[x, y],   // number of object in file
+                        x,              // tile position X
+                        y,              // tile position Y
+                        spritesheet,    // Texture2D spritesheet
+                        16,             // sprite width
+                        16);            // sprite height
 
                     int sideSize = sourceRect.Width * levelScale;
 
@@ -205,15 +223,24 @@ namespace Adumbration
             return returnArray;
         }
 
-        #endregion
-
         // returns a source rectangle in wall
         //   spritesheet based on surrounding tiles
         //
         // "num" is the number in the file read
         // "pos" is position of current tile to check
-        private Rectangle DetermineSourceRect(int num, int tilePosX, int tilePosY)
+        private Rectangle DetermineSourceRect(
+            int num, 
+            int tilePosX,
+            int tilePosY, 
+            Texture2D spritesheet, 
+            int spriteWidth,
+            int spriteHeight)
         {
+            // pixel dimensions divided by sizes of sprites,
+            //   represents the number of sprites width and height wise
+            int spritesheetWidth = spritesheet.Bounds.Width / spriteWidth;
+            int spritesheetHeight = spritesheet.Bounds.Height / spriteHeight;
+
             // coordinates in spritesheet to multiply at end
             //   of method from where to draw the sprite.
             //
@@ -225,107 +252,107 @@ namespace Adumbration
             {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;
-
             }
             // else, run thru conditionals to check for correct bounds
             else
             {
-                // size of boolean array
-                int sheetX = spritesheet.Bounds.Width / 16;
-                int sheetY = spritesheet.Bounds.Height / 16;
+                // 2D array same size as number of sprites in spritsheet,
+                //   holds which sprite should be drawn at end of method
+                bool[,] tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
-                // 2D array same size as spritesheet zoomed out,
-                //   only one item is true at a time and that is 
-                //   the one being drawn
-                bool[,] tileIsTrue = new bool[sheetX, sheetY];
+                #region RegularWalls
 
-                #region SurroundingTileChecks
-                
-                // checking tiles ABOVE itself
-                if(tilePosY > 0)
+                for(int y = 0; y < 3; y++)
                 {
-                    // TOP EDGE
-                    bool isBottomEdge = levelLayout[tilePosX, tilePosY - 1] == 1;
-
-                    // checks for corners
-                    if(!isBottomEdge)
+                    for(int x = 0; x < 3; x++)
                     {
-                        // BOTTOM RIGHT CORNER
-                        if(tilePosX > 0)
+                        // current positions of sub-array tile in big layout array
+                        int arrayX = tilePosX - 1 + x;
+                        int arrayY = tilePosY - 1 + y;
+
+                        // calculates coordinates opposite of relative location of floor
+                        int oppX = x - (2 * (x - 1));
+                        int oppY = y - (2 * (y - 1));
+
+                        // whether the current cell is in bounds of array
+                        bool inBounds = arrayX >= 0 &&
+                                        arrayX < levelLayout.GetLength(0) &&
+                                        arrayY >= 0 &&
+                                        arrayY < levelLayout.GetLength(1);
+
+                        // only checks if it's in the bounds
+                        //if(inBounds && (x == 1 || y == 1))
+                        if(inBounds)
                         {
-                            tileIsTrue[2, 2] = levelLayout[tilePosX - 1, tilePosY - 1] == 1;
-                        }
-                        // BOTTOM LEFT CORNER
-                        else if(tilePosX < levelLayout.GetLength(0) - 1)
-                        {
-                            tileIsTrue[0, 2] = levelLayout[tilePosX + 1, tilePosY - 1] == 1;
-                        }
-                    }
-                    // else, sets it to the edge
-                    else
-                    {
-                        tileIsTrue[1, 2] = isBottomEdge;
-                    }
-                }
+                            // true if iterated coordinate is a floor (1)
+                            if(levelLayout[arrayX, arrayY] == 1)
+                            {
+                                // if a floor is detected NOT DIAGONALLY,
+                                //   set all the diagonal values to false
+                                if(x == 1 || y == 1)
+                                {
+                                    // double iteration loop for checking the array
+                                    for(int i = 0; i < spritesheetHeight; i++)
+                                    {
+                                        for(int j = 0; j < spritesheetWidth; j++)
+                                        {
+                                            if(i != 1 && j != 1 && j != 4)
+                                            {
+                                                tileIsTrue[j, i] = false;
+                                            }
+                                        }
+                                    }
+                                }
 
-                // checking tiles BELOW itself
-                if(tilePosY < levelLayout.GetLength(1) - 1)
-                {
-                    // TOP EDGE
-                    bool isTopEdge = levelLayout[tilePosX, tilePosY + 1] == 1;
-
-                    // checks for corners
-                    if(!isTopEdge)
-                    {
-                        // TOP RIGHT CORNER
-                        if(tilePosX > 0)
-                        {
-                            tileIsTrue[2, 0] = levelLayout[tilePosX - 1, tilePosY + 1] == 1;
+                                tileIsTrue[oppX, oppY] = true;
+                            }
                         }
-                        // TOP LEFT CORNER
-                        else if(tilePosX < levelLayout.GetLength(0) - 1)
-                        {
-                            tileIsTrue[0, 0] = levelLayout[tilePosX + 1, tilePosY + 1] == 1;
-                        }
-                    } 
-                    // else, sets it to the edge
-                    else
-                    {
-                        tileIsTrue[1, 0] = isTopEdge;
-                    }
-                }
-
-                // checking tiles to LEFT of itself
-                if(tilePosX > 0)
-                {
-                    // RIGHT EDGE
-                    bool isRightEdge = levelLayout[tilePosX - 1, tilePosY] == 1;
-                    if(isRightEdge)
-                    {
-                        tileIsTrue = new bool[sheetX, sheetY];
-                        tileIsTrue[2, 1] = true;
-                    }
-                }
-
-                // checking tiles to RIGHT of itself
-                if(tilePosX < levelLayout.GetLength(1) - 1)
-                {
-                    // LEFT EDGE
-                    bool isLeftEdge = levelLayout[tilePosX + 1, tilePosY] == 1;
-                    if(isLeftEdge)
-                    {
-                        tileIsTrue = new bool[sheetX, sheetY];
-                        tileIsTrue[0, 1] = true;
                     }
                 }
 
                 #endregion
 
-                // iterates through the boolean array, only
-                //   setting coordinates for the true value
-                for(int y = 0; y < tileIsTrue.GetLength(1); y++)
+                #region InverseCorners
+
+                // if bottom and right are true, clear and set to inverted top left
+                if(tileIsTrue[1, 2] && tileIsTrue[2, 1])
                 {
-                    for(int x = 0; x < tileIsTrue.GetLength(0); x++)
+                    tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
+
+                    tileIsTrue[3, 0] = true;
+                }
+
+                // if bottom and left are true, clear and set to inverted top right
+                if(tileIsTrue[1, 2] && tileIsTrue[0, 1])
+                {
+                    tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
+
+                    tileIsTrue[5, 0] = true;
+                }
+
+                // if top and right are true, clear and set to inverted bottom left
+                if(tileIsTrue[1, 0] && tileIsTrue[2, 1])
+                {
+                    tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
+
+                    tileIsTrue[3, 2] = true;
+                }
+
+                // if top and left are true, clear and set to inverted bottom right
+                if(tileIsTrue[1, 0] && tileIsTrue[0, 1])
+                {
+                    tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
+
+                    tileIsTrue[5, 2] = true;
+                }
+
+                #endregion
+
+                // iteration thru bool array,
+                //   SETS FINAL RETURN COORD VALUES
+                for(int y = 0; y < spritesheetHeight; y++)
+                {
+                    for(int x = 0; x < spritesheetWidth; x++)
                     {
                         // only sets coordinates if true
                         if(tileIsTrue[x, y] == true)
