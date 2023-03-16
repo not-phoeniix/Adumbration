@@ -13,10 +13,20 @@ namespace Adumbration
     public class Level
     {
         // Fields
-        private int[,] levelLayout;         // copy of level text file, just int's
-        private GameObject[,] tileList;     // full array of GameObject's
+        private int[,] levelLayout;             // copy of level text file, just int's
+        private GameObject[,] objectArray;      // full array of GameObject's
         private Texture2D spritesheet;
         private int levelScale;
+        private Vector2 posOffset;
+
+        /// <summary>
+        /// Offset values of drawing position of entire level on screen
+        /// </summary>
+        public Vector2 PositionOffset
+        {
+            get { return posOffset; }
+            set { posOffset = value; }
+        }
 
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
@@ -31,7 +41,10 @@ namespace Adumbration
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
-            tileList = LoadObjectsFromLayout(levelLayout);
+            objectArray = LoadObjectsFromLayout(levelLayout);
+
+            // initializes offset at zero
+            posOffset = new Vector2(0, 0);
         }
 
         /// <summary>
@@ -40,28 +53,28 @@ namespace Adumbration
         /// </summary>
         public GameObject[,] TileList
         {
-            get { return tileList; }
+            get { return objectArray; }
         }
-
-        #region Methods
 
         /// <summary>
         /// Resets a level.
         /// </summary>
         public void ResetLevel()
         {
-
+            // should reset positions of all objects inside level, it's empty for now
         }
 
         /// <summary>
         /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, Vector2 posOffset)
         {
-            // This is Empty right now but should include update methods
-            //   for all objects in game, i.e. light beams and mirrors
-            //   and buttons and such.
+            // This is mostly empty right now but should include update
+            //   methods for all objects in game, i.e. light beams and
+            //   mirrors and buttons and such.
+
+            this.posOffset = posOffset;
         }
 
         /// <summary>
@@ -71,14 +84,13 @@ namespace Adumbration
         public void Draw(SpriteBatch sb)
         {
             // this loop draws all objects in the tileList array
-
-            // height/y-dimension being drawn
-            for(int y = 0; y < tileList.GetLength(1); y++)
+            for(int y = 0; y < objectArray.GetLength(1); y++)
             {
-                // width/x-dimension being drawn
-                for(int x = 0; x < tileList.GetLength(0); x++)
+                for(int x = 0; x < objectArray.GetLength(0); x++)
                 {
-                    tileList[x, y].Draw(sb);
+                    // draws object
+                    //objectArray[x, y].Draw(sb);
+                    objectArray[x, y].DrawOffset(sb, posOffset);
                 }
             }
         }
@@ -170,13 +182,19 @@ namespace Adumbration
 
             GameObject[,] returnArray = new GameObject[levelWidth, levelHeight];
 
+            // iterates through array and adds objects
             for(int y = 0; y < levelHeight; y++)
             {
                 for(int x = 0; x < levelWidth; x++)
                 {
-                    // determines from below method what tile to draw,
-                    //   like whether it's an edge or a corner
-                    Rectangle sourceRect = DetermineSourceRect(layout[x, y], x, y);
+                    // determines what source rect to add to list depending on neighboring tiles
+                    Rectangle sourceRect = DetermineSourceRect(
+                        layout[x, y],   // number of object in file
+                        x,              // tile position X
+                        y,              // tile position Y
+                        spritesheet,    // Texture2D spritesheet
+                        16,             // sprite width
+                        16);            // sprite height
 
                     int sideSize = sourceRect.Width * levelScale;
 
@@ -205,15 +223,24 @@ namespace Adumbration
             return returnArray;
         }
 
-        #endregion
-
         // returns a source rectangle in wall
         //   spritesheet based on surrounding tiles
         //
         // "num" is the number in the file read
         // "pos" is position of current tile to check
-        private Rectangle DetermineSourceRect(int num, int tilePosX, int tilePosY)
+        private Rectangle DetermineSourceRect(
+            int num, 
+            int tilePosX,
+            int tilePosY, 
+            Texture2D spritesheet, 
+            int spriteWidth,
+            int spriteHeight)
         {
+            // pixel dimensions divided by sizes of sprites,
+            //   represents the number of sprites width and height wise
+            int spritesheetWidth = spritesheet.Bounds.Width / spriteWidth;
+            int spritesheetHeight = spritesheet.Bounds.Height / spriteHeight;
+
             // coordinates in spritesheet to multiply at end
             //   of method from where to draw the sprite.
             //
@@ -231,9 +258,7 @@ namespace Adumbration
             {
                 // 2D array same size as number of sprites in spritsheet,
                 //   holds which sprite should be drawn at end of method
-                bool[,] tileIsTrue = new bool[
-                    spritesheet.Bounds.Width / 16, 
-                    spritesheet.Bounds.Height / 16];
+                bool[,] tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
                 #region RegularWalls
 
@@ -266,9 +291,10 @@ namespace Adumbration
                                 //   set all the diagonal values to false
                                 if(x == 1 || y == 1)
                                 {
-                                    for(int i = 0; i < tileIsTrue.GetLength(1); i++)
+                                    // double iteration loop for checking the array
+                                    for(int i = 0; i < spritesheetHeight; i++)
                                     {
-                                        for(int j = 0; j < tileIsTrue.GetLength(0); j++)
+                                        for(int j = 0; j < spritesheetWidth; j++)
                                         {
                                             if(i != 1 && j != 1 && j != 4)
                                             {
@@ -291,9 +317,7 @@ namespace Adumbration
                 // if bottom and right are true, clear and set to inverted top left
                 if(tileIsTrue[1, 2] && tileIsTrue[2, 1])
                 {
-                    tileIsTrue = new bool[
-                    spritesheet.Bounds.Width / 16,
-                    spritesheet.Bounds.Height / 16];
+                    tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
                     tileIsTrue[3, 0] = true;
                 }
@@ -301,9 +325,7 @@ namespace Adumbration
                 // if bottom and left are true, clear and set to inverted top right
                 if(tileIsTrue[1, 2] && tileIsTrue[0, 1])
                 {
-                    tileIsTrue = new bool[
-                    spritesheet.Bounds.Width / 16,
-                    spritesheet.Bounds.Height / 16];
+                    tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
                     tileIsTrue[5, 0] = true;
                 }
@@ -311,9 +333,7 @@ namespace Adumbration
                 // if top and right are true, clear and set to inverted bottom left
                 if(tileIsTrue[1, 0] && tileIsTrue[2, 1])
                 {
-                    tileIsTrue = new bool[
-                    spritesheet.Bounds.Width / 16,
-                    spritesheet.Bounds.Height / 16];
+                    tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
                     tileIsTrue[3, 2] = true;
                 }
@@ -321,9 +341,7 @@ namespace Adumbration
                 // if top and left are true, clear and set to inverted bottom right
                 if(tileIsTrue[1, 0] && tileIsTrue[0, 1])
                 {
-                    tileIsTrue = new bool[
-                    spritesheet.Bounds.Width / 16,
-                    spritesheet.Bounds.Height / 16];
+                    tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
                     tileIsTrue[5, 2] = true;
                 }
@@ -332,9 +350,9 @@ namespace Adumbration
 
                 // iteration thru bool array,
                 //   SETS FINAL RETURN COORD VALUES
-                for(int y = 0; y < tileIsTrue.GetLength(1); y++)
+                for(int y = 0; y < spritesheetHeight; y++)
                 {
-                    for(int x = 0; x < tileIsTrue.GetLength(0); x++)
+                    for(int x = 0; x < spritesheetWidth; x++)
                     {
                         // only sets coordinates if true
                         if(tileIsTrue[x, y] == true)

@@ -18,7 +18,7 @@ namespace Adumbration
         //all the protected fields that will be used in every child class
         protected Texture2D spriteSheet;
         protected Rectangle sourceRect;
-        protected Rectangle recPosition;
+        protected Rectangle positionRect;
 
         /// <summary>
         /// Full position rectangle of this GameObject, get/set,
@@ -26,10 +26,9 @@ namespace Adumbration
         /// </summary>
         public Rectangle Position
         {
-            get { return recPosition; }
-            set { recPosition = value; }
+            get { return positionRect; }
+            set { positionRect = value; }
         }
-
 
         /// <summary>
         /// Abstract constructor, takes in
@@ -59,16 +58,55 @@ namespace Adumbration
         /// </summary>
         public virtual void Draw(SpriteBatch sb)
         {
-            sb.Draw(spriteSheet, recPosition, sourceRect, Color.White);
+            sb.Draw(spriteSheet, positionRect, sourceRect, Color.White);
         }
 
         /// <summary>
-        /// Draws this GameObject to the screen with custom position, setting position afterwards
+        /// Draws this GameObject to the screen with custom position and scale, uses Rectangle
         /// </summary>
+        /// <param name="sb">SpriteBatch to draw with</param>
+        /// <param name="position">Position Rectangle</param>
         public virtual void Draw(SpriteBatch sb, Rectangle position)
         {
+            // draws object
             sb.Draw(spriteSheet, position, sourceRect, Color.White);
-            recPosition = position;
+
+            // updates position field
+            positionRect = position;
+        }
+
+        /// <summary>
+        /// Draws this GameObject to the screen with custom position, no scale, uses Vector2
+        /// </summary>
+        /// <param name="sb">SpriteBatch to draw with</param>
+        /// <param name="position">Position Vector2</param>
+        public virtual void Draw(SpriteBatch sb, Vector2 position)
+        {
+            // draws object
+            sb.Draw(spriteSheet, position, sourceRect, Color.White);
+
+            // updates position field
+            positionRect.X = (int)position.X;
+            positionRect.Y = (int)position.Y;
+        }
+
+        /// <summary>
+        /// Draws this GameObject to the screen with offset
+        /// Vector2, doesn't modify internal position value.
+        /// </summary>
+        /// <param name="sb">SpriteBatch to draw with</param>
+        /// <param name="offset">Offset Vector2</param>
+        public void DrawOffset(SpriteBatch sb, Vector2 offset)
+        {
+            // calculated new position from offset
+            Rectangle newPos = new Rectangle(
+                positionRect.X + (int)offset.X,
+                positionRect.Y + (int)offset.Y,
+                positionRect.Width,
+                positionRect.Height);
+
+            // draws object
+            sb.Draw(spriteSheet, newPos, sourceRect, Color.White);
         }
 
         /// <summary>
@@ -77,7 +115,5 @@ namespace Adumbration
         /// <param name="obj">Reference to the object in collision.</param>
         /// <returns>True if collision occurs, otherwise false.</returns>
         public abstract bool IsColliding(GameObject obj);
-
-
     }
 }

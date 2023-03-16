@@ -45,6 +45,9 @@ namespace Adumbration
         private int prevX;
         private int prevY;
 
+        // Position centered in screen
+        public Rectangle CenterRect { get; set; }
+
         // Properties
         /// <summary>
         /// Get property for whether the player has a dash or not
@@ -82,8 +85,8 @@ namespace Adumbration
             dashSpeed = speed * 5;
 
             // Player's current X and Y positions
-            int currentX = recPosition.X;
-            int currentY = recPosition.Y;
+            int currentX = positionRect.X;
+            int currentY = positionRect.Y;
 
             // Reset timer
             if (!isDashing && currentDashTime != 0)
@@ -126,8 +129,8 @@ namespace Adumbration
                     for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
                     {
                         // Changes position by 50 pixels in the diagonal direction
-                        recPosition.X += 1;         // X component of the vector
-                        recPosition.Y -= 1;         // Y component of the vector
+                        positionRect.X += 1;         // X component of the vector
+                        positionRect.Y -= 1;         // Y component of the vector
                         //hasDash = false;
                     }
                 }
@@ -143,8 +146,8 @@ namespace Adumbration
                     for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
                     {
                         // Changes position by 50 pixels in the diagonal direction
-                        recPosition.X -= 1;         // X component of the vector
-                        recPosition.Y -= 1;         // Y component of the vector
+                        positionRect.X -= 1;         // X component of the vector
+                        positionRect.Y -= 1;         // Y component of the vector
                         //hasDash = false;
                     }
                 }
@@ -160,8 +163,8 @@ namespace Adumbration
                     for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
                     {
                         // Changes position by 50 pixels in the diagonal direction
-                        recPosition.X += 1;         // X component of the vector
-                        recPosition.Y += 1;         // Y component of the vector
+                        positionRect.X += 1;         // X component of the vector
+                        positionRect.Y += 1;         // Y component of the vector
                         //hasDash = false;
                     }
                 }
@@ -177,8 +180,8 @@ namespace Adumbration
                     for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
                     {
                         // Changes position by 50 pixels in the diagonal direction
-                        recPosition.X -= 1;         // X component of the vector
-                        recPosition.Y += 1;         // Y component of the vector
+                        positionRect.X -= 1;         // X component of the vector
+                        positionRect.Y += 1;         // Y component of the vector
                         //hasDash = false;
                     }
                 }
@@ -209,6 +212,24 @@ namespace Adumbration
         }
 
         /// <summary>
+        /// Draws the player centered in the screen.
+        /// The position is still updated, just not drawn on screen.
+        /// </summary>
+        /// <param name="sb">SpriteBatch to draw to screen</param>
+        /// <param name="screenWidth">Entire screen width</param>
+        /// <param name="screenHeight">Entire screen height</param>
+        public void DrawCentered(SpriteBatch sb, int screenWidth, int screenHeight)
+        {
+            CenterRect = new Rectangle(
+                screenWidth / 2 - positionRect.Width / 2,
+                screenHeight / 2 - positionRect.Height / 2,
+                positionRect.Width,
+                positionRect.Height);
+
+            sb.Draw(spriteSheet, CenterRect, sourceRect, Color.White);
+        }
+
+        /// <summary>
         /// Checks for player collision with any GameObject.
         /// </summary>
         /// <param name="obj">Reference to any GameObject</param>
@@ -227,8 +248,8 @@ namespace Adumbration
         {
             if (this.IsColliding(beam) && !isDashing)
             {
-                recPosition.X = 150;
-                recPosition.Y = 150;
+                positionRect.X = 150;
+                positionRect.Y = 150;
             }
         }
 
@@ -252,7 +273,7 @@ namespace Adumbration
                         isDashing = true;
                         for (int i = 0; i < dashSpeed; i++)
                         {
-                            recPosition.Y -= 1;
+                            positionRect.Y -= 1;
                         }
                     }
                 }
@@ -264,7 +285,7 @@ namespace Adumbration
 
                 // Keeps player in window
                 // If player is not touching a top wall let them move in that direction
-                recPosition.Y -= speed;
+                positionRect.Y -= speed;
 
                 // While moving in the North direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -273,8 +294,8 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap the Player to the bottom of the wall
-                        recPosition.Y = tile.Position.Height + tile.Position.Y;
-                        recPosition.X = currentX;
+                        positionRect.Y = tile.Position.Height + tile.Position.Y;
+                        positionRect.X = currentX;
                     }
                 }
             }
@@ -301,7 +322,7 @@ namespace Adumbration
                         isDashing = true;
                         for (int i = 0; i < dashSpeed; i++)
                         {
-                            recPosition.X += 1;
+                            positionRect.X += 1;
                         }
                     }
                 }
@@ -312,7 +333,7 @@ namespace Adumbration
                 }
 
                 // Keeps player in window
-                recPosition.X += speed;
+                positionRect.X += speed;
 
 
                 // While moving in the East direction
@@ -322,8 +343,8 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap Player to the left side of the wall
-                        recPosition.X = tile.Position.X - recPosition.Width;
-                        recPosition.Y = currentY;
+                        positionRect.X = tile.Position.X - positionRect.Width;
+                        positionRect.Y = currentY;
 
                         // North Movement
                         NorthMovement(currentKbState, currentLevel, currentX);
@@ -353,7 +374,7 @@ namespace Adumbration
                         isDashing = true;
                         for (int i = 0; i < dashSpeed; i++)
                         {
-                            recPosition.X -= 1;
+                            positionRect.X -= 1;
                         }
                     }
                 }
@@ -364,7 +385,7 @@ namespace Adumbration
                 }
 
                 // Keeps player in window
-                recPosition.X -= speed;
+                positionRect.X -= speed;
 
                 // While the player is moving in the West direction 
                 foreach (GameObject tile in currentLevel.TileList)
@@ -373,8 +394,8 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap the player to the right side of the wall
-                        recPosition.X = tile.Position.Width + tile.Position.X;
-                        recPosition.Y = currentY;
+                        positionRect.X = tile.Position.Width + tile.Position.X;
+                        positionRect.Y = currentY;
 
                         // North Movement
                         NorthMovement(currentKbState, currentLevel, currentX);
@@ -405,7 +426,7 @@ namespace Adumbration
                         isDashing = true;
                         for (int i = 0; i < dashSpeed; i++)
                         {
-                            recPosition.Y += 1;
+                            positionRect.Y += 1;
                         }
                     }
                 }
@@ -416,7 +437,7 @@ namespace Adumbration
                 }
 
                 // Move Player Down
-                recPosition.Y += speed;
+                positionRect.Y += speed;
 
                 // While moving in the South direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -425,8 +446,8 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap player to the top of the wall
-                        recPosition.Y = tile.Position.Y - recPosition.Height;
-                        recPosition.X = currentX;
+                        positionRect.Y = tile.Position.Y - positionRect.Height;
+                        positionRect.X = currentX;
 
                         // Allow player to move west
                         WestMovement(currentKbState, currentLevel, currentX, currentY);
