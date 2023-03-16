@@ -2,11 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Adumbration
 {
@@ -34,6 +29,9 @@ namespace Adumbration
         // Player variables
         private int speed;
         private int dashSpeed;
+
+        // Whether player is flipped or not
+        private bool playerIsFlipped;
 
         // Dashing variables
         private bool hasDash;
@@ -226,7 +224,15 @@ namespace Adumbration
                 positionRect.Width,
                 positionRect.Height);
 
-            sb.Draw(spriteSheet, CenterRect, sourceRect, Color.White);
+            sb.Draw(
+                spriteSheet, 
+                CenterRect, 
+                sourceRect,
+                Color.White, 
+                0,
+                new Vector2(0, 0),
+                playerIsFlipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                0);
         }
 
         /// <summary>
@@ -335,6 +341,8 @@ namespace Adumbration
                 // Keeps player in window
                 positionRect.X += speed;
 
+                // makes player face RIGHT
+                playerIsFlipped = false;
 
                 // While moving in the East direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -386,6 +394,9 @@ namespace Adumbration
 
                 // Keeps player in window
                 positionRect.X -= speed;
+
+                // makes player face LEFT
+                playerIsFlipped = true;
 
                 // While the player is moving in the West direction 
                 foreach (GameObject tile in currentLevel.TileList)
