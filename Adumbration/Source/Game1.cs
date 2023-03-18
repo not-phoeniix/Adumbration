@@ -114,7 +114,7 @@ namespace Adumbration
             }
 
             // TODO: Add your update logic here
-            //player.Update(gameTime, levelTest);
+            player.Update(gameTime, levelTest);
             player.IsDead(beam);
 
             Vector2 playerPosOffset = new Vector2(
@@ -146,7 +146,7 @@ namespace Adumbration
                 _graphics.GraphicsDevice.Viewport.Height);
 
             // Draw test beam
-            beam.Draw(_spriteBatch);
+            beam.DrawOffset(_spriteBatch, levelTest.PositionOffset);
             
             //door.Draw(_spriteBatch);
 
