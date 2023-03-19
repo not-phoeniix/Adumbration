@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Configuration;
+using System.Drawing.Imaging;
 
 namespace Adumbration
 {
@@ -14,9 +15,14 @@ namespace Adumbration
         FacingRight,
         MovingRight,
         FacingLeft,
-        MovingLeft
+        MovingLeft,
+        FacingUp,
+        MovingUp
     }
 
+    /// <summary>
+    /// The states for the player's mode
+    /// </summary>
     public enum PlayerMode
     {
         NormalMode,
@@ -50,6 +56,14 @@ namespace Adumbration
         private int prevX;
         private int prevY;
 
+        // Animation fields
+        private int numSpritesInSheet;
+        private int widthOfSingleSprite;
+        private int currentFrame;
+        private double fps;
+        private double secondsPerFrame;
+        private double timeCounter;
+
         // Position centered in screen
         public Rectangle CenterRect { get; set; }
 
@@ -75,6 +89,12 @@ namespace Adumbration
         {
             hasDash = true;
             currentMode = PlayerMode.NormalMode;
+
+            // Animation data
+            fps = 2.0;
+            secondsPerFrame = 1.0 / fps;
+            timeCounter = 0;
+            currentFrame = 1;
         }
 
         // Methods
@@ -98,6 +118,7 @@ namespace Adumbration
                 System.Diagnostics.Debug.WriteLine("normal mode");
             }
 
+            // Player Modes
             switch (currentMode)
             {
                 case PlayerMode.NormalMode:
@@ -225,6 +246,7 @@ namespace Adumbration
             // South Movement
             SouthMovement(currentKbState, currentLevel, currentX, currentY);
             #endregion
+                        
 
 
                         // In case we need to use them keep them here
@@ -406,6 +428,9 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.W))
             {
+                // Update Player State
+                currentState = PlayerState.MovingUp;
+
                 // North Dash
                 // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
@@ -442,6 +467,12 @@ namespace Adumbration
                     }
                 }
             }
+
+            else
+            {
+                // Update Player State
+                currentState = PlayerState.FacingUp;
+            }
         }
 
         /// <summary>
@@ -455,6 +486,9 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.D))
             {
+                // Update Player State
+                currentState = PlayerState.MovingRight;
+
                 // East Dash
                 // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
@@ -496,6 +530,12 @@ namespace Adumbration
                     }
                 }
             }
+
+            else
+            {
+                // Update Player State
+                currentState = PlayerState.FacingRight;
+            }
         }
 
         /// <summary>
@@ -509,6 +549,9 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.A))
             {
+                // Update Player State
+                currentState = PlayerState.MovingLeft;
+
                 // West Dash
                 // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
@@ -550,6 +593,12 @@ namespace Adumbration
 
                     }
                 }
+            }
+
+            else
+            {
+                // Update Player State
+                currentState = PlayerState.FacingLeft;
             }
         }
 
@@ -808,6 +857,27 @@ namespace Adumbration
                 }
             }
         }
+        #endregion
+
+        #region//Animations
+        /// <summary>
+        /// When the player is moving, animate it accordingly
+        /// </summary>
+        public void UpdateMoving(GameTime gameTime)
+        {
+            // When the player is facing down and moving left or right
+            if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
+            {
+
+            }
+
+            // When the player is moving up
+            else if (currentState == PlayerState.MovingUp)
+            {
+
+            }
+        }
+
         #endregion
     }
 }
