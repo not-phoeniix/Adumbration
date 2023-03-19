@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Configuration;
 
 namespace Adumbration
 {
@@ -14,6 +15,12 @@ namespace Adumbration
         MovingRight,
         FacingLeft,
         MovingLeft
+    }
+
+    public enum PlayerMode
+    {
+        NormalMode,
+        GodMode
     }
 
     /// <summary>
@@ -46,6 +53,9 @@ namespace Adumbration
         // Position centered in screen
         public Rectangle CenterRect { get; set; }
 
+        //to turn on god mode in this game
+        private PlayerMode currentMode;
+
         // Properties
         /// <summary>
         /// Get property for whether the player has a dash or not
@@ -64,6 +74,7 @@ namespace Adumbration
             : base(spriteSheet, sourceRect, position)
         {
             hasDash = true;
+            currentMode = PlayerMode.NormalMode;
         }
 
         // Methods
@@ -76,29 +87,44 @@ namespace Adumbration
             // Player input
             KeyboardState currentKbState = Keyboard.GetState();
 
-            // Set player speed
-            speed = 5;
-
-            // Set player dash speed
-            dashSpeed = speed * 5;
-
-            // Player's current X and Y positions
-            int currentX = positionRect.X;
-            int currentY = positionRect.Y;
-
-            // Reset timer
-            if (!isDashing && currentDashTime != 0)
+            if (currentKbState.IsKeyDown(Keys.F12) && previousKbState.IsKeyUp(Keys.F12))
             {
-                currentDashTime = 0;
-                //hasDash = false;
+                currentMode = PlayerMode.GodMode;
+                System.Diagnostics.Debug.WriteLine("god mode");
             }
-            // Increase timer
-            else if (isDashing)
+            else if(currentKbState.IsKeyDown(Keys.F11) && previousKbState.IsKeyUp(Keys.F11))
             {
-                currentDashTime += 0.1f;
+                currentMode = PlayerMode.NormalMode;
+                System.Diagnostics.Debug.WriteLine("normal mode");
             }
 
-            #region// Keeping this in case we need to go back to it
+            switch (currentMode)
+            {
+                case PlayerMode.NormalMode:
+                    {
+                        // Set player speed
+                        speed = 5;
+
+                        // Set player dash speed
+                        dashSpeed = speed * 5;
+
+                        // Player's current X and Y positions
+                        int currentX = positionRect.X;
+                        int currentY = positionRect.Y;
+
+                        // Reset timer
+                        if (!isDashing && currentDashTime != 0)
+                        {
+                            currentDashTime = 0;
+                            //hasDash = false;
+                        }
+                        // Increase timer
+                        else if (isDashing)
+                        {
+                            currentDashTime += 0.1f;
+                        }
+
+                        #region// Keeping this in case we need to go back to it
             //foreach (GameObject tile in currentLevel.TileList)
             //{
             //    // If the player is touching a wall
@@ -116,7 +142,7 @@ namespace Adumbration
             //}
             #endregion
 
-            #region// Diagonal Dashes           
+                        #region// Diagonal Dashes           
             // North East
             if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&                                     // If moving north east
                 hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
@@ -186,7 +212,7 @@ namespace Adumbration
             }
             #endregion
 
-            #region // Movement
+                        #region // Movement
             // North Movement
             NorthMovement(currentKbState, currentLevel, currentX);
 
@@ -200,13 +226,121 @@ namespace Adumbration
             SouthMovement(currentKbState, currentLevel, currentX, currentY);
             #endregion
 
-            //checks to see if the lightbeam collides with the player
 
+                        // In case we need to use them keep them here
+                        prevX = currentX;
+                        prevY = currentY;
+                        break;
+                    }
+                case PlayerMode.GodMode:
+                    {
+                        // Set player speed
+                        speed = 5;
+
+                        // Set player dash speed
+                        dashSpeed = speed * 5;
+
+                        // Player's current X and Y positions
+                        int currentX = positionRect.X;
+                        int currentY = positionRect.Y;
+
+                        // Reset timer
+                        if (!isDashing && currentDashTime != 0)
+                        {
+                            currentDashTime = 0;
+                            //hasDash = false;
+                        }
+                        // Increase timer
+                        else if (isDashing)
+                        {
+                            currentDashTime += 0.1f;
+                        }
+
+                        #region// Diagonal Dashes           
+                        // North East
+                        if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&                                     // If moving north east
+                            hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
+                        {
+                            if (currentDashTime < MaxDashTime)
+                            {
+                                isDashing = true;
+                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                                {
+                                    // Changes position by 50 pixels in the diagonal direction
+                                    positionRect.X += 1;         // X component of the vector
+                                    positionRect.Y -= 1;         // Y component of the vector
+                                                                 //hasDash = false;
+                                }
+                            }
+                        }
+
+                        // North West
+                        if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&                                    // If moving north west
+                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
+                        {
+                            if (currentDashTime < MaxDashTime)
+                            {
+                                isDashing = true;
+                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                                {
+                                    // Changes position by 50 pixels in the diagonal direction
+                                    positionRect.X -= 1;         // X component of the vector
+                                    positionRect.Y -= 1;         // Y component of the vector
+                                                                 //hasDash = false;
+                                }
+                            }
+                        }
+
+                        // South East
+                        if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&                                   // If moving south east
+                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed
+                        {
+                            if (currentDashTime < MaxDashTime)
+                            {
+                                isDashing = true;
+                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                                {
+                                    // Changes position by 50 pixels in the diagonal direction
+                                    positionRect.X += 1;         // X component of the vector
+                                    positionRect.Y += 1;         // Y component of the vector
+                                                                 //hasDash = false;
+                                }
+                            }
+                        }
+
+                        // South West
+                        if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&                                   // If moving south west
+                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed                    
+                        {
+                            if (currentDashTime < MaxDashTime)
+                            {
+                                isDashing = true;
+                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                                {
+                                    // Changes position by 50 pixels in the diagonal direction
+                                    positionRect.X -= 1;         // X component of the vector
+                                    positionRect.Y += 1;         // Y component of the vector
+                                                                 //hasDash = false;
+                                }
+                            }
+                        }
+                        #endregion
+
+
+                        #region//all movements inside the godmode that allows the user to leave the stage and explore the entire window
+                        GodNorthMove(currentKbState, currentLevel, currentX);
+
+                        GodEastMove(currentKbState, currentLevel, currentX, currentY);
+
+                        GodWestMove(currentKbState, currentLevel, currentX, currentY);
+
+                        GodSouthMove(currentKbState, currentLevel, currentX, currentY);
+                        #endregion
+
+                        break;
+                    }
+            }
             previousKbState = currentKbState;
-
-            // In case we need to use them keep them here
-            prevX = currentX;
-            prevY = currentY;
         }
 
         /// <summary>
@@ -258,6 +392,9 @@ namespace Adumbration
                 positionRect.Y = 150;
             }
         }
+
+
+        #region//all normal mode movement methods
 
         /// <summary>
         /// Controls player's movement north
@@ -469,5 +606,208 @@ namespace Adumbration
                 }
             }
         }
+        #endregion
+
+        #region//all god mode movement methods
+
+        /// <summary>
+        /// this is just an extra method to not get normal mode and god mode movement mixed up
+        /// </summary>
+        /// <param name="currentKbState"></param>
+        /// <param name="currentLevel"></param>
+        /// <param name="currentX"></param>
+        private void GodNorthMove(KeyboardState currentKbState, Level currentLevel, int currentX)
+        {
+            if (currentKbState.IsKeyDown(Keys.W))
+            {
+                // North Dash
+                // If the player initates a dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    if (currentDashTime < MaxDashTime)
+                    {
+                        // They're dashing
+                        isDashing = true;
+                        for (int i = 0; i < dashSpeed; i++)
+                        {
+                            positionRect.Y -= 1;
+                        }
+                    }
+                }
+                // Otherwise they're not
+                else
+                {
+                    isDashing = false;
+                }
+
+                // Keeps player in window
+                // If player is not touching a top wall let them move in that direction
+                positionRect.Y -= speed;
+            }
+        }
+
+
+        /// <summary>
+        /// this is the god mode version of the east movement to ignore the walls
+        /// </summary>
+        /// <param name="currentKbState"></param>
+        /// <param name="currentLevel"></param>
+        /// <param name="currentX"></param>
+        /// <param name="currentY"></param>
+        private void GodEastMove(KeyboardState currentKbState, Level currentLevel, int currentX, int currentY)
+        {
+            if (currentKbState.IsKeyDown(Keys.D))
+            {
+                // East Dash
+                // If the player initates a dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    if (currentDashTime < MaxDashTime)
+                    {
+                        // They're dashing
+                        isDashing = true;
+                        for (int i = 0; i < dashSpeed; i++)
+                        {
+                            positionRect.X += 1;
+                        }
+                    }
+                }
+                // Otherwise they're not
+                else
+                {
+                    isDashing = false;
+                }
+
+                // Keeps player in window
+                positionRect.X += speed;
+
+                // makes player face RIGHT
+                playerIsFlipped = false;
+
+                foreach (GameObject tile in currentLevel.TileList)
+                {
+                    // if the player is colliding with a wall
+                    if (tile is Wall && IsColliding(tile))
+                    {
+                        //ignores the wall and continues moving
+                        positionRect.X = positionRect.X;
+                        positionRect.Y = currentY;
+
+                        // North Movement
+                        GodNorthMove(currentKbState, currentLevel, currentX);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// god mode version of the west movement that ignores walls
+        /// </summary>
+        /// <param name="currentKbState"></param>
+        /// <param name="currentLevel"></param>
+        /// <param name="currentX"></param>
+        /// <param name="currentY"></param>
+        private void GodWestMove(KeyboardState currentKbState, Level currentLevel, int currentX, int currentY)
+        {
+            if (currentKbState.IsKeyDown(Keys.A))
+            {
+                // West Dash
+                // If the player initates a dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    if (currentDashTime < MaxDashTime)
+                    {
+                        // They're dashing
+                        isDashing = true;
+                        for (int i = 0; i < dashSpeed; i++)
+                        {
+                            positionRect.X -= 1;
+                        }
+                    }
+                }
+                // Otherwise they're not
+                else
+                {
+                    isDashing = false;
+                }
+
+                // Keeps player in window
+                positionRect.X -= speed;
+
+                // makes player face LEFT
+                playerIsFlipped = true;
+
+                // While the player is moving in the West direction 
+                foreach (GameObject tile in currentLevel.TileList)
+                {
+                    // If the player collides with a wall
+                    if (tile is Wall && IsColliding(tile))
+                    {
+                        //ignores the wall
+                        positionRect.X = positionRect.X;
+                        positionRect.Y = currentY;
+
+                        // North Movement
+                        GodNorthMove(currentKbState, currentLevel, currentX);
+
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// god mode version of the south movement that ignores walls
+        /// </summary>
+        /// <param name="currentKbState"></param>
+        /// <param name="currentLevel"></param>
+        /// <param name="currentX"></param>
+        /// <param name="currentY"></param>
+        private void GodSouthMove(KeyboardState currentKbState, Level currentLevel, int currentX, int currentY)
+        {
+            if (currentKbState.IsKeyDown(Keys.S))
+            {
+                // South Dash
+                // If the player initates a dash
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    if (currentDashTime < MaxDashTime)
+                    {
+                        // They're dashing
+                        isDashing = true;
+                        for (int i = 0; i < dashSpeed; i++)
+                        {
+                            positionRect.Y += 1;
+                        }
+                    }
+                }
+                // Otherwise they're not
+                else
+                {
+                    isDashing = false;
+                }
+
+                // Move Player Down
+                positionRect.Y += speed;
+
+                // While moving in the South direction
+                foreach (GameObject tile in currentLevel.TileList)
+                {
+                    // If the player collides with a wall
+                    if (tile is Wall && IsColliding(tile))
+                    {
+                        //ignores the wall
+                        positionRect.Y = positionRect.Y;
+                        positionRect.X = currentX;
+
+                        //Allow player to move west
+                        GodWestMove(currentKbState, currentLevel, currentX, currentY);
+
+                        //Allow player to move east
+                        GodEastMove(currentKbState, currentLevel, currentX, currentY);
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }
