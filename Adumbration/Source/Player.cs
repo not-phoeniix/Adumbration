@@ -118,6 +118,202 @@ namespace Adumbration
                 System.Diagnostics.Debug.WriteLine("normal mode");
             }
 
+            // Player States
+            switch (currentState)
+            {
+                case PlayerState.FacingLeft:
+                    {
+                        currentFrame = 1;
+                        // If W is pressed, face up
+                        if (currentKbState.IsKeyDown(Keys.W))
+                        {
+                            currentState = PlayerState.FacingUp;
+                        }
+
+                        // If A is pressed, move left
+                        else if (currentKbState.IsKeyDown(Keys.A))
+                        {
+                            currentState = PlayerState.MovingLeft;
+                        }
+
+                        // If S is pressed, move down with MovingLeft animation
+                        else if (currentKbState.IsKeyDown(Keys.S))
+                        {
+                            currentState = PlayerState.MovingLeft;
+                        }
+
+                        // If D is pressed, face right
+                        else if (currentKbState.IsKeyDown(Keys.D))
+                        {
+                            currentState = PlayerState.FacingRight;
+                        }
+                        break;
+                    }
+
+                case PlayerState.MovingLeft:
+                    {
+                        currentFrame = 1;
+                        // If W is pressed, move up
+                        if (currentKbState.IsKeyDown(Keys.W))
+                        {
+                            currentState = PlayerState.MovingUp;
+                        }
+
+                        // If A is pressed, move left
+                        else if (currentKbState.IsKeyDown(Keys.A))
+                        {
+                            currentState = PlayerState.MovingLeft;
+                        }
+
+                        // If S is pressed, move down with MovingLeft animation
+                        else if (currentKbState.IsKeyDown(Keys.S))
+                        {
+                            currentState = PlayerState.MovingLeft;
+                        }
+
+                        // If D is pressed, face right
+                        else if (currentKbState.IsKeyDown(Keys.D))
+                        {
+                            currentState = PlayerState.FacingRight;
+                        }
+
+                        // If nothing is pressed, face left
+                        else
+                        {
+                            currentState = PlayerState.FacingLeft;
+                        }
+                        break;
+                    }
+
+                case PlayerState.FacingRight:
+                    {
+                        currentFrame = 1;
+                        // If W is pressed, face up
+                        if (currentKbState.IsKeyDown(Keys.W))
+                        {
+                            currentState = PlayerState.FacingUp;
+                        }
+
+                        // If A is pressed, face left
+                        else if (currentKbState.IsKeyDown(Keys.A))
+                        {
+                            currentState = PlayerState.FacingLeft;
+                        }
+
+                        // If S is pressed, move down with MovingRight animation
+                        else if (currentKbState.IsKeyDown(Keys.S))
+                        {
+                            currentState = PlayerState.MovingRight;
+                        }
+
+                        // If D is pressed, face right
+                        else if (currentKbState.IsKeyDown(Keys.D))
+                        {
+                            currentState = PlayerState.MovingRight;
+                        }
+                        break;
+                    }
+
+                case PlayerState.MovingRight:
+                    {
+                        currentFrame = 1;
+                        // If W is pressed, move up
+                        if (currentKbState.IsKeyDown(Keys.W))
+                        {
+                            currentState = PlayerState.MovingUp;
+                        }
+
+                        // If A is pressed, face left
+                        else if (currentKbState.IsKeyDown(Keys.A))
+                        {
+                            currentState = PlayerState.FacingLeft;
+                        }
+
+                        // If S is pressed, move down with MovingRight animation
+                        else if (currentKbState.IsKeyDown(Keys.S))
+                        {
+                            currentState = PlayerState.MovingRight;
+                        }
+
+                        // If D is pressed, move right
+                        else if (currentKbState.IsKeyDown(Keys.D))
+                        {
+                            currentState = PlayerState.MovingRight;
+                        }
+
+                        // If nothing is pressed, face right
+                        else
+                        {
+                            currentState = PlayerState.FacingRight;
+                        }
+                        break;
+                    }
+
+                case PlayerState.FacingUp:
+                    {
+                        currentFrame = 3;
+                        // If W is pressed, move up
+                        if (currentKbState.IsKeyDown(Keys.W))
+                        {
+                            currentState = PlayerState.MovingUp;
+                        }
+
+                        // If A is pressed, move left with MovingUp animation
+                        else if (currentKbState.IsKeyDown(Keys.A))
+                        {
+                            currentState = PlayerState.MovingUp;
+                        }
+
+                        // If S is pressed, face right
+                        else if (currentKbState.IsKeyDown(Keys.S))
+                        {
+                            currentState = PlayerState.FacingRight;
+                        }
+
+                        // If D is pressed, move right with MovingUp animation
+                        else if (currentKbState.IsKeyDown(Keys.D))
+                        {
+                            currentState = PlayerState.MovingUp;
+                        }
+                        break;
+                    }
+
+                case PlayerState.MovingUp:
+                    {
+                        currentFrame = 3;
+                        // If W is pressed, move up
+                        if (currentKbState.IsKeyDown(Keys.W))
+                        {
+                            currentState = PlayerState.MovingUp;
+                        }
+
+                        // If A is pressed, move left with MovingUp animation
+                        else if (currentKbState.IsKeyDown(Keys.A))
+                        {
+                            currentState = PlayerState.MovingUp;
+                        }
+
+                        // If S is pressed, move down with MovingRight animation
+                        else if (currentKbState.IsKeyDown(Keys.S))
+                        {
+                            currentState = PlayerState.MovingRight;
+                        }
+
+                        // If D is pressed, move right with MovingUp animation
+                        else if (currentKbState.IsKeyDown(Keys.D))
+                        {
+                            currentState = PlayerState.MovingUp;
+                        }
+
+                        // If nothing is pressed, face up
+                        else
+                        {
+                            currentState = PlayerState.FacingUp;
+                        }
+                        break;
+                    }
+            }
+
             // Player Modes
             switch (currentMode)
             {
@@ -428,9 +624,6 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.W))
             {
-                // Update Player State
-                currentState = PlayerState.MovingUp;
-
                 // North Dash
                 // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
@@ -467,12 +660,6 @@ namespace Adumbration
                     }
                 }
             }
-
-            else
-            {
-                // Update Player State
-                currentState = PlayerState.FacingUp;
-            }
         }
 
         /// <summary>
@@ -486,9 +673,6 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.D))
             {
-                // Update Player State
-                currentState = PlayerState.MovingRight;
-
                 // East Dash
                 // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
@@ -530,12 +714,6 @@ namespace Adumbration
                     }
                 }
             }
-
-            else
-            {
-                // Update Player State
-                currentState = PlayerState.FacingRight;
-            }
         }
 
         /// <summary>
@@ -549,9 +727,6 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.A))
             {
-                // Update Player State
-                currentState = PlayerState.MovingLeft;
-
                 // West Dash
                 // If the player initates a dash
                 if (hasDash && currentKbState.IsKeyDown(Keys.Space))
@@ -593,12 +768,6 @@ namespace Adumbration
 
                     }
                 }
-            }
-
-            else
-            {
-                // Update Player State
-                currentState = PlayerState.FacingLeft;
             }
         }
 
@@ -861,21 +1030,79 @@ namespace Adumbration
 
         #region//Animations
         /// <summary>
-        /// When the player is moving, animate it accordingly
+        /// Helper for updating player's animation based on time.
         /// </summary>
-        public void UpdateMoving(GameTime gameTime)
+        /// <param name="gameTime">Info about time from MonoGame.</param>
+        private void UpdateAnimation(GameTime gameTime)
         {
-            // When the player is facing down and moving left or right
+            //
+            timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
+
+            //
+            if (timeCounter >= secondsPerFrame)
+            {
+                // Change which frame is active, ensuring the frame is reset back to the first frame in the animation
+                currentFrame++;
+                if (currentState != PlayerState.FacingUp && currentState != PlayerState.MovingUp)
+                {
+                    if (currentFrame >= 2)
+                    {
+                        currentFrame = 1;
+                    }
+                }
+                else
+                {
+                    if (currentFrame >= 4)
+                    {
+                        currentFrame = 3;
+                    }
+                }
+                
+                // Reset time counter
+                timeCounter -= secondsPerFrame;
+            }
+        }
+
+        /// <summary>
+        /// Helper method to animate the player's motion.
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="flip">Should he be flipped horizontally.</param>
+        private void DrawMotion(SpriteBatch sb, SpriteEffects flip)
+        {
             if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
             {
-
+                sb.Draw(
+                    spriteSheet,
+                    positionRect,
+                    new Rectangle(
+                        currentFrame * widthOfSingleSprite,
+                        0,
+                        widthOfSingleSprite,
+                        spriteSheet.Height),
+                    Color.White,
+                    0.0f,
+                    Vector2.Zero,
+                    flip,
+                    0.0f);
             }
-
-            // When the player is moving up
             else if (currentState == PlayerState.MovingUp)
             {
-
+                sb.Draw(
+                    spriteSheet,
+                    positionRect,
+                    new Rectangle(
+                        currentFrame * widthOfSingleSprite,
+                        0,
+                        widthOfSingleSprite,
+                        spriteSheet.Height),
+                    Color.White,
+                    0.0f,
+                    Vector2.Zero,
+                    flip,
+                    0.0f);
             }
+
         }
 
         #endregion
