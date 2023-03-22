@@ -13,7 +13,7 @@ namespace Adumbration
     public class Level
     {
         // Fields
-        private int[,] levelLayout;             // copy of level text file, just int's
+        private char[,] levelLayout;            // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
         private Texture2D spritesheet;
 
@@ -85,14 +85,14 @@ namespace Adumbration
         /// <summary>
         /// Loads a level from a file and returns an associated array. 
         /// The first line of the file should be "levelWidth,LevelHeight", 
-        /// and all the other lines should be the numbers associated with the tiles.
-        /// 0 is wall, 1 is floor, more numbers will be added later.
+        /// and all the other lines should be the chars associated with the tiles.
+        /// 0 is wall, _ is floor, more chars will be added later.
         /// </summary>
         /// <param name="filename">String of file name</param>
-        /// <returns>2D integer array of level</returns>
-        private int[,] LoadLayoutFromFile(string filename)
+        /// <returns>2D char array of level</returns>
+        private char[,] LoadLayoutFromFile(string filename)
         {
-            int[,] returnLayout = new int[1, 1];
+            char[,] returnLayout = new char[1, 1];
 
             StreamReader reader = null;
 
@@ -120,7 +120,7 @@ namespace Adumbration
                         levelHeight = int.Parse(splitString[1]);
 
                         // initializes the list with given file values
-                        returnLayout = new int[levelWidth, levelHeight];
+                        returnLayout = new char[levelWidth, levelHeight];
                     }
 
                     // loading level & filling array ==========================
@@ -129,7 +129,11 @@ namespace Adumbration
                         // fills row in array with the split string
                         for (int i = 0; i < splitString.Length; i++)
                         {
-                            returnLayout[i, lineNum - 2] = int.Parse(splitString[i]);
+                            // removes space and parses to char
+                            char trimmedChar = char.Parse(splitString[i].Trim());
+
+                            // adds to layout
+                            returnLayout[i, lineNum - 2] = trimmedChar;
                         }
                     }
 
@@ -160,7 +164,7 @@ namespace Adumbration
         /// with various objects like walls/floors.
         /// </summary>
         /// <param name="layout"></param>
-        private GameObject[,] LoadObjectsFromLayout(int[,] layout)
+        private GameObject[,] LoadObjectsFromLayout(char[,] layout)
         {
             int levelWidth = layout.GetLength(0);
             int levelHeight = layout.GetLength(1);
@@ -215,7 +219,7 @@ namespace Adumbration
         // "num" is the number in the file read
         // "pos" is position of current tile to check
         private Rectangle DetermineSourceRect(
-            int num,
+            char tileValue,
             int tilePosX,
             int tilePosY,
             Texture2D spritesheet,
@@ -233,8 +237,8 @@ namespace Adumbration
             // by default it is the completely empty black sprite
             Vector2 returnRectCoord = new Vector2(4, 1);
 
-            // if 1, use the floor coords
-            if (num == 1)
+            // if floor char, use the floor coords
+            if (tileValue == '_')
             {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;
@@ -267,11 +271,10 @@ namespace Adumbration
                                         arrayY < levelLayout.GetLength(1);
 
                         // only checks if it's in the bounds
-                        //if(inBounds && (x == 1 || y == 1))
                         if (inBounds)
                         {
-                            // true if iterated coordinate is a floor (1)
-                            if (levelLayout[arrayX, arrayY] == 1)
+                            // true if iterated coordinate is a floor ('_')
+                            if (levelLayout[arrayX, arrayY] == '_')
                             {
                                 // if a floor is detected NOT DIAGONALLY,
                                 //   set all the diagonal values to false

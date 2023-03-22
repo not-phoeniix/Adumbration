@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.DirectoryServices.ActiveDirectory;
 
 // 
 // ===================================
@@ -17,8 +18,13 @@ namespace Adumbration
 {
     public class Game1 : Game
     {
+        #region Fields
+
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
+
+        private KeyboardState kbState;
+        private KeyboardState kbStateOld;
 
         private Texture2D fullSpritesheet;
         private Texture2D wallSpritesheet;
@@ -40,6 +46,8 @@ namespace Adumbration
         private static LevelManager lvlMgrSingleton;
         private Level levelTest;
 
+        #endregion
+
         // Level Manager Property
         public static LevelManager LevelMgrSingleton
         {
@@ -55,7 +63,7 @@ namespace Adumbration
 
         protected override void Initialize()
         {
-            globalScale = 1.0f;
+            globalScale = 4.0f;
             tMatrix = Matrix.Identity;
 
             base.Initialize();
@@ -113,7 +121,9 @@ namespace Adumbration
 
         protected override void Update(GameTime gameTime)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            kbState = Keyboard.GetState();
+
+            if(kbState.IsKeyDown(Keys.Escape))
             {
                 Exit();
             }
@@ -121,17 +131,37 @@ namespace Adumbration
             player.Update(gameTime, levelTest);
             player.IsDead(beam);
 
-            // zooming +/- keybind checking LATER
+            #region Zoom
+
+            // zoom in (one press)
+            if(kbState.IsKeyDown(Keys.OemPlus))
+            {
+                globalScale += 0.2f;
+            }
+
+            // zoom out (one press)
+            if(kbState.IsKeyDown(Keys.OemMinus))
+            {
+                globalScale -= 0.2f;
+            }
+
+            // prevents player from zooming too far in or out
+            if(globalScale > 8) { globalScale = 8; }  // max zoom
+            if(globalScale < 2) { globalScale = 2; }    // min zoom
+
+            #endregion
 
             // updates transformation matrix values
             // position:
-            tMatrix.M41 = (-player.Position.X + (_graphics.GraphicsDevice.Viewport.Width / 2)) / globalScale;
-            tMatrix.M42 = (-player.Position.Y + (_graphics.GraphicsDevice.Viewport.Height / 2)) / globalScale;
+            tMatrix.M41 = (-player.Position.X * globalScale) + (_graphics.GraphicsDevice.Viewport.Width / 2 - player.Position.Width * globalScale / 2);
+            tMatrix.M42 = (-player.Position.Y * globalScale) + (_graphics.GraphicsDevice.Viewport.Height / 2 - player.Position.Height * globalScale / 2);
             // scale:
             tMatrix.M11 = globalScale;
             tMatrix.M22 = globalScale;
 
             base.Update(gameTime);
+
+            kbStateOld = kbState;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -167,6 +197,18 @@ namespace Adumbration
             //_spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Used to detect single key presses
+        /// </summary>
+        /// <param name="key">Desired key to check for</param>
+        /// <param name="currentState">Current kb state</param>
+        /// <param name="prevState">Previous frame's kb state</param>
+        /// <returns></returns>
+        private bool IsKeyPressedOnce(Keys key, KeyboardState currentState, KeyboardState prevState)
+        {
+            return currentState.IsKeyDown(key) && !prevState.IsKeyDown(key);
         }
     }
 }
