@@ -23,7 +23,11 @@ namespace Adumbration
         private Texture2D fullSpritesheet;
         private Texture2D wallSpritesheet;
 
-        // Player Test
+        // scale/transformation matrix
+        private float globalScale;
+        private Matrix tMatrix;
+
+        // Player object & related fields
         Player player;
         private Texture2D playerTexture;
 
@@ -51,7 +55,8 @@ namespace Adumbration
 
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            globalScale = 3.0f;
+            tMatrix = Matrix.Identity;
 
             base.Initialize();
         }
@@ -67,13 +72,13 @@ namespace Adumbration
             doorTexture = Content.Load<Texture2D>("door_spritesheet");
 
             // creating test level
-            levelTest = new Level(wallSpritesheet, 6, "BigLevelTest.txt");
+            levelTest = new Level(wallSpritesheet, "BigLevelTest.txt");
 
             // Player Object
             player = new Player(
                 playerTexture,                      // spritesheet
                 new Rectangle(0, 0, 6, 8),          // source
-                new Rectangle(500, 200, 36, 48));   // pos
+                new Rectangle(50, 50, 6, 8));       // pos
 
             // Door Object
             door = new Door(
@@ -113,15 +118,14 @@ namespace Adumbration
                 Exit();
             }
 
-            // TODO: Add your update logic here
             player.Update(gameTime, levelTest);
             player.IsDead(beam);
 
-            Vector2 playerPosOffset = new Vector2(
-                -player.Position.X + player.CenterRect.X,
-                -player.Position.Y + player.CenterRect.Y);
-
-            levelTest.Update(gameTime, playerPosOffset);
+            // updates transformation matrix values
+            // position:
+            tMatrix.M41 = -player.Position.X + (_graphics.GraphicsDevice.Viewport.Width / 2);
+            tMatrix.M42 = -player.Position.Y + (_graphics.GraphicsDevice.Viewport.Height / 2);
+            // scale:
 
             base.Update(gameTime);
         }
@@ -132,21 +136,24 @@ namespace Adumbration
 
             // Deferred sort mode is default, PointClamp makes it so
             //   pixel art doesn't get blurry when upscaled
-            _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+            _spriteBatch.Begin(
+                SpriteSortMode.Deferred, 
+                null, 
+                SamplerState.PointClamp,
+                null,
+                null,
+                null,
+                tMatrix);
 
 
             // Draw test level
             levelTest.Draw(_spriteBatch);
 
             // Draw Player
-            //player.Draw(_spriteBatch);
-            player.DrawCentered(
-                _spriteBatch,
-                _graphics.GraphicsDevice.Viewport.Width,
-                _graphics.GraphicsDevice.Viewport.Height);
+            player.Draw(_spriteBatch);
 
             // Draw test beam
-            beam.DrawOffset(_spriteBatch, levelTest.PositionOffset);
+            beam.Draw(_spriteBatch);
             
             //door.Draw(_spriteBatch);
 

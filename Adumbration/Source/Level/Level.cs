@@ -16,35 +16,19 @@ namespace Adumbration
         private int[,] levelLayout;             // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
         private Texture2D spritesheet;
-        private int levelScale;
-        private Vector2 posOffset;
-
-        /// <summary>
-        /// Offset values of drawing position of entire level on screen
-        /// </summary>
-        public Vector2 PositionOffset
-        {
-            get { return posOffset; }
-            set { posOffset = value; }
-        }
 
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
         /// </summary>
         /// <param name="spritesheet">Texture2D wall spritesheet</param>
-        /// <param name="levelScale">Overall scale of level being drawn</param>
         /// <param name="dataFilePath">File path of layout data file (Already in LevelData folder, only file name needed)</param>
-        public Level(Texture2D spritesheet, int levelScale, string dataFilePath)
+        public Level(Texture2D spritesheet, string dataFilePath)
         {
             this.spritesheet = spritesheet;
-            this.levelScale = levelScale;
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
             objectArray = LoadObjectsFromLayout(levelLayout);
-
-            // initializes offset at zero
-            posOffset = new Vector2(0, 0);
         }
 
         /// <summary>
@@ -72,10 +56,8 @@ namespace Adumbration
         public void Update(GameTime gameTime, Vector2 posOffset)
         {
             // This is mostly empty right now but should include update
-            //   methods for all objects in game, i.e. light beams and
+            //   logic for all objects in game, i.e. light beams and
             //   mirrors and buttons and such.
-
-            this.posOffset = posOffset;
         }
 
         /// <summary>
@@ -90,8 +72,7 @@ namespace Adumbration
                 for (int x = 0; x < objectArray.GetLength(0); x++)
                 {
                     // draws object
-                    //objectArray[x, y].Draw(sb);
-                    objectArray[x, y].DrawOffset(sb, posOffset);
+                    objectArray[x, y].Draw(sb);
                 }
             }
         }
@@ -200,14 +181,15 @@ namespace Adumbration
                         16,             // sprite width
                         16);            // sprite height
 
-                    int sideSize = sourceRect.Width * levelScale;
+                    int sideSizeX = sourceRect.Width;
+                    int sideSizeY = sourceRect.Height;
 
                     // full pos on screen
                     Rectangle positionRect = new Rectangle(
-                        x * sideSize,
-                        y * sideSize,
-                        sideSize,
-                        sideSize);
+                        x * sideSizeX,
+                        y * sideSizeY,
+                        sideSizeX,
+                        sideSizeY);
 
                     // detects if rect is the coordinates of the floor sprite
                     Rectangle floorSourceRect = new Rectangle(16, 16, 16, 16);

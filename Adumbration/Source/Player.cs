@@ -586,6 +586,22 @@ namespace Adumbration
         }
 
         /// <summary>
+        /// Draws the player normally according to internal position.
+        /// </summary>
+        /// <param name="sb">SpriteBatch object to draw with</param>
+        public override void Draw(SpriteBatch sb) {
+            sb.Draw(
+                spriteSheet,
+                positionRect,
+                sourceRect,
+                Color.White,
+                0,
+                new Vector2(0, 0),
+                playerIsFlipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                0);
+        }
+
+        /// <summary>
         /// Checks for player collision with any GameObject.
         /// </summary>
         /// <param name="obj">Reference to any GameObject</param>
