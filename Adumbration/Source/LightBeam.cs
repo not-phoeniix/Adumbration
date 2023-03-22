@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Adumbration
 {
@@ -32,7 +27,7 @@ namespace Adumbration
         /// <returns></returns>
         public override bool IsColliding(GameObject obj)
         {
-            if (this.Position.Intersects(obj.Position))
+            if (Position.Intersects(obj.Position))
             {
                 return true;
             }

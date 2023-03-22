@@ -1,12 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Adumbration
 {
@@ -57,7 +50,7 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Update(GameTime gameTime)
         {
-            
+
         }
 
         /// <summary>
@@ -108,7 +101,7 @@ namespace Adumbration
         /// </summary>
         public void Interact(Player myPlayer)
         {
-            if(isOpen && IsColliding(myPlayer))
+            if (isOpen && IsColliding(myPlayer))
             {
 
             }

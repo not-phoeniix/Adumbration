@@ -16,35 +16,19 @@ namespace Adumbration
         private int[,] levelLayout;             // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
         private Texture2D spritesheet;
-        private int levelScale;
-        private Vector2 posOffset;
-
-        /// <summary>
-        /// Offset values of drawing position of entire level on screen
-        /// </summary>
-        public Vector2 PositionOffset
-        {
-            get { return posOffset; }
-            set { posOffset = value; }
-        }
 
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
         /// </summary>
         /// <param name="spritesheet">Texture2D wall spritesheet</param>
-        /// <param name="levelScale">Overall scale of level being drawn</param>
         /// <param name="dataFilePath">File path of layout data file (Already in LevelData folder, only file name needed)</param>
-        public Level(Texture2D spritesheet, int levelScale, string dataFilePath)
+        public Level(Texture2D spritesheet, string dataFilePath)
         {
             this.spritesheet = spritesheet;
-            this.levelScale = levelScale;
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
             objectArray = LoadObjectsFromLayout(levelLayout);
-
-            // initializes offset at zero
-            posOffset = new Vector2(0, 0);
         }
 
         /// <summary>
@@ -68,13 +52,12 @@ namespace Adumbration
         /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
+        /// <param name="posOffset">Vector2 offset of where to draw the whole level.</param>
         public void Update(GameTime gameTime, Vector2 posOffset)
         {
             // This is mostly empty right now but should include update
-            //   methods for all objects in game, i.e. light beams and
+            //   logic for all objects in game, i.e. light beams and
             //   mirrors and buttons and such.
-
-            this.posOffset = posOffset;
         }
 
         /// <summary>
@@ -84,18 +67,20 @@ namespace Adumbration
         public void Draw(SpriteBatch sb)
         {
             // this loop draws all objects in the tileList array
-            for(int y = 0; y < objectArray.GetLength(1); y++)
+            for (int y = 0; y < objectArray.GetLength(1); y++)
             {
-                for(int x = 0; x < objectArray.GetLength(0); x++)
+                for (int x = 0; x < objectArray.GetLength(0); x++)
                 {
                     // draws object
-                    //objectArray[x, y].Draw(sb);
-                    objectArray[x, y].DrawOffset(sb, posOffset);
+                    objectArray[x, y].Draw(sb);
                 }
             }
         }
 
         #region LevelLoading
+
+        // These methods only run once upon level loading/object
+        //   creation, they DO NOT occur every frame
 
         /// <summary>
         /// Loads a level from a file and returns an associated array. 
@@ -123,13 +108,13 @@ namespace Adumbration
                 int levelWidth, levelHeight;
 
                 // loops through every line until reading null
-                while((lineString = reader.ReadLine()) != null)
+                while ((lineString = reader.ReadLine()) != null)
                 {
                     // splits the line at beginning of read
                     string[] splitString = lineString.Split(",");
 
                     // sets array size & initializes ==========================
-                    if(lineNum == 1)
+                    if (lineNum == 1)
                     {
                         levelWidth = int.Parse(splitString[0]);
                         levelHeight = int.Parse(splitString[1]);
@@ -142,7 +127,7 @@ namespace Adumbration
                     else
                     {
                         // fills row in array with the split string
-                        for(int i = 0; i < splitString.Length; i++)
+                        for (int i = 0; i < splitString.Length; i++)
                         {
                             returnLayout[i, lineNum - 2] = int.Parse(splitString[i]);
                         }
@@ -152,7 +137,7 @@ namespace Adumbration
                     lineNum++;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // prints exception if there is one
                 Debug.WriteLine($"Error in file reading! Error: {ex.Message}");
@@ -160,7 +145,7 @@ namespace Adumbration
             finally
             {
                 // closes reader if it's not closed already
-                if(reader != null)
+                if (reader != null)
                 {
                     reader.Close();
                 }
@@ -183,9 +168,9 @@ namespace Adumbration
             GameObject[,] returnArray = new GameObject[levelWidth, levelHeight];
 
             // iterates through array and adds objects
-            for(int y = 0; y < levelHeight; y++)
+            for (int y = 0; y < levelHeight; y++)
             {
-                for(int x = 0; x < levelWidth; x++)
+                for (int x = 0; x < levelWidth; x++)
                 {
                     // determines what source rect to add to list depending on neighboring tiles
                     Rectangle sourceRect = DetermineSourceRect(
@@ -196,20 +181,21 @@ namespace Adumbration
                         16,             // sprite width
                         16);            // sprite height
 
-                    int sideSize = sourceRect.Width * levelScale;
+                    int sideSizeX = sourceRect.Width;
+                    int sideSizeY = sourceRect.Height;
 
                     // full pos on screen
                     Rectangle positionRect = new Rectangle(
-                        x * sideSize,
-                        y * sideSize,
-                        sideSize,
-                        sideSize);
+                        x * sideSizeX,
+                        y * sideSizeY,
+                        sideSizeX,
+                        sideSizeY);
 
                     // detects if rect is the coordinates of the floor sprite
                     Rectangle floorSourceRect = new Rectangle(16, 16, 16, 16);
 
                     // fills array with respective objects
-                    if(sourceRect == floorSourceRect)
+                    if (sourceRect == floorSourceRect)
                     {
                         returnArray[x, y] = new Floor(spritesheet, sourceRect, positionRect);
                     }
@@ -229,10 +215,10 @@ namespace Adumbration
         // "num" is the number in the file read
         // "pos" is position of current tile to check
         private Rectangle DetermineSourceRect(
-            int num, 
+            int num,
             int tilePosX,
-            int tilePosY, 
-            Texture2D spritesheet, 
+            int tilePosY,
+            Texture2D spritesheet,
             int spriteWidth,
             int spriteHeight)
         {
@@ -248,7 +234,7 @@ namespace Adumbration
             Vector2 returnRectCoord = new Vector2(4, 1);
 
             // if 1, use the floor coords
-            if(num == 1)
+            if (num == 1)
             {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;
@@ -262,17 +248,17 @@ namespace Adumbration
 
                 #region RegularWalls
 
-                for(int y = 0; y < 3; y++)
+                for (int y = 0; y < 3; y++)
                 {
-                    for(int x = 0; x < 3; x++)
+                    for (int x = 0; x < 3; x++)
                     {
                         // current positions of sub-array tile in big layout array
                         int arrayX = tilePosX - 1 + x;
                         int arrayY = tilePosY - 1 + y;
 
                         // calculates coordinates opposite of relative location of floor
-                        int oppX = x - (2 * (x - 1));
-                        int oppY = y - (2 * (y - 1));
+                        int oppX = x - 2 * (x - 1);
+                        int oppY = y - 2 * (y - 1);
 
                         // whether the current cell is in bounds of array
                         bool inBounds = arrayX >= 0 &&
@@ -282,21 +268,21 @@ namespace Adumbration
 
                         // only checks if it's in the bounds
                         //if(inBounds && (x == 1 || y == 1))
-                        if(inBounds)
+                        if (inBounds)
                         {
                             // true if iterated coordinate is a floor (1)
-                            if(levelLayout[arrayX, arrayY] == 1)
+                            if (levelLayout[arrayX, arrayY] == 1)
                             {
                                 // if a floor is detected NOT DIAGONALLY,
                                 //   set all the diagonal values to false
-                                if(x == 1 || y == 1)
+                                if (x == 1 || y == 1)
                                 {
                                     // double iteration loop for checking the array
-                                    for(int i = 0; i < spritesheetHeight; i++)
+                                    for (int i = 0; i < spritesheetHeight; i++)
                                     {
-                                        for(int j = 0; j < spritesheetWidth; j++)
+                                        for (int j = 0; j < spritesheetWidth; j++)
                                         {
-                                            if(i != 1 && j != 1 && j != 4)
+                                            if (i != 1 && j != 1 && j != 4)
                                             {
                                                 tileIsTrue[j, i] = false;
                                             }
@@ -315,7 +301,7 @@ namespace Adumbration
                 #region InverseCorners
 
                 // if bottom and right are true, clear and set to inverted top left
-                if(tileIsTrue[1, 2] && tileIsTrue[2, 1])
+                if (tileIsTrue[1, 2] && tileIsTrue[2, 1])
                 {
                     tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
@@ -323,7 +309,7 @@ namespace Adumbration
                 }
 
                 // if bottom and left are true, clear and set to inverted top right
-                if(tileIsTrue[1, 2] && tileIsTrue[0, 1])
+                if (tileIsTrue[1, 2] && tileIsTrue[0, 1])
                 {
                     tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
@@ -331,7 +317,7 @@ namespace Adumbration
                 }
 
                 // if top and right are true, clear and set to inverted bottom left
-                if(tileIsTrue[1, 0] && tileIsTrue[2, 1])
+                if (tileIsTrue[1, 0] && tileIsTrue[2, 1])
                 {
                     tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
@@ -339,7 +325,7 @@ namespace Adumbration
                 }
 
                 // if top and left are true, clear and set to inverted bottom right
-                if(tileIsTrue[1, 0] && tileIsTrue[0, 1])
+                if (tileIsTrue[1, 0] && tileIsTrue[0, 1])
                 {
                     tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
@@ -350,12 +336,12 @@ namespace Adumbration
 
                 // iteration thru bool array,
                 //   SETS FINAL RETURN COORD VALUES
-                for(int y = 0; y < spritesheetHeight; y++)
+                for (int y = 0; y < spritesheetHeight; y++)
                 {
-                    for(int x = 0; x < spritesheetWidth; x++)
+                    for (int x = 0; x < spritesheetWidth; x++)
                     {
                         // only sets coordinates if true
-                        if(tileIsTrue[x, y] == true)
+                        if (tileIsTrue[x, y] == true)
                         {
                             returnRectCoord.X = x;
                             returnRectCoord.Y = y;

@@ -2,8 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Configuration;
-using System.Drawing.Imaging;
 
 namespace Adumbration
 {
@@ -581,6 +579,22 @@ namespace Adumbration
                 CenterRect, 
                 sourceRect,
                 Color.White, 
+                0,
+                new Vector2(0, 0),
+                playerIsFlipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                0);
+        }
+
+        /// <summary>
+        /// Draws the player normally according to internal position.
+        /// </summary>
+        /// <param name="sb">SpriteBatch object to draw with</param>
+        public override void Draw(SpriteBatch sb) {
+            sb.Draw(
+                spriteSheet,
+                positionRect,
+                sourceRect,
+                Color.White,
                 0,
                 new Vector2(0, 0),
                 playerIsFlipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
