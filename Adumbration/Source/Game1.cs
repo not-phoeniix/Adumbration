@@ -84,9 +84,17 @@ namespace Adumbration
 
             // Player Object
             player = new Player(
-                playerTexture,                      // spritesheet
-                new Rectangle(0, 0, 6, 8),          // source
-                new Rectangle(50, 50, 6, 8));       // pos
+                playerTexture,      // spritesheet
+                new Rectangle(
+                    0,
+                    0,
+                    6,
+                    8),             // source
+                new Rectangle(
+                    50,
+                    50,
+                    6,
+                    8));            // pos
 
             // Door Object
             door = new Door(
