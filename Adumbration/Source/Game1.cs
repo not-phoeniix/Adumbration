@@ -55,7 +55,7 @@ namespace Adumbration
 
         protected override void Initialize()
         {
-            globalScale = 3.0f;
+            globalScale = 1.0f;
             tMatrix = Matrix.Identity;
 
             base.Initialize();
@@ -121,11 +121,15 @@ namespace Adumbration
             player.Update(gameTime, levelTest);
             player.IsDead(beam);
 
+            // zooming +/- keybind checking LATER
+
             // updates transformation matrix values
             // position:
-            tMatrix.M41 = -player.Position.X + (_graphics.GraphicsDevice.Viewport.Width / 2);
-            tMatrix.M42 = -player.Position.Y + (_graphics.GraphicsDevice.Viewport.Height / 2);
+            tMatrix.M41 = (-player.Position.X + (_graphics.GraphicsDevice.Viewport.Width / 2)) / globalScale;
+            tMatrix.M42 = (-player.Position.Y + (_graphics.GraphicsDevice.Viewport.Height / 2)) / globalScale;
             // scale:
+            tMatrix.M11 = globalScale;
+            tMatrix.M22 = globalScale;
 
             base.Update(gameTime);
         }
