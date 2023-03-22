@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System.DirectoryServices.ActiveDirectory;
+using Penumbra;
 
 // 
 // ===================================
@@ -33,8 +33,12 @@ namespace Adumbration
         private float globalScale;
         private Matrix tMatrix;
 
+        // lighting stuff
+        private PenumbraComponent penumbra;
+        private PointLight playerLight;
+
         // Player object & related fields
-        Player player;
+        private Player player;
         private Texture2D playerTexture;
 
         // Door Test
@@ -65,6 +69,14 @@ namespace Adumbration
         {
             globalScale = 4.0f;
             tMatrix = Matrix.Identity;
+
+            // shading initializing
+            penumbra = new PenumbraComponent(this);
+            Components.Add(penumbra);
+
+            // changing penumbra initial properties
+            penumbra.SpriteBatchTransformEnabled = true;
+            penumbra.AmbientColor = Color.FromNonPremultiplied(24, 20, 37, 255);
 
             base.Initialize();
         }
@@ -125,6 +137,33 @@ namespace Adumbration
                     _graphics.PreferredBackBufferHeight / 2 - 100,      // - Y Location
                     10,                                                 // - Width
                     10));                                               // - Height
+
+            #region PenumbraSetup
+
+            // setting up player light
+            playerLight = new PointLight()
+            {
+                Scale = new Vector2(300),
+                Color = Color.White,
+                ShadowType = ShadowType.Illuminated
+            };
+
+            // add lights
+            penumbra.Lights.Add(playerLight);
+
+            // add hulls
+            for(int y = 0; y < levelTest.WallHulls.GetLength(1); y++)
+            {
+                for(int x = 0; x < levelTest.WallHulls.GetLength(0); x++)
+                {
+                    if(levelTest.WallHulls[x, y] != null)
+                    {
+                        penumbra.Hulls.Add(levelTest.WallHulls[x, y]);
+                    }
+                }
+            }
+
+            #endregion
         }
 
         protected override void Update(GameTime gameTime)
@@ -153,19 +192,36 @@ namespace Adumbration
                 globalScale -= 0.2f;
             }
 
-            // prevents player from zooming too far in or out
+            // zoom bounds setting (min/max zoom level)
             if(globalScale > 8) { globalScale = 8; }  // max zoom
             if(globalScale < 2) { globalScale = 2; }    // min zoom
 
             #endregion
 
+            #region MatrixUpdating
+
             // updates transformation matrix values
-            // position:
-            tMatrix.M41 = (-player.Position.X * globalScale) + (_graphics.GraphicsDevice.Viewport.Width / 2 - player.Position.Width * globalScale / 2);
-            tMatrix.M42 = (-player.Position.Y * globalScale) + (_graphics.GraphicsDevice.Viewport.Height / 2 - player.Position.Height * globalScale / 2);
-            // scale:
+
+            // position: (x & y)
+            tMatrix.M41 = _graphics.GraphicsDevice.Viewport.Width / 2 - player.CenterPos.X * globalScale;
+            tMatrix.M42 = _graphics.GraphicsDevice.Viewport.Height / 2 - player.CenterPos.Y * globalScale;
+
+            // scale: (x & y)
             tMatrix.M11 = globalScale;
             tMatrix.M22 = globalScale;
+
+            #endregion
+
+            #region Penumbra
+
+            playerLight.Position = player.CenterPos;
+            penumbra.Transform = tMatrix;
+
+            if(IsKeyPressedOnce(Keys.L, kbState, kbStateOld)) { 
+                penumbra.Visible = !penumbra.Visible;
+            }
+
+            #endregion
 
             base.Update(gameTime);
 
@@ -174,6 +230,9 @@ namespace Adumbration
 
         protected override void Draw(GameTime gameTime)
         {
+            // start penumbra effect drawing
+            penumbra.BeginDraw();
+
             GraphicsDevice.Clear(Color.FromNonPremultiplied(24, 20, 37, 255));
 
             // Deferred sort mode is default, PointClamp makes it so
@@ -186,7 +245,6 @@ namespace Adumbration
                 null,
                 null,
                 tMatrix);
-
 
             // Draw test level
             levelTest.Draw(_spriteBatch);

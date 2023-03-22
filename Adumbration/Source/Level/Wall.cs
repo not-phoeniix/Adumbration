@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Penumbra;
 
 namespace Adumbration
 {
@@ -8,6 +9,8 @@ namespace Adumbration
     /// </summary>
     public class Wall : GameObject
     {
+        private Hull hull;
+
         /// <summary>
         /// Parameterized Constructor for this class
         /// </summary>
@@ -17,8 +20,20 @@ namespace Adumbration
         public Wall(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
              : base(spriteSheet, sourceRect, position)
         {
-
+            // creates shadow casting hull
+            hull = new Hull(new Vector2[]
+            {
+                new Vector2(position.X, position.Y),
+                new Vector2(position.X + position.Width, position.Y),
+                new Vector2(position.X + position.Width, position.Y + position.Height),
+                new Vector2(position.X, position.Y + position.Height)
+            });
         }
+
+        /// <summary>
+        /// Wall's hull for shadow casting
+        /// </summary>
+        public Hull Hull { get { return hull; } }
 
         /// <summary>
         /// This is to get a bool value inside Game1

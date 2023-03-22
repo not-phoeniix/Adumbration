@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Penumbra;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -16,6 +17,7 @@ namespace Adumbration
         private char[,] levelLayout;            // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
         private Texture2D spritesheet;
+        private Hull[,] wallHulls;               // for shadow casting
 
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
@@ -29,6 +31,7 @@ namespace Adumbration
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
             objectArray = LoadObjectsFromLayout(levelLayout);
+            wallHulls = LoadHulls(objectArray);
         }
 
         /// <summary>
@@ -39,6 +42,8 @@ namespace Adumbration
         {
             get { return objectArray; }
         }
+
+        public Hull[,] WallHulls { get { return wallHulls; } }
 
         /// <summary>
         /// Resets a level.
@@ -206,6 +211,32 @@ namespace Adumbration
                     else
                     {
                         returnArray[x, y] = new Wall(spritesheet, sourceRect, positionRect);
+                    }
+                }
+            }
+
+            return returnArray;
+        }
+
+        /// <summary>
+        /// Loads and returns all hulls depending on bounds of each object in array
+        /// </summary>
+        /// <param name="levelObjects">2D array of all level objects</param>
+        /// <returns>2D array of hulls</returns>
+        private Hull[,] LoadHulls(GameObject[,] levelObjects)
+        {
+            int levelWidth = levelObjects.GetLength(0);
+            int levelHeight = levelObjects.GetLength(1);
+
+            Hull[,] returnArray = new Hull[levelWidth, levelHeight];
+
+            for(int y = 0; y < levelHeight; y++)
+            {
+                for(int x = 0; x < levelWidth; x++)
+                {
+                    if(levelObjects[x, y] is Wall)
+                    {
+                        returnArray[x, y] = ((Wall)levelObjects[x, y]).Hull;
                     }
                 }
             }

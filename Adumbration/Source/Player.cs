@@ -77,6 +77,17 @@ namespace Adumbration
             get { return hasDash; }
         }
 
+        public Vector2 CenterPos
+        {
+            get
+            {
+                return new Vector2(
+                    positionRect.X + positionRect.Width / 2,
+                    positionRect.Y + positionRect.Height / 2
+                    );
+            }
+        }
+
         // Constructor
         /// <summary>
         /// Player takes completely from Parent class
@@ -338,7 +349,7 @@ namespace Adumbration
                 case PlayerMode.NormalMode:
                     {
                         // Set player speed
-                        speed = 5;
+                        speed = 2;
 
                         // Set player dash speed
                         dashSpeed = speed * 5;
