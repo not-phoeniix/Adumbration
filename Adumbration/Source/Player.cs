@@ -122,6 +122,7 @@ namespace Adumbration
                 case PlayerState.FacingLeft:
                     {
                         currentFrame = 1;
+
                         // If W is pressed, face up
                         if (currentKbState.IsKeyDown(Keys.W))
                         {
@@ -145,12 +146,14 @@ namespace Adumbration
                         {
                             currentState = PlayerState.FacingRight;
                         }
+                        UpdateAnimation(gameTime);
                         break;
                     }
 
                 case PlayerState.MovingLeft:
                     {
                         currentFrame = 1;
+
                         // If W is pressed, move up
                         if (currentKbState.IsKeyDown(Keys.W))
                         {
@@ -180,12 +183,14 @@ namespace Adumbration
                         {
                             currentState = PlayerState.FacingLeft;
                         }
+                        UpdateAnimation(gameTime);
                         break;
                     }
 
                 case PlayerState.FacingRight:
                     {
                         currentFrame = 1;
+
                         // If W is pressed, face up
                         if (currentKbState.IsKeyDown(Keys.W))
                         {
@@ -209,12 +214,14 @@ namespace Adumbration
                         {
                             currentState = PlayerState.MovingRight;
                         }
+                        UpdateAnimation(gameTime);
                         break;
                     }
 
                 case PlayerState.MovingRight:
                     {
                         currentFrame = 1;
+
                         // If W is pressed, move up
                         if (currentKbState.IsKeyDown(Keys.W))
                         {
@@ -244,12 +251,15 @@ namespace Adumbration
                         {
                             currentState = PlayerState.FacingRight;
                         }
+                        UpdateAnimation(gameTime);
                         break;
                     }
 
                 case PlayerState.FacingUp:
                     {
                         currentFrame = 3;
+                        sourceRect.X = widthOfSingleSprite * currentFrame;
+
                         // If W is pressed, move up
                         if (currentKbState.IsKeyDown(Keys.W))
                         {
@@ -273,12 +283,21 @@ namespace Adumbration
                         {
                             currentState = PlayerState.MovingUp;
                         }
+
+                        // If nothing is pressed, continue facing up
+                        else
+                        {
+                            currentState = PlayerState.FacingUp;
+                        }
+                        UpdateAnimation(gameTime);
                         break;
                     }
 
                 case PlayerState.MovingUp:
                     {
                         currentFrame = 3;
+                        sourceRect.X = widthOfSingleSprite * currentFrame;
+
                         // If W is pressed, move up
                         if (currentKbState.IsKeyDown(Keys.W))
                         {
@@ -308,6 +327,7 @@ namespace Adumbration
                         {
                             currentState = PlayerState.FacingUp;
                         }
+                        UpdateAnimation(gameTime);
                         break;
                     }
             }
@@ -589,7 +609,8 @@ namespace Adumbration
         /// Draws the player normally according to internal position.
         /// </summary>
         /// <param name="sb">SpriteBatch object to draw with</param>
-        public override void Draw(SpriteBatch sb) {
+        public override void Draw(SpriteBatch sb)
+        {
             sb.Draw(
                 spriteSheet,
                 positionRect,
@@ -1084,48 +1105,56 @@ namespace Adumbration
         /// <param name="flip">Should he be flipped horizontally.</param>
         private void DrawMotion(SpriteBatch sb, SpriteEffects flip)
         {
-            if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-            {
-                sb.Draw(
-                    spriteSheet,
-                    positionRect,
-                    new Rectangle(
-                        currentFrame * widthOfSingleSprite,
-                        0,
-                        widthOfSingleSprite,
-                        spriteSheet.Height),
-                    Color.White,
-                    0.0f,
-                    Vector2.Zero,
-                    flip,
-                    0.0f);
-            }
-            else if (currentState == PlayerState.MovingUp)
-            {
-                sb.Draw(
-                    spriteSheet,
-                    positionRect,
-                    new Rectangle(
-                        currentFrame * widthOfSingleSprite,
-                        0,
-                        widthOfSingleSprite,
-                        spriteSheet.Height),
-                    Color.White,
-                    0.0f,
-                    Vector2.Zero,
-                    flip,
-                    0.0f);
-            }
-
+            sb.Draw(
+                spriteSheet,
+                positionRect,
+                new Rectangle(
+                    currentFrame * widthOfSingleSprite,
+                    0,
+                    widthOfSingleSprite,
+                    spriteSheet.Height),
+                Color.White,
+                0.0f,
+                Vector2.Zero,
+                flip,
+                0.0f);
         }
 
         /// <summary>
         /// Helper method to draw player in standing position. Player is not animated.
         /// </summary>
+        /// <param name="sb"></param>
         /// <param name="flip">Should be able to flip horizontally.</param>
-        private void DrawStanding (SpriteEffects flip)
+        private void DrawStanding (SpriteBatch sb, SpriteEffects flip)
         {
-
+            if (currentState == PlayerState.FacingLeft || currentState == PlayerState.FacingRight)
+            {
+                sb.Draw(
+                    spriteSheet,
+                    positionRect,
+                    sourceRect,
+                    Color.White,
+                    0.0f,
+                    Vector2.Zero,
+                    flip,
+                    0.0f);
+            }
+            else if (currentState == PlayerState.FacingUp)
+            {
+                sb.Draw(
+                    spriteSheet,
+                    positionRect,
+                    new Rectangle(
+                        0,
+                        0,
+                        widthOfSingleSprite,
+                        spriteSheet.Height),
+                    Color.White,
+                    0.0f,
+                    Vector2.Zero,
+                    flip,
+                    0.0f);
+            }
         }
 
         #endregion
