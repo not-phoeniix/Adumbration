@@ -1105,6 +1105,15 @@ namespace Adumbration
 
         }
 
+        /// <summary>
+        /// Helper method to draw player in standing position. Player is not animated.
+        /// </summary>
+        /// <param name="flip">Should be able to flip horizontally.</param>
+        private void DrawStanding (SpriteEffects flip)
+        {
+
+        }
+
         #endregion
     }
 }
