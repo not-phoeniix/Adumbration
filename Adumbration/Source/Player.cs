@@ -591,32 +591,6 @@ namespace Adumbration
         }
 
         /// <summary>
-        /// Draws the player centered in the screen.
-        /// The position is still updated, just not drawn on screen.
-        /// </summary>
-        /// <param name="sb">SpriteBatch to draw to screen</param>
-        /// <param name="screenWidth">Entire screen width</param>
-        /// <param name="screenHeight">Entire screen height</param>
-        public void DrawCentered(SpriteBatch sb, int screenWidth, int screenHeight)
-        {
-            CenterRect = new Rectangle(
-                screenWidth / 2 - positionRect.Width / 2,
-                screenHeight / 2 - positionRect.Height / 2,
-                positionRect.Width,
-                positionRect.Height);
-
-            sb.Draw(
-                spriteSheet, 
-                CenterRect, 
-                sourceRect,
-                Color.White, 
-                0,
-                new Vector2(0, 0),
-                playerIsFlipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
-                0);
-        }
-
-        /// <summary>
         /// Draws the player normally according to internal position.
         /// </summary>
         /// <param name="sb">SpriteBatch object to draw with</param>

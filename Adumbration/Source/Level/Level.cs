@@ -57,8 +57,7 @@ namespace Adumbration
         /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        /// <param name="posOffset">Vector2 offset of where to draw the whole level.</param>
-        public void Update(GameTime gameTime, Vector2 posOffset)
+        public void Update(GameTime gameTime)
         {
             // This is mostly empty right now but should include update
             //   logic for all objects in game, i.e. light beams and

@@ -20,43 +20,35 @@ namespace Adumbration
     {
         #region Fields
 
+        // MonoGame fields
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
+        // states
         private KeyboardState kbState;
         private KeyboardState kbStateOld;
 
-        private Texture2D fullSpritesheet;
-        private Texture2D wallSpritesheet;
-
-        // scale/transformation matrix
+        // general game settings/fields
+        private Vector2 screenRes;
         private float globalScale;
         private Matrix tMatrix;
+
+        // all textures
+        private Texture2D fullSpritesheet;
+        private Texture2D wallSpritesheet;
+        private Texture2D playerTexture;
+        private Texture2D doorTexture;
 
         // lighting stuff
         private PenumbraComponent penumbra;
         private PointLight playerLight;
 
-        // Player object & related fields
+        // Game objects
         private Player player;
-        private Texture2D playerTexture;
-
-        // Door Test
         private Door door;
         private LightBeam beam;
-        private Texture2D doorTexture;
-
-        // Level Manager
-        private static LevelManager lvlMgrSingleton;
-        private Level levelTest;
 
         #endregion
-
-        // Level Manager Property
-        public static LevelManager LevelMgrSingleton
-        {
-            get { return lvlMgrSingleton; }
-        }
 
         public Game1()
         {
@@ -67,8 +59,12 @@ namespace Adumbration
 
         protected override void Initialize()
         {
+            // global field value setting
+            screenRes = new Vector2(1280, 720);
             globalScale = 4.0f;
             tMatrix = Matrix.Identity;
+
+            #region PenumbraInit
 
             // shading initializing
             penumbra = new PenumbraComponent(this);
@@ -77,6 +73,8 @@ namespace Adumbration
             // changing penumbra initial properties
             penumbra.SpriteBatchTransformEnabled = true;
             penumbra.AmbientColor = Color.FromNonPremultiplied(24, 20, 37, 255);
+
+            #endregion
 
             base.Initialize();
         }
@@ -91,52 +89,39 @@ namespace Adumbration
             fullSpritesheet = Content.Load<Texture2D>("spritesheet");
             doorTexture = Content.Load<Texture2D>("door_spritesheet");
 
-            // creating test level
-            levelTest = new Level(wallSpritesheet, "BigLevelTest.txt");
+            #region ObjectCreation
+
+            // LevelManager init
+            LevelManager.Instance.Initialize(wallSpritesheet, GameLevels.TestLevel);
 
             // Player Object
             player = new Player(
-                playerTexture,      // spritesheet
-                new Rectangle(
-                    0,
-                    0,
-                    6,
-                    8),             // source
-                new Rectangle(
-                    50,
-                    50,
-                    6,
-                    8));            // pos
+                playerTexture,                  // spritesheet
+                new Rectangle(0, 0, 6, 8),      // source
+                new Rectangle(50, 50, 6, 8));   // initial pos
 
             // Door Object
             door = new Door(
-                false,
-                doorTexture,
-                new Rectangle(  // Source Rectangle
-                    64,         // - X Location
-                    0,          // - Y Location
-                    16,         // - Width
-                    10),        // - Height
-                new Rectangle(                                  // Position
-                    _graphics.PreferredBackBufferWidth / 2,     // - X Location
-                    _graphics.PreferredBackBufferHeight / 2,    // - Y Location
-                    36,                                         // - Width
-                    48));                                       // - Height
+                false,                          // isOpen
+                doorTexture,                    // texture
+                new Rectangle(64, 0, 16, 10),   // source rect
+                new Rectangle(                  // position
+                    (int)screenRes.X / 2, 
+                    (int)screenRes.Y / 2, 
+                    36, 
+                    48));
 
-
-            //light beam test
+            // light beam test
             beam = new LightBeam(
-                fullSpritesheet,
-                new Rectangle(      //source rectangle
-                    64,
-                    0,
-                    1,
-                    1),
-                new Rectangle(
-                    _graphics.PreferredBackBufferWidth / 2 - 200,       // - X Location
-                    _graphics.PreferredBackBufferHeight / 2 - 100,      // - Y Location
-                    10,                                                 // - Width
-                    10));                                               // - Height
+                fullSpritesheet,                    // spritesheet
+                new Rectangle(64, 0, 1, 1),         // source
+                new Rectangle(                      // pos
+                    (int)screenRes.X / 2 - 200,     // - X Location
+                    (int)screenRes.Y / 2 - 100,     // - Y Location
+                    10,                             // - Width
+                    10));                           // - Height
+
+            #endregion
 
             #region PenumbraSetup
 
@@ -152,13 +137,14 @@ namespace Adumbration
             penumbra.Lights.Add(playerLight);
 
             // add hulls
-            for(int y = 0; y < levelTest.WallHulls.GetLength(1); y++)
+            Hull[,] wallHulls = LevelManager.Instance.CurrentLevel.WallHulls;
+            for(int y = 0; y < wallHulls.GetLength(1); y++)
             {
-                for(int x = 0; x < levelTest.WallHulls.GetLength(0); x++)
+                for(int x = 0; x < wallHulls.GetLength(0); x++)
                 {
-                    if(levelTest.WallHulls[x, y] != null)
+                    if(wallHulls[x, y] != null)
                     {
-                        penumbra.Hulls.Add(levelTest.WallHulls[x, y]);
+                        penumbra.Hulls.Add(wallHulls[x, y]);
                     }
                 }
             }
@@ -170,12 +156,28 @@ namespace Adumbration
         {
             kbState = Keyboard.GetState();
 
+            // ESC exits game
             if(kbState.IsKeyDown(Keys.Escape))
             {
                 Exit();
             }
 
-            player.Update(gameTime, levelTest);
+            // ALT+ENTER toggles fullscreen
+            if(kbState.IsKeyDown(Keys.LeftAlt) && IsKeyPressedOnce(Keys.Enter, kbState, kbStateOld))
+            {
+                _graphics.ToggleFullScreen();
+            }
+
+            // setting screen res if it changes
+            if(_graphics.PreferredBackBufferWidth != screenRes.X ||
+               _graphics.PreferredBackBufferHeight != screenRes.Y)
+            {
+                _graphics.PreferredBackBufferWidth = (int)screenRes.X;
+                _graphics.PreferredBackBufferHeight = (int)screenRes.Y;
+                _graphics.ApplyChanges();
+            }
+
+            player.Update(gameTime, LevelManager.Instance.CurrentLevel);
             player.IsDead(beam);
 
             #region Zoom
@@ -203,8 +205,8 @@ namespace Adumbration
             // updates transformation matrix values
 
             // position: (x & y)
-            tMatrix.M41 = _graphics.GraphicsDevice.Viewport.Width / 2 - player.CenterPos.X * globalScale;
-            tMatrix.M42 = _graphics.GraphicsDevice.Viewport.Height / 2 - player.CenterPos.Y * globalScale;
+            tMatrix.M41 = screenRes.X / 2 - player.CenterPos.X * globalScale;
+            tMatrix.M42 = screenRes.Y / 2 - player.CenterPos.Y * globalScale;
 
             // scale: (x & y)
             tMatrix.M11 = globalScale;
@@ -247,7 +249,7 @@ namespace Adumbration
                 tMatrix);
 
             // Draw test level
-            levelTest.Draw(_spriteBatch);
+            LevelManager.Instance.Draw(_spriteBatch);
 
             // Draw Player
             player.Draw(_spriteBatch);

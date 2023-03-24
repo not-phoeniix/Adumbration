@@ -1,71 +1,124 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
 namespace Adumbration
 {
     /// <summary>
-    /// Alexander Gough
-    /// Purpose: It is a Singleton that creates the Levels
-    /// Restrictions: Since it is a sealed class, no classes inherit from it.
+    /// Enumeration that holds all different possible levels
     /// </summary>
-    public class LevelManager
+    public enum GameLevels
     {
-        // Fields
-        private int instanceCounter = 0;
-        private LevelManager instance = null;
-        private Level[] levels = new Level[4];
+        TestLevel,
 
-        // Level test stuff
-        private Player lvlPlayer;
-        private Texture2D wallSpritesheet;
-        private Level levelTest;
+        Hub,
+        Level1,
+        Level2,
+        Level3,
+        Level4,
+        End
+    }
 
-        // Properties
+    /// <summary>
+    /// Singleton LevelManager that can change levels. 
+    /// Only one level can be loaded and used at a time.
+    /// </summary>
+    public sealed class LevelManager
+    {
+        #region SingletonStuff
+
+        // static private instance of itself
+        private static LevelManager instance = null;
+
+        // PRIVATE constructor
+        private LevelManager() { }
 
         /// <summary>
-        /// Get only for the singleton instance.
-        /// If instance is null, instantiate it, then return it.
+        /// LevelManager instance, singleton which allows 
+        /// managing of all levels in the game. READ-ONLY
         /// </summary>
-        public LevelManager GetInstance
+        public static LevelManager Instance
         {
             get
             {
-                if (instance == null)
+                // if the instance wasn't created yet, create it
+                if(instance == null)
                 {
-                    instance = new LevelManager(levelTest);
+                    instance = new LevelManager();
                 }
+
                 return instance;
             }
         }
 
+        #endregion
+
+        // level info
+        private Texture2D levelSpritesheet;
+        private Level currentLevel;
+
         /// <summary>
-        /// 
+        /// Get-only property for current level
         /// </summary>
-        public Level[] GetLevels
+        public Level CurrentLevel
         {
-            get { return levels; }
+            get { return currentLevel; }
         }
 
         /// <summary>
-        /// Private Constructor
+        /// Initializes LevelManager singleton, must be run first for levels to work properly.
         /// </summary>
-        public LevelManager(Level level)
+        /// <param name="levelSpritesheet"></param>
+        /// <param name="startingLevel"></param>
+        public void Initialize(Texture2D levelSpritesheet, GameLevels startingLevel)
         {
-            levelTest = level;
+            this.levelSpritesheet = levelSpritesheet;
+            LoadLevel(startingLevel);
         }
 
-        // Methods
+        /// <summary>
+        /// Loads level according to the GameLevels enum,
+        /// which is an enum that holds all possible levels.
+        /// </summary>
+        /// <param name="level">Level to load</param>
+        public void LoadLevel(GameLevels level)
+        {
+            // FSM for what level is being loaded
+            switch(level)
+            {
+                // test level
+                case GameLevels.TestLevel:
+                    currentLevel = new Level(
+                        levelSpritesheet, 
+                        "BigLevelTest.txt");
 
+                    break;
 
+                // throw exception if any other value is inputted
+                default:
+                    throw new Exception($"Error: level {level} does not exist!");
+            }
+        }
+
+        #region GameLoop
+
+        /// <summary>
+        /// Updates the logic of currently loaded level
+        /// </summary>
         public void Update(GameTime gameTime)
         {
-            lvlPlayer.Update(gameTime, levelTest);
+            currentLevel.Update(gameTime);
         }
 
-
+        /// <summary>
+        /// Draws the currently loaded level to the screen
+        /// </summary>
+        /// <param name="sb"></param>
         public void Draw(SpriteBatch sb)
         {
-            levelTest.Draw(sb);
+            currentLevel.Draw(sb);
         }
+
+        #endregion
     }
 }
