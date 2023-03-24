@@ -15,6 +15,11 @@ namespace Adumbration
         private bool isOpen;
         private Rectangle sourceClosedRect;
 
+        // Door sprite sheet information
+        private int numSpritesInSheet;
+        private int widthOfSingleSprite;
+        private int currentFrame;
+
         // Properties
 
         /// <summary>
@@ -40,6 +45,11 @@ namespace Adumbration
              : base(spriteSheet, sourceRect, position)
         {
             this.isOpen = isOpen;
+
+            // Door information
+            numSpritesInSheet = 5;
+            widthOfSingleSprite = spriteSheet.Width;
+            currentFrame = 5;
         }
 
         // Methods
@@ -59,24 +69,12 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Draw(SpriteBatch sb)
         {
-            if (isOpen)
-            {
-                // Draw open door if isOpen is true
-                sb.Draw(
-                    spriteSheet,
-                    Position,
-                    sourceRect,
-                    Color.White);
-            }
-            else
-            {
-                // Draw closed door otherwise
-                sb.Draw(
-                    spriteSheet,
-                    Position,
-                    sourceClosedRect,
-                    Color.White);
-            }
+            // Draw open door if isOpen is true
+            sb.Draw(
+                spriteSheet,
+                positionRect,
+                sourceRect,
+                Color.White);
         }
 
         /// <summary>

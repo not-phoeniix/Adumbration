@@ -42,7 +42,7 @@ namespace Adumbration
         private Texture2D playerTexture;
 
         // Door Test
-        private Door door;
+        private Door testDoor;
         private LightBeam beam;
         private Texture2D doorTexture;
 
@@ -109,20 +109,19 @@ namespace Adumbration
                     8));            // pos
 
             // Door Object
-            door = new Door(
+            testDoor = new Door(
                 false,
-                doorTexture,
-                new Rectangle(  // Source Rectangle
-                    64,         // - X Location
-                    0,          // - Y Location
-                    16,         // - Width
-                    10),        // - Height
+                fullSpritesheet,
+                new Rectangle(                                  // Source Rectangle
+                    4 * 16,                                          // - X Location
+                    6 * 16,                                          // - Y Location
+                    16,                                          // - Width
+                    16),                                         // - Height
                 new Rectangle(                                  // Position
-                    _graphics.PreferredBackBufferWidth / 2,     // - X Location
-                    _graphics.PreferredBackBufferHeight / 2,    // - Y Location
-                    36,                                         // - Width
-                    48));                                       // - Height
-
+                    _graphics.PreferredBackBufferWidth / 2 - 200,     // - X Location
+                    _graphics.PreferredBackBufferHeight / 2 - 240,    // - Y Location
+                    16,                                         // - Width
+                    16));                                       // - Height
 
             //light beam test
             beam = new LightBeam(
@@ -255,7 +254,7 @@ namespace Adumbration
             // Draw test beam
             beam.Draw(_spriteBatch);
             
-            //door.Draw(_spriteBatch);
+            testDoor.Draw(_spriteBatch);
 
             _spriteBatch.End();
 
