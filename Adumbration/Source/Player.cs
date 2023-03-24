@@ -104,6 +104,7 @@ namespace Adumbration
             secondsPerFrame = 1.0 / fps;
             timeCounter = 0;
             currentFrame = 1;
+            //widthOfSingleSprite = spriteSheet.Width;
         }
 
         // Methods

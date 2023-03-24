@@ -13,7 +13,6 @@ namespace Adumbration
     {
         // Fields
         private bool isOpen;
-        private Rectangle sourceClosedRect;
 
         // Properties
 
@@ -59,24 +58,12 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Draw(SpriteBatch sb)
         {
-            if (isOpen)
-            {
-                // Draw open door if isOpen is true
-                sb.Draw(
-                    spriteSheet,
-                    Position,
-                    sourceRect,
-                    Color.White);
-            }
-            else
-            {
-                // Draw closed door otherwise
-                sb.Draw(
-                    spriteSheet,
-                    Position,
-                    sourceClosedRect,
-                    Color.White);
-            }
+            // Draw open door if isOpen is true
+            sb.Draw(
+                spriteSheet,
+                positionRect,
+                sourceRect,
+                Color.White);
         }
 
         /// <summary>
@@ -90,10 +77,7 @@ namespace Adumbration
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         /// <summary>
