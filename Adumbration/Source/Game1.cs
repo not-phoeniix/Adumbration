@@ -128,7 +128,8 @@ namespace Adumbration
                     _graphics.PreferredBackBufferHeight / 2 - 110,      // - Y Location
                     10,                                                 // - Width
                     10),
-                    Direction.Down);                                               // - Height
+                    Direction.Down);                                              // - Height
+            #endregion
 
             #region PenumbraSetup
 
@@ -186,7 +187,7 @@ namespace Adumbration
 
             player.Update(gameTime, LevelManager.Instance.CurrentLevel);
             player.IsDead(beam);
-            beam.Update(gameTime, levelTest);
+            beam.Update(gameTime, LevelManager.Instance.CurrentLevel);
 
             #region Zoom
 
