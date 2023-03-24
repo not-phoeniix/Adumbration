@@ -46,7 +46,7 @@ namespace Adumbration
 
         // Dashing variables
         private bool hasDash;
-        private const float MaxDashTime = 0.5f;
+        private const float MaxDashTime = 0.2f;
         private float currentDashTime;
         private bool isDashing;
 
@@ -653,10 +653,7 @@ namespace Adumbration
                     {
                         // They're dashing
                         isDashing = true;
-                        for (int i = 0; i < dashSpeed; i++)
-                        {
-                            positionRect.Y -= 1;
-                        }
+                        positionRect.Y -= 1;
                     }
                 }
                 // Otherwise they're not
@@ -702,10 +699,9 @@ namespace Adumbration
                     {
                         // They're dashing
                         isDashing = true;
-                        for (int i = 0; i < dashSpeed; i++)
-                        {
-                            positionRect.X += 1;
-                        }
+
+                        positionRect.X += 1;
+
                     }
                 }
                 // Otherwise they're not
@@ -756,10 +752,9 @@ namespace Adumbration
                     {
                         // They're dashing
                         isDashing = true;
-                        for (int i = 0; i < dashSpeed; i++)
-                        {
-                            positionRect.X -= 1;
-                        }
+
+                        positionRect.X -= 1;
+
                     }
                 }
                 // Otherwise they're not
@@ -811,10 +806,9 @@ namespace Adumbration
                     {
                         // They're dashing
                         isDashing = true;
-                        for (int i = 0; i < dashSpeed; i++)
-                        {
-                            positionRect.Y += 1;
-                        }
+
+                        positionRect.Y += 1;
+
                     }
                 }
                 // Otherwise they're not
@@ -923,7 +917,7 @@ namespace Adumbration
                 // makes player face RIGHT
                 playerIsFlipped = false;
 
-                
+
             }
         }
 
@@ -964,7 +958,7 @@ namespace Adumbration
                 // makes player face LEFT
                 playerIsFlipped = true;
 
-                
+
             }
         }
 
