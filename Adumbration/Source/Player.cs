@@ -1052,24 +1052,6 @@ namespace Adumbration
 
                 // Move Player Down
                 positionRect.Y += speed;
-
-                // While moving in the South direction
-                //foreach (GameObject tile in currentLevel.TileList)
-                //{
-                //    // If the player collides with a wall
-                //    if (tile is Wall && IsColliding(tile))
-                //    {
-                //        //ignores the wall
-                //        positionRect.Y = positionRect.Y;
-                //        positionRect.X = currentX;
-
-                //        //Allow player to move west
-                //        GodWestMove(currentKbState, currentLevel, currentX, currentY);
-
-                //        //Allow player to move east
-                //        GodEastMove(currentKbState, currentLevel, currentX, currentY);
-                //    }
-                //}
             }
         }
         #endregion
