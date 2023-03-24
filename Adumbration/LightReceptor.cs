@@ -9,6 +9,11 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Adumbration
 {
+    /// <summary>
+    /// the light receptor class will basically be a wall tile 
+    /// that catches the light
+    /// it's 
+    /// </summary>
     internal class LightReceptor : Wall
     {
         private bool activated;
