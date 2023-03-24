@@ -45,7 +45,7 @@ namespace Adumbration
 
         // Game objects
         private Player player;
-        private Door door;
+        private Door closedDoor;
         private LightBeam beam;
 
         #endregion
@@ -101,15 +101,19 @@ namespace Adumbration
                 new Rectangle(50, 50, 6, 8));   // initial pos
 
             // Door Object
-            door = new Door(
-                false,                          // isOpen
-                doorTexture,                    // texture
-                new Rectangle(64, 0, 16, 10),   // source rect
-                new Rectangle(                  // position
-                    (int)screenRes.X / 2, 
-                    (int)screenRes.Y / 2, 
-                    36, 
-                    48));
+            closedDoor = new Door(
+                false,
+                fullSpritesheet,
+                new Rectangle(                                          // Source Rectangle
+                    4 * 16,                                             // - X Location
+                    6 * 16,                                             // - Y Location
+                    16,                                                 // - Width
+                    16),                                                // - Height
+                new Rectangle(                                          // Position
+                    _graphics.PreferredBackBufferWidth / 2 - 215,       // - X Location
+                    _graphics.PreferredBackBufferHeight / 2 - 240,      // - Y Location
+                    16,                                                 // - Width
+                    16));                                               // - Height
 
             // light beam test
             beam = new LightBeam(
@@ -257,7 +261,7 @@ namespace Adumbration
             // Draw test beam
             beam.Draw(_spriteBatch);
             
-            //door.Draw(_spriteBatch);
+            closedDoor.Draw(_spriteBatch);
 
             _spriteBatch.End();
 
