@@ -112,16 +112,16 @@ namespace Adumbration
             testDoor = new Door(
                 false,
                 fullSpritesheet,
-                new Rectangle(                                  // Source Rectangle
-                    4 * 16,                                          // - X Location
-                    6 * 16,                                          // - Y Location
-                    16,                                          // - Width
-                    16),                                         // - Height
-                new Rectangle(                                  // Position
-                    _graphics.PreferredBackBufferWidth / 2 - 200,     // - X Location
-                    _graphics.PreferredBackBufferHeight / 2 - 240,    // - Y Location
-                    16,                                         // - Width
-                    16));                                       // - Height
+                new Rectangle(                                          // Source Rectangle
+                    4 * 16,                                             // - X Location
+                    6 * 16,                                             // - Y Location
+                    16,                                                 // - Width
+                    16),                                                // - Height
+                new Rectangle(                                          // Position
+                    _graphics.PreferredBackBufferWidth / 2 - 215,       // - X Location
+                    _graphics.PreferredBackBufferHeight / 2 - 240,      // - Y Location
+                    16,                                                 // - Width
+                    16));                                               // - Height
 
             //light beam test
             beam = new LightBeam(
