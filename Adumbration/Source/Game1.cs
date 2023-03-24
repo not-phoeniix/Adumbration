@@ -117,15 +117,18 @@ namespace Adumbration
 
             // light beam test
             beam = new LightBeam(
-                fullSpritesheet,                    // spritesheet
-                new Rectangle(64, 0, 1, 1),         // source
-                new Rectangle(                      // pos
-                    (int)screenRes.X / 2 - 200,     // - X Location
-                    (int)screenRes.Y / 2 - 100,     // - Y Location
-                    10,                             // - Width
-                    10));                           // - Height
-
-            #endregion
+                fullSpritesheet,
+                new Rectangle(      //source rectangle
+                    64,
+                    0,
+                    1,
+                    1),
+                new Rectangle(
+                    _graphics.PreferredBackBufferWidth / 2 - 300,       // - X Location
+                    _graphics.PreferredBackBufferHeight / 2 - 110,      // - Y Location
+                    10,                                                 // - Width
+                    10),
+                    Direction.Down);                                               // - Height
 
             #region PenumbraSetup
 
@@ -183,6 +186,7 @@ namespace Adumbration
 
             player.Update(gameTime, LevelManager.Instance.CurrentLevel);
             player.IsDead(beam);
+            beam.Update(gameTime, levelTest);
 
             #region Zoom
 

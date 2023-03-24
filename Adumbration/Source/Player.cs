@@ -122,7 +122,7 @@ namespace Adumbration
                 currentMode = PlayerMode.GodMode;
                 System.Diagnostics.Debug.WriteLine("god mode");
             }
-            else if(currentKbState.IsKeyDown(Keys.F11) && previousKbState.IsKeyUp(Keys.F11))
+            else if (currentKbState.IsKeyDown(Keys.F11) && previousKbState.IsKeyUp(Keys.F11))
             {
                 currentMode = PlayerMode.NormalMode;
                 System.Diagnostics.Debug.WriteLine("normal mode");
@@ -372,107 +372,107 @@ namespace Adumbration
                         }
 
                         #region// Keeping this in case we need to go back to it
-            //foreach (GameObject tile in currentLevel.TileList)
-            //{
-            //    // If the player is touching a wall
-            //    if (tile is Wall && recPosition.Intersects(tile.Position))
-            //    {
-            //        // They're touching a wall
-            //        isTouchingWall = true;
-            //    }
-            //    // Otherwise
-            //    if (tile is Floor && recPosition.Intersects(tile.Position))
-            //    {
-            //        // They're not
-            //        isTouchingWall = false;
-            //    }
-            //}
-            #endregion
+                        //foreach (GameObject tile in currentLevel.TileList)
+                        //{
+                        //    // If the player is touching a wall
+                        //    if (tile is Wall && recPosition.Intersects(tile.Position))
+                        //    {
+                        //        // They're touching a wall
+                        //        isTouchingWall = true;
+                        //    }
+                        //    // Otherwise
+                        //    if (tile is Floor && recPosition.Intersects(tile.Position))
+                        //    {
+                        //        // They're not
+                        //        isTouchingWall = false;
+                        //    }
+                        //}
+                        #endregion
 
                         #region// Diagonal Dashes           
-            // North East
-            if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&                                     // If moving north east
-                hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
-            {
-                if (currentDashTime < MaxDashTime)
-                {
-                    isDashing = true;
-                    for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                    {
-                        // Changes position by 50 pixels in the diagonal direction
-                        positionRect.X += 1;         // X component of the vector
-                        positionRect.Y -= 1;         // Y component of the vector
-                        //hasDash = false;
-                    }
-                }
-            }
+                        // North East
+                        if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&                                     // If moving north east
+                            hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
+                        {
+                            if (currentDashTime < MaxDashTime)
+                            {
+                                isDashing = true;
+                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                                {
+                                    // Changes position by 50 pixels in the diagonal direction
+                                    positionRect.X += 1;         // X component of the vector
+                                    positionRect.Y -= 1;         // Y component of the vector
+                                                                 //hasDash = false;
+                                }
+                            }
+                        }
 
-            // North West
-            if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&                                    // If moving north west
-               hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
-            {
-                if (currentDashTime < MaxDashTime)
-                {
-                    isDashing = true;
-                    for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                    {
-                        // Changes position by 50 pixels in the diagonal direction
-                        positionRect.X -= 1;         // X component of the vector
-                        positionRect.Y -= 1;         // Y component of the vector
-                        //hasDash = false;
-                    }
-                }
-            }
+                        // North West
+                        if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&                                    // If moving north west
+                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
+                        {
+                            if (currentDashTime < MaxDashTime)
+                            {
+                                isDashing = true;
+                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                                {
+                                    // Changes position by 50 pixels in the diagonal direction
+                                    positionRect.X -= 1;         // X component of the vector
+                                    positionRect.Y -= 1;         // Y component of the vector
+                                                                 //hasDash = false;
+                                }
+                            }
+                        }
 
-            // South East
-            if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&                                   // If moving south east
-               hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed
-            {
-                if (currentDashTime < MaxDashTime)
-                {
-                    isDashing = true;
-                    for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                    {
-                        // Changes position by 50 pixels in the diagonal direction
-                        positionRect.X += 1;         // X component of the vector
-                        positionRect.Y += 1;         // Y component of the vector
-                        //hasDash = false;
-                    }
-                }
-            }
+                        // South East
+                        if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&                                   // If moving south east
+                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed
+                        {
+                            if (currentDashTime < MaxDashTime)
+                            {
+                                isDashing = true;
+                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                                {
+                                    // Changes position by 50 pixels in the diagonal direction
+                                    positionRect.X += 1;         // X component of the vector
+                                    positionRect.Y += 1;         // Y component of the vector
+                                                                 //hasDash = false;
+                                }
+                            }
+                        }
 
-            // South West
-            if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&                                   // If moving south west
-               hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed                    
-            {
-                if (currentDashTime < MaxDashTime)
-                {
-                    isDashing = true;
-                    for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                    {
-                        // Changes position by 50 pixels in the diagonal direction
-                        positionRect.X -= 1;         // X component of the vector
-                        positionRect.Y += 1;         // Y component of the vector
-                        //hasDash = false;
-                    }
-                }
-            }
-            #endregion
+                        // South West
+                        if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&                                   // If moving south west
+                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed                    
+                        {
+                            if (currentDashTime < MaxDashTime)
+                            {
+                                isDashing = true;
+                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
+                                {
+                                    // Changes position by 50 pixels in the diagonal direction
+                                    positionRect.X -= 1;         // X component of the vector
+                                    positionRect.Y += 1;         // Y component of the vector
+                                                                 //hasDash = false;
+                                }
+                            }
+                        }
+                        #endregion
 
                         #region // Movement
-            // North Movement
-            NorthMovement(currentKbState, currentLevel, currentX);
+                        // North Movement
+                        NorthMovement(currentKbState, currentLevel, currentX);
 
-            // East Movement
-            EastMovement(currentKbState, currentLevel, currentX, currentY);
+                        // East Movement
+                        EastMovement(currentKbState, currentLevel, currentX, currentY);
 
-            // West Movement
-            WestMovement(currentKbState, currentLevel, currentX, currentY);
+                        // West Movement
+                        WestMovement(currentKbState, currentLevel, currentX, currentY);
 
-            // South Movement
-            SouthMovement(currentKbState, currentLevel, currentX, currentY);
-            #endregion
-                        
+                        // South Movement
+                        SouthMovement(currentKbState, currentLevel, currentX, currentY);
+                        #endregion
+
 
 
                         // In case we need to use them keep them here
@@ -923,19 +923,7 @@ namespace Adumbration
                 // makes player face RIGHT
                 playerIsFlipped = false;
 
-                foreach (GameObject tile in currentLevel.TileList)
-                {
-                    // if the player is colliding with a wall
-                    if (tile is Wall && IsColliding(tile))
-                    {
-                        //ignores the wall and continues moving
-                        positionRect.X = positionRect.X;
-                        positionRect.Y = currentY;
-
-                        // North Movement
-                        GodNorthMove(currentKbState, currentLevel, currentX);
-                    }
-                }
+                
             }
         }
 
@@ -976,21 +964,7 @@ namespace Adumbration
                 // makes player face LEFT
                 playerIsFlipped = true;
 
-                // While the player is moving in the West direction 
-                foreach (GameObject tile in currentLevel.TileList)
-                {
-                    // If the player collides with a wall
-                    if (tile is Wall && IsColliding(tile))
-                    {
-                        //ignores the wall
-                        positionRect.X = positionRect.X;
-                        positionRect.Y = currentY;
-
-                        // North Movement
-                        GodNorthMove(currentKbState, currentLevel, currentX);
-
-                    }
-                }
+                
             }
         }
 
@@ -1060,7 +1034,7 @@ namespace Adumbration
                         currentFrame = 3;
                     }
                 }
-                
+
                 // Reset time counter
                 timeCounter -= secondsPerFrame;
             }
@@ -1093,7 +1067,7 @@ namespace Adumbration
         /// </summary>
         /// <param name="sb"></param>
         /// <param name="flip">Should be able to flip horizontally.</param>
-        private void DrawStanding (SpriteBatch sb, SpriteEffects flip)
+        private void DrawStanding(SpriteBatch sb, SpriteEffects flip)
         {
             if (currentState == PlayerState.FacingLeft || currentState == PlayerState.FacingRight)
             {
