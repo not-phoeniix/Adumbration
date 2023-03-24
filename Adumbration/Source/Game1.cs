@@ -42,7 +42,7 @@ namespace Adumbration
         private Texture2D playerTexture;
 
         // Door Test
-        private Door testDoor;
+        private Door closedDoor;
         private LightBeam beam;
         private Texture2D doorTexture;
 
@@ -109,7 +109,7 @@ namespace Adumbration
                     8));            // pos
 
             // Door Object
-            testDoor = new Door(
+            closedDoor = new Door(
                 false,
                 fullSpritesheet,
                 new Rectangle(                                          // Source Rectangle
@@ -254,7 +254,7 @@ namespace Adumbration
             // Draw test beam
             beam.Draw(_spriteBatch);
             
-            testDoor.Draw(_spriteBatch);
+            closedDoor.Draw(_spriteBatch);
 
             _spriteBatch.End();
 

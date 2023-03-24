@@ -13,12 +13,6 @@ namespace Adumbration
     {
         // Fields
         private bool isOpen;
-        private Rectangle sourceClosedRect;
-
-        // Door sprite sheet information
-        private int numSpritesInSheet;
-        private int widthOfSingleSprite;
-        private int currentFrame;
 
         // Properties
 
@@ -45,11 +39,6 @@ namespace Adumbration
              : base(spriteSheet, sourceRect, position)
         {
             this.isOpen = isOpen;
-
-            // Door information
-            numSpritesInSheet = 5;
-            widthOfSingleSprite = spriteSheet.Width;
-            currentFrame = 5;
         }
 
         // Methods
@@ -88,10 +77,7 @@ namespace Adumbration
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         /// <summary>
