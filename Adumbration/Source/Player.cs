@@ -623,12 +623,16 @@ namespace Adumbration
             return false;
         }
 
+        /// <summary>
+        /// If the player is killed, it will respawn at the start of the room.
+        /// </summary>
+        /// <param name="beam">The light beam.</param>
         public void IsDead(GameObject beam)
         {
             if (this.IsColliding(beam) && !isDashing)
             {
-                positionRect.X = 150;
-                positionRect.Y = 150;
+                positionRect.X = 50;
+                positionRect.Y = 50;
             }
         }
 
