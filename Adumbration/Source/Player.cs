@@ -594,7 +594,7 @@ namespace Adumbration
         /// <summary>
         /// Draws the player normally according to internal position.
         /// </summary>
-        /// <param name="sb">SpriteBatch object to draw with</param>
+        /// <param name="sb">SpriteBatch object to draw with.</param>
         public override void Draw(SpriteBatch sb)
         {
             sb.Draw(
@@ -615,11 +615,13 @@ namespace Adumbration
         /// <returns>True if player is colliding with a GameObject, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
+            // As long as the objects are colliding, return true
             if (this.Position.Intersects(obj.Position))
             {
                 return true;
             }
 
+            // When the collision ends, return false
             return false;
         }
 
@@ -629,6 +631,8 @@ namespace Adumbration
         /// <param name="beam">The light beam.</param>
         public void IsDead(GameObject beam)
         {
+            // When the player collides with a light beam, respawn at starting point
+            // This is just for the test room
             if (this.IsColliding(beam) && !isDashing)
             {
                 positionRect.X = 50;
