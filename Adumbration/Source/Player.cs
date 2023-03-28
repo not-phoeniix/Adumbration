@@ -55,7 +55,6 @@ namespace Adumbration
         private int prevY;
 
         // Animation fields
-        private int numSpritesInSheet;
         private int widthOfSingleSprite;
         private int currentFrame;
         private double fps;
@@ -134,6 +133,7 @@ namespace Adumbration
                 case PlayerState.FacingLeft:
                     {
                         currentFrame = 1;
+                        sourceRect.X = 0;
 
                         // If W is pressed, face up
                         if (currentKbState.IsKeyDown(Keys.W))
@@ -165,6 +165,7 @@ namespace Adumbration
                 case PlayerState.MovingLeft:
                     {
                         currentFrame = 1;
+                        sourceRect.X = 0;
 
                         // If W is pressed, move up
                         if (currentKbState.IsKeyDown(Keys.W))
@@ -202,6 +203,7 @@ namespace Adumbration
                 case PlayerState.FacingRight:
                     {
                         currentFrame = 1;
+                        sourceRect.X = 0;
 
                         // If W is pressed, face up
                         if (currentKbState.IsKeyDown(Keys.W))
@@ -233,6 +235,7 @@ namespace Adumbration
                 case PlayerState.MovingRight:
                     {
                         currentFrame = 1;
+                        sourceRect.X = 0;
 
                         // If W is pressed, move up
                         if (currentKbState.IsKeyDown(Keys.W))
@@ -270,7 +273,7 @@ namespace Adumbration
                 case PlayerState.FacingUp:
                     {
                         currentFrame = 3;
-                        sourceRect.X = widthOfSingleSprite * currentFrame;
+                        sourceRect.X = 14;
 
                         // If W is pressed, move up
                         if (currentKbState.IsKeyDown(Keys.W))
@@ -308,7 +311,7 @@ namespace Adumbration
                 case PlayerState.MovingUp:
                     {
                         currentFrame = 3;
-                        sourceRect.X = widthOfSingleSprite * currentFrame;
+                        sourceRect.X = 14;
 
                         // If W is pressed, move up
                         if (currentKbState.IsKeyDown(Keys.W))
@@ -1014,24 +1017,24 @@ namespace Adumbration
         /// <param name="gameTime">Info about time from MonoGame.</param>
         private void UpdateAnimation(GameTime gameTime)
         {
-            //
+            // Increment the time
             timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
 
-            //
+            // 
             if (timeCounter >= secondsPerFrame)
             {
                 // Change which frame is active, ensuring the frame is reset back to the first frame in the animation
                 currentFrame++;
-                if (currentState != PlayerState.FacingUp && currentState != PlayerState.MovingUp)
+                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
                 {
-                    if (currentFrame >= 2)
+                    if (currentFrame >= 3)
                     {
                         currentFrame = 1;
                     }
                 }
-                else
+                else if (currentState == PlayerState.MovingUp)
                 {
-                    if (currentFrame >= 4)
+                    if (currentFrame >= 5)
                     {
                         currentFrame = 3;
                     }
@@ -1089,7 +1092,7 @@ namespace Adumbration
                     spriteSheet,
                     positionRect,
                     new Rectangle(
-                        0,
+                        14,
                         0,
                         widthOfSingleSprite,
                         spriteSheet.Height),
