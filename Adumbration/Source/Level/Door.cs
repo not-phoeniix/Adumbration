@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 namespace Adumbration
 {
@@ -49,7 +50,14 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Update(GameTime gameTime)
         {
-
+            if (!isOpen)
+            {
+                sourceRect.X = 4 * 16;
+            }
+            else if (isOpen)
+            {
+                sourceRect.X = 0;
+            }
         }
 
         /// <summary>
@@ -85,9 +93,13 @@ namespace Adumbration
         /// </summary>
         public void Interact(Player myPlayer)
         {
-            if (isOpen && IsColliding(myPlayer))
+            KeyboardState kb = Keyboard.GetState();
+            if (IsColliding(myPlayer))
             {
-
+                if (kb.IsKeyDown(Keys.E))
+                {
+                    isOpen = true;
+                }
             }
         }
     }
