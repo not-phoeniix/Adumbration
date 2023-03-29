@@ -14,6 +14,7 @@ namespace Adumbration
     {
         // Fields
         private bool isOpen;
+        private Rectangle doorHitbox;
 
         // Properties
 
@@ -24,6 +25,15 @@ namespace Adumbration
         {
             get { return isOpen; }
             set { isOpen = value; }
+        }
+
+        /// <summary>
+        /// Property that creates a hitbox for the door.
+        /// </summary>
+        public Rectangle DoorHitbox
+        {
+            get { return doorHitbox; }
+            set { doorHitbox = value; }
         }
 
         // Constructor(s)
@@ -40,6 +50,13 @@ namespace Adumbration
              : base(spriteSheet, sourceRect, position)
         {
             this.isOpen = isOpen;
+
+            // Create door hitbox
+            doorHitbox = new Rectangle(
+                position.X,
+                position.Y,
+                position.Width,
+                position.Height * 2);
         }
 
         // Methods
@@ -81,7 +98,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            if (obj.Position.Intersects(Position))
+            if (obj.Position.Intersects(DoorHitbox))
             {
                 return true;
             }
@@ -91,9 +108,8 @@ namespace Adumbration
         /// <summary>
         /// Loads the next level.
         /// </summary>
-        public void Interact(Player myPlayer)
+        public void Interact(Player myPlayer, KeyboardState kb)
         {
-            KeyboardState kb = Keyboard.GetState();
             if (IsColliding(myPlayer))
             {
                 if (kb.IsKeyDown(Keys.E))
