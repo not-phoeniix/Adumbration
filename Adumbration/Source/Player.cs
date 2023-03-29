@@ -103,7 +103,7 @@ namespace Adumbration
             secondsPerFrame = 1.0 / fps;
             timeCounter = 0;
             currentFrame = 1;
-            //widthOfSingleSprite = spriteSheet.Width;
+            widthOfSingleSprite = 7;
         }
 
         // Methods
@@ -166,6 +166,7 @@ namespace Adumbration
                     {
                         currentFrame = 1;
                         sourceRect.X = 0;
+
 
                         // If W is pressed, move up
                         if (currentKbState.IsKeyDown(Keys.W))
@@ -1047,16 +1048,25 @@ namespace Adumbration
                 currentFrame++;
                 if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
                 {
-                    if (currentFrame >= 3)
+                    if (currentFrame >= 3 || currentFrame == 1)
                     {
                         currentFrame = 1;
+                        sourceRect.X = 0;
+                    }
+                    else
+                    {
+                        currentFrame = currentFrame * widthOfSingleSprite;
                     }
                 }
                 else if (currentState == PlayerState.MovingUp)
                 {
-                    if (currentFrame >= 5)
+                    if (currentFrame >= 5 || currentFrame == 3)
                     {
                         currentFrame = 3;
+                    }
+                    else
+                    {
+                        currentFrame = currentFrame * widthOfSingleSprite;
                     }
                 }
 
