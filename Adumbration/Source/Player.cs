@@ -367,11 +367,31 @@ namespace Adumbration
                         {
                             currentDashTime = 0;
                             //hasDash = false;
+                            
+                            // Draw non-dash textures
+                            if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
+                            {
+                                sourceRect.X = 0;
+                            }
+                            else if (currentState == PlayerState.MovingUp)
+                            {
+                                sourceRect.X = 14;
+                            }
                         }
                         // Increase timer
                         else if (isDashing)
                         {
                             currentDashTime += 0.1f;
+
+                            // Draw dash textures
+                            if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
+                            {
+                                sourceRect.X = 28;
+                            }
+                            else if (currentState == PlayerState.MovingUp)
+                            {
+                                sourceRect.X = 42;
+                            }
                         }
 
                         #region// Keeping this in case we need to go back to it
