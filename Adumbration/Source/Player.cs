@@ -46,7 +46,7 @@ namespace Adumbration
 
         // Dashing variables
         private bool hasDash;
-        private const float MaxDashTime = 0.2f;
+        private const float MaxDashTime = 0.5f;
         private float currentDashTime;
         private bool isDashing;
 
@@ -103,6 +103,13 @@ namespace Adumbration
             secondsPerFrame = 1.0 / fps;
             timeCounter = 0;
             currentFrame = 1;
+
+            // Set player speed
+            speed = 2;
+
+            // Set player dash speed
+            dashSpeed = speed * 2;
+
             //widthOfSingleSprite = spriteSheet.Width;
         }
 
@@ -352,12 +359,6 @@ namespace Adumbration
             {
                 case PlayerMode.NormalMode:
                     {
-                        // Set player speed
-                        speed = 2;
-
-                        // Set player dash speed
-                        dashSpeed = speed * 5;
-
                         // Player's current X and Y positions
                         int currentX = positionRect.X;
                         int currentY = positionRect.Y;
@@ -476,8 +477,6 @@ namespace Adumbration
                         SouthMovement(currentKbState, currentLevel, currentX, currentY);
                         #endregion
 
-
-
                         // In case we need to use them keep them here
                         prevX = currentX;
                         prevY = currentY;
@@ -485,12 +484,6 @@ namespace Adumbration
                     }
                 case PlayerMode.GodMode:
                     {
-                        // Set player speed
-                        speed = 5;
-
-                        // Set player dash speed
-                        dashSpeed = speed * 5;
-
                         // Player's current X and Y positions
                         int currentX = positionRect.X;
                         int currentY = positionRect.Y;
@@ -576,7 +569,6 @@ namespace Adumbration
                             }
                         }
                         #endregion
-
 
                         #region//all movements inside the godmode that allows the user to leave the stage and explore the entire window
                         GodNorthMove(currentKbState, currentLevel, currentX);
@@ -664,7 +656,7 @@ namespace Adumbration
                     {
                         // They're dashing
                         isDashing = true;
-                        positionRect.Y -= 1;
+                        positionRect.Y -= dashSpeed;
                     }
                 }
                 // Otherwise they're not
@@ -710,8 +702,7 @@ namespace Adumbration
                     {
                         // They're dashing
                         isDashing = true;
-
-                        positionRect.X += 1;
+                        positionRect.X += dashSpeed;
 
                     }
                 }
@@ -763,8 +754,7 @@ namespace Adumbration
                     {
                         // They're dashing
                         isDashing = true;
-
-                        positionRect.X -= 1;
+                        positionRect.X -= dashSpeed;
 
                     }
                 }
@@ -817,8 +807,7 @@ namespace Adumbration
                     {
                         // They're dashing
                         isDashing = true;
-
-                        positionRect.Y += 1;
+                        positionRect.Y += dashSpeed;
 
                     }
                 }
