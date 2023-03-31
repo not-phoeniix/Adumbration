@@ -58,6 +58,9 @@ namespace Adumbration
         /// </summary>
         /// <param name="obj">Reference to the object in collision.</param>
         /// <returns>True if collision occurs, otherwise false.</returns>
-        public abstract bool IsColliding(GameObject obj);
+        public virtual bool IsColliding(GameObject obj)
+        {
+            return positionRect.Intersects(obj.Position);
+        }
     }
 }
