@@ -415,15 +415,15 @@ namespace Adumbration
                         // North Movement
                         NorthMovement(currentKbState, currentLevel, currentX);
 
-                        // East Movement
-                        EastMovement(currentKbState, currentLevel, currentX, currentY);
+            // East Movement
+            EastMovement(currentKbState, currentLevel, currentX, currentY);
 
-                        // West Movement
-                        WestMovement(currentKbState, currentLevel, currentX, currentY);
+            // West Movement
+            WestMovement(currentKbState, currentLevel, currentX, currentY);
 
-                        // South Movement
-                        SouthMovement(currentKbState, currentLevel, currentX, currentY);
-                        #endregion
+            // South Movement
+            SouthMovement(currentKbState, currentLevel, currentX, currentY);
+            #endregion
 
 
 
