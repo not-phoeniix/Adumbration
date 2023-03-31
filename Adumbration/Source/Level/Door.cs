@@ -98,7 +98,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            if (obj.Position.Intersects(DoorHitbox))
+            if (obj.Position.Intersects(this.DoorHitbox))
             {
                 return true;
             }
