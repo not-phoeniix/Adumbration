@@ -126,8 +126,8 @@ namespace Adumbration
                 new Rectangle(
                     _graphics.PreferredBackBufferWidth / 2 - 300,       // - X Location
                     _graphics.PreferredBackBufferHeight / 2 - 110,      // - Y Location
-                    10,                                                 // - Width
-                    10),
+                    2,                                                 // - Width
+                    2),
                     Direction.Down);                                              // - Height
             #endregion
 
