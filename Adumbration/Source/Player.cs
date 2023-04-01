@@ -467,7 +467,7 @@ namespace Adumbration
         }
         #endregion
 
-        #region//Animations
+        #region// Animations
         /// <summary>
         /// Helper for updating player's animation based on time.
         /// </summary>

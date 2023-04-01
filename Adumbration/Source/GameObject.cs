@@ -43,7 +43,7 @@ namespace Adumbration
         /// <summary>
         /// will be changed to update anything that happens to this SPECIFIC sprite
         /// </summary>
-        public virtual void Update(GameTime gameTime) {}
+        public virtual void Update(GameTime gameTime) { }
 
         /// <summary>
         /// Draws this GameObject to the screen with given position
