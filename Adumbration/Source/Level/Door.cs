@@ -1,7 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+<<<<<<< HEAD
 using Microsoft.Xna.Framework.Input;
 using SharpDX.XAudio2;
+=======
+>>>>>>> parent of 10d29d3 (Set up door texture change function but cannot currently test it because the wall blocks the way.)
 
 namespace Adumbration
 {
@@ -104,6 +107,7 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Update(GameTime gameTime)
         {
+<<<<<<< HEAD
             if (isOpen)
             {
                 sourceRect.X = sourceXOrigin;
@@ -132,6 +136,9 @@ namespace Adumbration
                 }
             }
             previousState = currentState;
+=======
+
+>>>>>>> parent of 10d29d3 (Set up door texture change function but cannot currently test it because the wall blocks the way.)
         }
 
         /// <summary>
@@ -164,6 +171,7 @@ namespace Adumbration
         /// </summary>
         public void Interact(Player myPlayer)
         {
+<<<<<<< HEAD
             KeyboardState currentState = Keyboard.GetState();
 
             if (this.IsColliding(myPlayer) && !isOpen)
@@ -176,6 +184,11 @@ namespace Adumbration
                         isOpen = true;
                     }
                 }
+=======
+            if (isOpen && IsColliding(myPlayer))
+            {
+
+>>>>>>> parent of 10d29d3 (Set up door texture change function but cannot currently test it because the wall blocks the way.)
             }
             previousState = currentState;
         }
