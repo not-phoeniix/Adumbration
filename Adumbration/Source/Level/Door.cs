@@ -163,7 +163,15 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
+<<<<<<< HEAD
             return DoorHitbox.Intersects(obj.Position);
+=======
+            if (obj.Position.Intersects(DoorHitbox))
+            {
+                return true;
+            }
+            return false;
+>>>>>>> parent of 12970d9 (Added to intersects method in door)
         }
 
         /// <summary>
