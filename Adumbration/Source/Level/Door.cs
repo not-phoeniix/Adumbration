@@ -1,9 +1,29 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SharpDX.XAudio2;
 
 namespace Adumbration
 {
+    #region// Delegate(s)
+
+    /// <summary>
+    /// Delegate for methods of the bool return type and take the parameters
+    /// Keys, KeyboardState, and KeyboardState.
+    /// </summary>
+    /// <param name="keys">Key that is pressed.</param>
+    /// <param name="current">Current key being pressed.</param>
+    /// <param name="previous">Previous key that was pressed.</param>
+    /// <returns></returns>
+    public delegate bool KeyPressOnceDelegate(Keys keys, KeyboardState current, KeyboardState previous);
+
+    /// <summary>
+    /// Delegate for methods of the void return type and take the Player parameter
+    /// </summary>
+    /// <param name="player">Reference to the the player game object</param>
+    public delegate void KeyPressDelegate(Player player);
+    #endregion
+
     /// <summary>
     /// Alexander Gough
     /// Door class that inherits from abstract GameObject.
@@ -14,6 +34,23 @@ namespace Adumbration
     {
         // Fields
         private bool isOpen;
+        private Rectangle doorHitbox;
+        private int sourceXOrigin;
+        private GameLevels level;
+        private KeyboardState previousState;
+
+        #region// Event(s)
+
+        /// <summary>
+        /// Tie the methods for if a key is pressed once here.
+        /// </summary>
+        public event KeyPressOnceDelegate OnKeyPressOnce;
+
+        /// <summary>
+        /// Tie the methods for if a key is pressed here.
+        /// </summary>
+        public event KeyPressDelegate OnKeyPress;
+        #endregion
 
         // Properties
 
@@ -24,6 +61,14 @@ namespace Adumbration
         {
             get { return isOpen; }
             set { isOpen = value; }
+        }
+
+        /// <summary>
+        /// Property that creates a hitbox for the door.
+        /// </summary>
+        public Rectangle DoorHitbox
+        {
+            get { return doorHitbox; }
         }
 
         // Constructor(s)
@@ -40,24 +85,53 @@ namespace Adumbration
              : base(spriteSheet, sourceRect, position)
         {
             this.isOpen = isOpen;
+            sourceXOrigin = sourceRect.X;
+
+            // Create door hitbox
+            doorHitbox = new Rectangle(
+                position.X,
+                position.Y,
+                position.Width,
+                position.Height * 2);
         }
 
         // Methods
 
+        #region// Game Loop
         /// <summary>
         /// Updates the game's doors.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
         public override void Update(GameTime gameTime)
         {
-            if (!isOpen)
+            if (isOpen)
+            {
+                sourceRect.X = sourceXOrigin;
+            }
+            else
             {
                 sourceRect.X = 4 * 16;
             }
-            else if (isOpen)
+        }
+
+        public void Update(Player myPlayer)
+        {
+            KeyboardState currentState = Keyboard.GetState();
+
+            if (currentState.IsKeyUp(Keys.E) &&
+                previousState.IsKeyDown(Keys.E) &&
+                DoorHitbox.Contains(myPlayer.Position))
             {
-                sourceRect.X = 0;
+                if (OnKeyPressOnce != null)
+                {
+                    OnKeyPressOnce(Keys.E, currentState, previousState);
+                }
+                if (OnKeyPress != null)
+                {
+                    OnKeyPress(myPlayer);
+                }
             }
+            previousState = currentState;
         }
 
         /// <summary>
@@ -66,13 +140,14 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Draw(SpriteBatch sb)
         {
-            // Draw open door if isOpen is true
+            // Draw door
             sb.Draw(
                 spriteSheet,
                 positionRect,
                 sourceRect,
                 Color.White);
         }
+        #endregion
 
         /// <summary>
         /// Checks for a collision between an object and a door.
@@ -81,11 +156,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            if (obj.Position.Intersects(Position))
-            {
-                return true;
-            }
-            return false;
+            return DoorHitbox.Intersects(obj.Position);
         }
 
         /// <summary>
@@ -93,14 +164,20 @@ namespace Adumbration
         /// </summary>
         public void Interact(Player myPlayer)
         {
-            KeyboardState kb = Keyboard.GetState();
-            if (IsColliding(myPlayer))
+            KeyboardState currentState = Keyboard.GetState();
+
+            if (this.IsColliding(myPlayer) && !isOpen)
             {
-                if (kb.IsKeyDown(Keys.E))
+                if (currentState.IsKeyDown(Keys.E))
                 {
-                    isOpen = true;
+                    previousState = currentState;
+                    if (previousState.IsKeyDown(Keys.E))
+                    {
+                        isOpen = true;
+                    }
                 }
             }
+            previousState = currentState;
         }
     }
 }

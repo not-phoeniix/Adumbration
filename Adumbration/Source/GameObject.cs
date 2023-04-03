@@ -55,7 +55,7 @@ namespace Adumbration
         /// <summary>
         /// will be changed to update anything that happens to this SPECIFIC sprite
         /// </summary>
-        public virtual void Update(GameTime gameTime) {}
+        public virtual void Update(GameTime gameTime) { }
 
         /// <summary>
         /// Draws this GameObject to the screen with given position
@@ -70,6 +70,9 @@ namespace Adumbration
         /// </summary>
         /// <param name="obj">Reference to the object in collision.</param>
         /// <returns>True if collision occurs, otherwise false.</returns>
-        public abstract bool IsColliding(GameObject obj);
+        public virtual bool IsColliding(GameObject obj)
+        {
+            return positionRect.Intersects(obj.Position);
+        }
     }
 }
