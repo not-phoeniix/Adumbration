@@ -45,7 +45,7 @@ namespace Adumbration
 
         // Game objects
         private Player player;
-        private Door door;
+        private Door closedDoor;
         private LightBeam beam;
 
         #endregion
@@ -100,8 +100,8 @@ namespace Adumbration
                 new Rectangle(0, 0, 6, 8),      // source
                 new Rectangle(50, 50, 6, 8));   // initial pos
 
-            // Level 1 Door Object
-            door = new Door(
+            // Door Object
+            closedDoor = new Door(
                 false,
                 fullSpritesheet,
                 new Rectangle(                                          // Source Rectangle
@@ -113,7 +113,7 @@ namespace Adumbration
                     _graphics.PreferredBackBufferWidth / 2 - 215,       // - X Location
                     _graphics.PreferredBackBufferHeight / 2 - 240,      // - Y Location
                     16,                                                 // - Width
-                    16));                                                // - Height   
+                    16));                                               // - Height
 
             // light beam test
             beam = new LightBeam(
@@ -126,9 +126,9 @@ namespace Adumbration
                 new Rectangle(
                     _graphics.PreferredBackBufferWidth / 2 - 300,       // - X Location
                     _graphics.PreferredBackBufferHeight / 2 - 110,      // - Y Location
-                    2,                                                  // - Width
-                    2),                                                 // - Height
-                Direction.Down);                                        // Direction
+                    2,                                                 // - Width
+                    2),
+                    Direction.Down);                                              // - Height
             #endregion
 
             #region PenumbraSetup
@@ -156,13 +156,6 @@ namespace Adumbration
                     }
                 }
             }
-
-            #endregion
-
-            #region// Methods to subscribe to events
-
-            door.OnKeyPress += door.Update;
-            door.OnKeyPress += door.Interact;
 
             #endregion
         }
@@ -272,9 +265,8 @@ namespace Adumbration
 
             // Draw test beam
             beam.Draw(_spriteBatch);
-
-            // Draw Level 1 Door
-            door.Draw(_spriteBatch);
+            
+            closedDoor.Draw(_spriteBatch);
 
             _spriteBatch.End();
 

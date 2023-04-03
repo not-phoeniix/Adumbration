@@ -20,7 +20,7 @@ namespace Adumbration
     /// for if the user runs into something
     /// it will teleport them back to a starting point
     /// </summary>
-    public class LightBeam : GameObject
+    internal class LightBeam : GameObject
     {
         // Fields
         Direction dir;
