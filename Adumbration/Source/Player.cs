@@ -481,7 +481,7 @@ namespace Adumbration
                         SouthMovement(currentKbState, currentLevel, currentX, currentY);
                         #endregion
 
-
+                        MoveMirror(currentLevel, currentKbState);
 
                         // In case we need to use them keep them here
                         prevX = currentX;
@@ -1109,7 +1109,8 @@ namespace Adumbration
 
 
         /// <summary>
-        /// an isolated method to check if the 
+        /// an isolated method to check if the user is colliding
+        /// with a mirror and will allow them to move it.
         /// </summary>
         /// <param name="currentLevel"></param>
         /// <param name="currentKbState"></param>
