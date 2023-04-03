@@ -33,22 +33,6 @@ namespace Adumbration
         }
 
         /// <summary>
-        /// X position of light beam rectangle
-        /// </summary>
-        public int X
-        {
-            get { return positionRect.X; }
-        }
-
-        /// <summary>
-        /// Y position of light beam rectangle
-        /// </summary>
-        public int Y
-        {
-            get { return positionRect.Y; }
-        }
-
-        /// <summary>
         /// Width of the light beam rectangle
         /// </summary>
         public int Width

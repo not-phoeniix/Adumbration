@@ -25,6 +25,18 @@ namespace Adumbration
             set { positionRect = value; }
         }
 
+        public int X
+        {
+            get { return positionRect.X; }
+            set { positionRect.X = value; }
+        }
+
+        public int Y
+        {
+            get { return positionRect.Y; }
+            set { positionRect.Y = value; }
+        }
+
         /// <summary>
         /// Abstract constructor, takes in
         /// </summary>

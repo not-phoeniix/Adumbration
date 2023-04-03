@@ -130,6 +130,9 @@ namespace Adumbration
             // Player States
             switch (currentState)
             {
+
+                #region//animations cases
+
                 case PlayerState.FacingLeft:
                     {
                         currentFrame = 1;
@@ -346,6 +349,7 @@ namespace Adumbration
                         break;
                     }
             }
+            #endregion
 
             // Player Modes
             switch (currentMode)
@@ -465,6 +469,7 @@ namespace Adumbration
                         #region // Movement
                         // North Movement
                         NorthMovement(currentKbState, currentLevel, currentX);
+                        
 
                         // East Movement
                         EastMovement(currentKbState, currentLevel, currentX, currentY);
@@ -927,8 +932,6 @@ namespace Adumbration
 
                 // makes player face RIGHT
                 playerIsFlipped = false;
-
-
             }
         }
 
@@ -968,8 +971,6 @@ namespace Adumbration
 
                 // makes player face LEFT
                 playerIsFlipped = true;
-
-
             }
         }
 
@@ -1105,5 +1106,37 @@ namespace Adumbration
         }
 
         #endregion
+
+
+        /// <summary>
+        /// an isolated method to check if the 
+        /// </summary>
+        /// <param name="currentLevel"></param>
+        /// <param name="currentKbState"></param>
+        private void MoveMirror(Level currentLevel, KeyboardState currentKbState)
+        {
+            foreach (GameObject tile in currentLevel.TileList)
+            {
+                if (tile is Mirror)
+                {
+                    if (currentKbState.IsKeyDown(Keys.Space) && currentKbState.IsKeyDown(Keys.W))
+                    {
+                        tile.Y -= speed;
+                    }
+                    if (currentKbState.IsKeyDown(Keys.Space) && currentKbState.IsKeyDown(Keys.S))
+                    {
+                        tile.Y += speed;
+                    }
+                    if (currentKbState.IsKeyDown(Keys.Space) && currentKbState.IsKeyDown(Keys.A))
+                    {
+                        tile.X -= speed;
+                    }
+                    if (currentKbState.IsKeyDown(Keys.Space) && currentKbState.IsKeyDown(Keys.D))
+                    {
+                        tile.X += speed;
+                    }
+                }
+            }
+        }
     }
 }
