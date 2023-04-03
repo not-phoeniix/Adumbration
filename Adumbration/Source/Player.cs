@@ -354,8 +354,8 @@ namespace Adumbration
                         UpdateAnimation(gameTime);
                         break;
                     }
+                    #endregion
             }
-            #endregion
 
             // Player Modes
             switch (currentMode)
@@ -371,69 +371,59 @@ namespace Adumbration
                         // Player's current X and Y positions
                         int currentX = positionRect.X;
                         int currentY = positionRect.Y;
-            // Player's current X and Y positions
-            int currentX = positionRect.X;
-            int currentY = positionRect.Y;
 
-            // Reset timer
-            if (!isDashing && currentDashTime != 0)
-            {
-                currentDashTime = 0;
-                //hasDash = false;
-            }
-            // Increase timer
-            else if (isDashing)
-            {
-                currentDashTime += 0.1f;
-            }
+                        // Reset timer
+                        if (!isDashing && currentDashTime != 0)
+                        {
+                            currentDashTime = 0;
+                            //hasDash = false;
+                        }
+                        // Increase timer
+                        else if (isDashing)
+                        {
+                            currentDashTime += 0.1f;
+                        }
 
-            // If they are not or no longer dashing
-            if (!isDashing || currentDashTime > MaxDashTime)
-            {
-                // Draw non-dash textures
-                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-                {
-                    sourceRect.X = 0;
-                }
-                else if (currentState == PlayerState.MovingUp)
-                {
-                    sourceRect.X = 14;
-                }
-            }
-            // if they are in the midst of a dash
-            else if (isDashing)
-            {
-                // Draw dash textures
-                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-                {
-                    sourceRect.X = 28;
-                }
-                else if (currentState == PlayerState.MovingUp)
-                {
-                    sourceRect.X = 42;
-                }
-            }
+                        // If they are not or no longer dashing
+                        if (!isDashing || currentDashTime > MaxDashTime)
+                        {
+                            // Draw non-dash textures
+                            if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
+                            {
+                                sourceRect.X = 0;
+                            }
+                            else if (currentState == PlayerState.MovingUp)
+                            {
+                                sourceRect.X = 14;
+                            }
+                        }
+                        // if they are in the midst of a dash
+                        else if (isDashing)
+                        {
+                            // Draw dash textures
+                            if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
+                            {
+                                sourceRect.X = 28;
+                            }
+                            else if (currentState == PlayerState.MovingUp)
+                            {
+                                sourceRect.X = 42;
+                            }
+                        }
 
                         #region // Movement
                         // North Movement
                         NorthMovement(currentKbState, currentLevel, currentX);
-                        
 
                         // East Movement
                         EastMovement(currentKbState, currentLevel, currentX, currentY);
-            #region // Movement
-            // North Movement
-            NorthMovement(currentKbState, currentLevel, currentX);
 
-            // East Movement
-            EastMovement(currentKbState, currentLevel, currentX, currentY);
+                        // West Movement
+                        WestMovement(currentKbState, currentLevel, currentX, currentY);
 
-            // West Movement
-            WestMovement(currentKbState, currentLevel, currentX, currentY);
-
-            // South Movement
-            SouthMovement(currentKbState, currentLevel, currentX, currentY);
-            #endregion
+                        // South Movement
+                        SouthMovement(currentKbState, currentLevel, currentX, currentY);
+                        #endregion
 
 
 
@@ -546,11 +536,16 @@ namespace Adumbration
 
                         GodSouthMove(currentKbState, currentLevel, currentX, currentY);
                         #endregion
-            // In case we need to use them keep them here
-            prevX = currentX;
-            prevY = currentY;
+                        
+                        // In case we need to use them keep them here
+                        prevX = currentX;
+                        prevY = currentY;
 
-            previousKbState = currentKbState;
+                        previousKbState = currentKbState;
+
+                        break;
+                    }
+            }
         }
 
         /// <summary>
@@ -603,6 +598,7 @@ namespace Adumbration
         }
 
         #region// Movement methods
+
         /// <summary>
         /// Controls player's movement north
         /// </summary>
@@ -969,29 +965,15 @@ namespace Adumbration
                 else
                 {
                     isDashing = false;
-                // Otherwise they're not
+                    // Otherwise they're not
 
-                // Move Player Down
-                positionRect.Y += speed;
-                else
-                {
-                    isDashing = false;
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
+                    // Move Player Down
+                    positionRect.Y += speed;
+
                 }
             }
         }
-        #endregion
+    #endregion
 
         #region// Animations
         /// <summary>
@@ -1028,13 +1010,13 @@ namespace Adumbration
                     }
                     else
                     {
-                        currentFrame = currentFrame * widthOfSingleSprite;
+                    currentFrame = currentFrame * widthOfSingleSprite;
                     }
                 }
 
                 // Reset time counter
                 timeCounter -= secondsPerFrame;
-            }
+                }
         }
 
         /// <summary>
@@ -1048,10 +1030,10 @@ namespace Adumbration
                 spriteSheet,
                 positionRect,
                 new Rectangle(
-                    currentFrame * widthOfSingleSprite,
-                    0,
-                    widthOfSingleSprite,
-                    spriteSheet.Height),
+                currentFrame * widthOfSingleSprite,
+                0,
+                widthOfSingleSprite,
+                spriteSheet.Height),
                 Color.White,
                 0.0f,
                 Vector2.Zero,
@@ -1084,10 +1066,10 @@ namespace Adumbration
                     spriteSheet,
                     positionRect,
                     new Rectangle(
-                        14,
-                        0,
-                        widthOfSingleSprite,
-                        spriteSheet.Height),
+                    14,
+                    0,
+                    widthOfSingleSprite,
+                    spriteSheet.Height),
                     Color.White,
                     0.0f,
                     Vector2.Zero,
@@ -1098,36 +1080,5 @@ namespace Adumbration
 
         #endregion
 
-
-        /// <summary>
-        /// an isolated method to check if the 
-        /// </summary>
-        /// <param name="currentLevel"></param>
-        /// <param name="currentKbState"></param>
-        private void MoveMirror(Level currentLevel, KeyboardState currentKbState)
-        {
-            foreach (GameObject tile in currentLevel.TileList)
-            {
-                if (tile is Mirror)
-                {
-                    if (currentKbState.IsKeyDown(Keys.Space) && currentKbState.IsKeyDown(Keys.W))
-                    {
-                        tile.Y -= speed;
-                    }
-                    if (currentKbState.IsKeyDown(Keys.Space) && currentKbState.IsKeyDown(Keys.S))
-                    {
-                        tile.Y += speed;
-                    }
-                    if (currentKbState.IsKeyDown(Keys.Space) && currentKbState.IsKeyDown(Keys.A))
-                    {
-                        tile.X -= speed;
-                    }
-                    if (currentKbState.IsKeyDown(Keys.Space) && currentKbState.IsKeyDown(Keys.D))
-                    {
-                        tile.X += speed;
-                    }
-                }
-            }
-        }
     }
 }
