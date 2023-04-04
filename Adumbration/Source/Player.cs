@@ -1080,31 +1080,5 @@ namespace Adumbration
 
         #endregion
 
-        public void MoveMirror(Level currentLevel, KeyboardState currentState)
-        {
-            foreach (GameObject tile in currentLevel.TileList)
-            {
-                if(tile is Mirror && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
-                {
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.W))
-                    {
-                        tile.Y -= speed;
-                    }
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.S))
-                    {
-                        tile.Y += speed;
-                    }
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.A))
-                    {
-                        tile.X -= speed;    
-                    }
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.D))
-                    {
-                        tile.X += speed;
-                    }
-                }
-            }
-        }
-
     }
 }
