@@ -35,7 +35,8 @@ namespace Adumbration
     {
         // Fields
         private bool isOpen;
-        private Rectangle doorHitbox;
+        private Rectangle unlockHitbox;
+        private Rectangle enterHitbox;
         private int sourceXOrigin;
         private KeyboardState previousState;
         private int level;
@@ -65,12 +66,20 @@ namespace Adumbration
         }
 
         /// <summary>
-        /// Property that creates a hitbox for the door.
+        /// Property that creates a hitbox for unlocking the door.
         /// </summary>
-        public Rectangle DoorHitbox
+        public Rectangle UnlockHitbox
         {
-            get { return doorHitbox; }
+            get { return UnlockHitbox; }
         }
+
+        /// <summary>
+        /// Property that creates a hitbox for entering the door when it is unlocked.
+        /// </summary>
+        /*public Rectangle EnterHitbox
+        {
+            get { return enterHitbox; }
+        }*/
 
         /// <summary>
         /// Gets the int that represents the level the door leads to.
@@ -97,12 +106,18 @@ namespace Adumbration
             this.level = level;
             sourceXOrigin = sourceRect.X;
 
-            // Create door hitbox
-            doorHitbox = new Rectangle(
-                position.X - position.Width,
-                position.Y - position.Height,
+            // Create door hitboxes
+            unlockHitbox = new Rectangle(
+                position.X - position.Width / 2,
+                position.Y - position.Height / 2,
                 position.Width * 2,
                 position.Height * 2);
+
+            /*enterHitbox = new Rectangle(
+                position.X - position.Width / 2,
+                position.Y - position.Height / 2,
+                position.Width * 2,
+                position.Height * 2); */
         }
 
         // Methods
@@ -114,11 +129,11 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Update(GameTime gameTime)
         {
-            if (IsOpen)
+            if (isOpen)
             {
                 sourceRect.X = (level - 1) * 16;
             }
-            else if (!IsOpen)
+            else if (!isOpen)
             {
                 sourceRect.X = 4 * 16;
             }
@@ -134,7 +149,7 @@ namespace Adumbration
 
             if (currentState.IsKeyUp(Keys.E) &&
                 previousState.IsKeyDown(Keys.E) &&
-                DoorHitbox.Contains(myPlayer.Position))
+                UnlockHitbox.Contains(myPlayer.Position))
             {
                 if (OnKeyPressOnce != null)
                 {
@@ -151,7 +166,7 @@ namespace Adumbration
         /// <summary>
         /// Draws the game's doors.
         /// </summary>
-        /// <param name="gameTime">State of the game's time.</param>
+        /// <param name="sb">Reference to the SpriteBatch.</param>
         public override void Draw(SpriteBatch sb)
         {
             // Draw door
@@ -170,7 +185,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            return DoorHitbox.Intersects(obj.Position);
+            return UnlockHitbox.Intersects(obj.Position);
         }
 
         /// <summary>
@@ -181,8 +196,12 @@ namespace Adumbration
         /// <param name="previousState">The previous state of the keyboard.</param>
         public void Interact(Player myPlayer, KeyboardState currentState, KeyboardState previousState)
         {
+            // Set locally declared boolean
             bool ifOpen = false;
-            if (!IsOpen)
+
+            // If the door is not open set 'ifOpen' to true if the E key is pressed
+            // AND when the door's unlock hitbox is colliding with the player.
+            if (!isOpen)
             {
                 if (currentState.IsKeyUp(Keys.E) &&
                     previousState.IsKeyDown(Keys.E) &&
@@ -191,7 +210,20 @@ namespace Adumbration
                     ifOpen = true;
                 }
             }
-            IsOpen = ifOpen;
+
+            // If the door is open, set 'ifOpen' to true.
+            // Then load the level connected to the door.
+            else
+            {
+                ifOpen = true;
+                /*if (EnterHitbox.Intersects(myPlayer.Position))
+                {
+
+                }*/
+            }
+
+            // Set the 'isOpen' field equal to the value of 'ifOpen'.
+            isOpen = ifOpen;
         }
     }
 }
