@@ -15,14 +15,14 @@ namespace Adumbration
     /// <param name="keys">Key that is pressed.</param>
     /// <param name="current">Current key being pressed.</param>
     /// <param name="previous">Previous key that was pressed.</param>
-    /// <returns></returns>
+    /// <returns>True or false for all methods tied to this delegate's event(s).</returns>
     public delegate bool KeyPressOnceDelegate(Keys keys, KeyboardState current, KeyboardState previous);
 
     /// <summary>
     /// Delegate for methods of the void return type and take the Player parameter
     /// </summary>
     /// <param name="player">Reference to the the player game object</param>
-    public delegate void KeyPressDelegate(Player player);
+    public delegate void KeyPressDelegate(Player player, KeyboardState current, KeyboardState previous);
     #endregion
 
     /// <summary>
@@ -37,8 +37,8 @@ namespace Adumbration
         private bool isOpen;
         private Rectangle doorHitbox;
         private int sourceXOrigin;
-        private GameLevels level;
         private KeyboardState previousState;
+        private int level;
 
         #region// Event(s)
 
@@ -72,6 +72,14 @@ namespace Adumbration
             get { return doorHitbox; }
         }
 
+        /// <summary>
+        /// Gets the int that represents the level the door leads to.
+        /// </summary>
+        public int Level
+        {
+            get { return level; }
+        }
+
         // Constructor(s)
 
         /// <summary>
@@ -82,17 +90,18 @@ namespace Adumbration
         /// <param name="spriteSheet"></param>
         /// <param name="sourceRect"></param>
         /// <param name="position"></param>
-        public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
+        public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, int level)
              : base(spriteSheet, sourceRect, position)
         {
             this.isOpen = isOpen;
+            this.level = level;
             sourceXOrigin = sourceRect.X;
 
             // Create door hitbox
             doorHitbox = new Rectangle(
-                position.X,
-                position.Y,
-                position.Width,
+                position.X - position.Width,
+                position.Y - position.Height,
+                position.Width * 2,
                 position.Height * 2);
         }
 
@@ -105,16 +114,20 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public override void Update(GameTime gameTime)
         {
-            if (isOpen)
+            if (IsOpen)
             {
-                sourceRect.X = sourceXOrigin;
+                sourceRect.X = (level - 1) * 16;
             }
-            else
+            else if (!IsOpen)
             {
                 sourceRect.X = 4 * 16;
             }
         }
 
+        /// <summary>
+        /// Updates the events.
+        /// </summary>
+        /// <param name="myPlayer">Reference to the player.</param>
         public void Update(Player myPlayer)
         {
             KeyboardState currentState = Keyboard.GetState();
@@ -129,7 +142,7 @@ namespace Adumbration
                 }
                 if (OnKeyPress != null)
                 {
-                    OnKeyPress(myPlayer);
+                    OnKeyPress(myPlayer, currentState, previousState);
                 }
             }
             previousState = currentState;
@@ -151,43 +164,34 @@ namespace Adumbration
         #endregion
 
         /// <summary>
-        /// Checks for a collision between an object and a door.
+        /// Checks for a collision between an object and a door's hitbox.
         /// </summary>
-        /// <param name="obj">References the object that may collide with a door.</param>
+        /// <param name="obj">References the object that may collide with a door's hitbox.</param>
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
             return DoorHitbox.Intersects(obj.Position);
-
-            if (obj.Position.Intersects(DoorHitbox))
-            {
-                return true;
-            }
-            return false;
         }
 
         /// <summary>
         /// Loads the next level.
         /// </summary>
-        public void Interact(Player myPlayer)
+        /// <param name="myPlayer">Reference to Game1's player.</param>
+        /// <param name="currentState">The current state of the keyboard.</param>
+        /// <param name="previousState">The previous state of the keyboard.</param>
+        public void Interact(Player myPlayer, KeyboardState currentState, KeyboardState previousState)
         {
-            KeyboardState currentState = Keyboard.GetState();
-
-            if (this.IsColliding(myPlayer) && !isOpen)
+            bool ifOpen = false;
+            if (!IsOpen)
             {
-                if (currentState.IsKeyDown(Keys.E))
+                if (currentState.IsKeyUp(Keys.E) &&
+                    previousState.IsKeyDown(Keys.E) &&
+                    IsColliding(myPlayer))
                 {
-                    previousState = currentState;
-                    if (previousState.IsKeyDown(Keys.E))
-                    {
-                        isOpen = true;
-                    }
-                }
-                if (isOpen && IsColliding(myPlayer))
-                {
-                    previousState = currentState;
+                    ifOpen = true;
                 }
             }
+            IsOpen = ifOpen;
         }
     }
 }
