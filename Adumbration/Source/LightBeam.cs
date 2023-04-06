@@ -26,8 +26,8 @@ namespace Adumbration
         Direction dir;
 
         //constructor for this class
-        public LightBeam(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, Direction dir)
-             : base(spriteSheet, sourceRect, position)
+        public LightBeam(Texture2D spriteSheet, Rectangle position, Direction dir)
+             : base(spriteSheet, new Rectangle(0, 0, 1, 1), position)
         {
             this.dir = dir;
         }

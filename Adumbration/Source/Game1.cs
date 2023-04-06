@@ -34,10 +34,13 @@ namespace Adumbration
         private Matrix tMatrix;
 
         // all textures
-        private Texture2D fullSpritesheet;
-        private Texture2D wallSpritesheet;
         private Texture2D playerTexture;
+        private Texture2D wallTexture;
         private Texture2D doorTexture;
+        private Texture2D mirrorTexture;
+        private Texture2D altFloorTexture;
+        private Texture2D altWallTexture;
+        private Texture2D whitePixelTexture;    // 1x1 white pixel for drawing primitives
 
         // lighting stuff
         private PenumbraComponent penumbra;
@@ -84,15 +87,18 @@ namespace Adumbration
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // loading sprites/textures
-            wallSpritesheet = Content.Load<Texture2D>("wall_spritesheet");
-            playerTexture = Content.Load<Texture2D>("player_spritesheet");
-            fullSpritesheet = Content.Load<Texture2D>("spritesheet");
-            doorTexture = Content.Load<Texture2D>("door_spritesheet");
+            playerTexture = Content.Load<Texture2D>("sprite_player");
+            wallTexture = Content.Load<Texture2D>("sprite_walls");
+            doorTexture = Content.Load<Texture2D>("sprite_doors");
+            mirrorTexture = Content.Load<Texture2D>("sprite_mirror");
+            altFloorTexture = Content.Load<Texture2D>("sprite_altFloors");
+            altWallTexture = Content.Load<Texture2D>("sprite_altWalls");
+            whitePixelTexture = Content.Load<Texture2D>("sprite_whitePixel");
 
             #region ObjectCreation
 
             // LevelManager init
-            LevelManager.Instance.Initialize(wallSpritesheet, GameLevels.TestLevel);
+            LevelManager.Instance.Initialize(wallTexture, GameLevels.TestLevel);
 
             // Player Object
             player = new Player(
@@ -103,10 +109,10 @@ namespace Adumbration
             // Door Object
             closedDoor = new Door(
                 false,
-                fullSpritesheet,
+                doorTexture,
                 new Rectangle(                                          // Source Rectangle
-                    4 * 16,                                             // - X Location
-                    6 * 16,                                             // - Y Location
+                    0,                                                  // - X Location
+                    0,                                                  // - Y Location
                     16,                                                 // - Width
                     16),                                                // - Height
                 new Rectangle(                                          // Position
@@ -117,18 +123,13 @@ namespace Adumbration
 
             // light beam test
             beam = new LightBeam(
-                fullSpritesheet,
-                new Rectangle(      //source rectangle
-                    64,
-                    0,
-                    1,
-                    1),
+                whitePixelTexture,
                 new Rectangle(
                     _graphics.PreferredBackBufferWidth / 2 - 300,       // - X Location
                     _graphics.PreferredBackBufferHeight / 2 - 110,      // - Y Location
                     10,                                                 // - Width
-                    10),
-                    Direction.Down);                                              // - Height
+                    10),                                                // - Height
+                    Direction.Down);
             #endregion
 
             #region PenumbraSetup
