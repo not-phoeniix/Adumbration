@@ -119,7 +119,8 @@ namespace Adumbration
                     _graphics.PreferredBackBufferWidth / 2 - 215,       // - X Location
                     _graphics.PreferredBackBufferHeight / 2 - 240,      // - Y Location
                     16,                                                 // - Width
-                    16));                                               // - Height
+                    16),                                                // - Height
+                1);                                                     // Level
 
             // light beam test
             beam = new LightBeam(
@@ -159,6 +160,11 @@ namespace Adumbration
             }
 
             #endregion
+
+            #region//Subscribing methods to events
+            closedDoor.OnKeyPressOnce += IsKeyPressedOnce;
+            closedDoor.OnKeyPress += closedDoor.Interact;
+            #endregion
         }
 
         protected override void Update(GameTime gameTime)
@@ -189,6 +195,8 @@ namespace Adumbration
             player.Update(gameTime, LevelManager.Instance.CurrentLevel);
             player.IsDead(beam);
             beam.Update(gameTime, LevelManager.Instance.CurrentLevel);
+            closedDoor.Update(gameTime);
+            closedDoor.Update(player);
 
             #region Zoom
 
