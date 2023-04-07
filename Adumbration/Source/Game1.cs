@@ -72,6 +72,8 @@ namespace Adumbration
         private Player player;
         private Door closedDoor;
         private LightBeam beam;
+
+        // Emitter and Receptor Testing
         private LightEmitter emitter;
         private LightReceptor receptor;
 
