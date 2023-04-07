@@ -14,6 +14,22 @@ using Penumbra;
 
 namespace Adumbration
 {
+    /// <summary>
+    /// Holds the current state of the overall game
+    /// </summary>
+    public enum GameState
+    {
+        Menu,
+        Game,
+        Pause
+    }
+
+    public enum PauseButtons
+    {
+        Resume,
+        Quit
+    }
+
     public class Game1 : Game
     {
         #region Fields
@@ -25,13 +41,14 @@ namespace Adumbration
         // states
         private KeyboardState kbState;
         private KeyboardState kbStateOld;
+        private GameState gameState;
 
         // general game settings/fields
         private Vector2 screenRes;
         private float globalScale;
         private Matrix tMatrix;
 
-        // all textures
+        // all game textures
         private Texture2D playerTexture;
         private Texture2D wallTexture;
         private Texture2D doorTexture;
@@ -39,6 +56,13 @@ namespace Adumbration
         private Texture2D altFloorTexture;
         private Texture2D altWallTexture;
         private Texture2D whitePixelTexture;    // 1x1 white pixel for drawing primitives
+
+        // all ui textures
+        private Texture2D pauseResumeTexture;
+        private Texture2D pauseQuitTexture;
+
+        // menu tracking
+        private PauseButtons selectedPauseItem;
 
         // lighting stuff
         private PenumbraComponent penumbra;
@@ -64,6 +88,8 @@ namespace Adumbration
             screenRes = new Vector2(1280, 720);
             globalScale = 4.0f;
             tMatrix = Matrix.Identity;
+            gameState = GameState.Game;
+            selectedPauseItem = PauseButtons.Resume;
 
             #region PenumbraInit
 
@@ -84,14 +110,22 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // loading sprites/textures
-            playerTexture = Content.Load<Texture2D>("sprite_player");
-            wallTexture = Content.Load<Texture2D>("sprite_walls");
-            doorTexture = Content.Load<Texture2D>("sprite_doors");
-            mirrorTexture = Content.Load<Texture2D>("sprite_mirror");
-            altFloorTexture = Content.Load<Texture2D>("sprite_altFloors");
-            altWallTexture = Content.Load<Texture2D>("sprite_altWalls");
-            whitePixelTexture = Content.Load<Texture2D>("sprite_whitePixel");
+            #region TextureLoading
+
+            // game sprites
+            playerTexture = Content.Load<Texture2D>("Sprites/sprite_player");
+            wallTexture = Content.Load<Texture2D>("Sprites/sprite_walls");
+            doorTexture = Content.Load<Texture2D>("Sprites/sprite_doors");
+            mirrorTexture = Content.Load<Texture2D>("Sprites/sprite_mirror");
+            altFloorTexture = Content.Load<Texture2D>("Sprites/sprite_altFloors");
+            altWallTexture = Content.Load<Texture2D>("Sprites/sprite_altWalls");
+            whitePixelTexture = Content.Load<Texture2D>("Sprites/sprite_whitePixel");
+
+            // ui textures
+            pauseResumeTexture = Content.Load<Texture2D>("UI/ui_pauseResume");
+            pauseQuitTexture = Content.Load<Texture2D>("UI/ui_pauseQuit");
+
+            #endregion
 
             #region ObjectCreation
 
@@ -169,12 +203,6 @@ namespace Adumbration
         {
             kbState = Keyboard.GetState();
 
-            // ESC exits game
-            if(kbState.IsKeyDown(Keys.Escape))
-            {
-                Exit();
-            }
-
             // ALT+ENTER toggles fullscreen
             if(kbState.IsKeyDown(Keys.LeftAlt) && IsKeyPressedOnce(Keys.Enter, kbState, kbStateOld))
             {
@@ -190,56 +218,122 @@ namespace Adumbration
                 _graphics.ApplyChanges();
             }
 
-            player.Update(gameTime, LevelManager.Instance.CurrentLevel);
-            player.IsDead(beam);
-            beam.Update(gameTime, LevelManager.Instance.CurrentLevel);
-            closedDoor.Update(gameTime);
-            closedDoor.Update(player);
-
-            #region Zoom
-
-            // zoom in (one press)
-            if(kbState.IsKeyDown(Keys.OemPlus))
+            switch(gameState)
             {
-                globalScale += 0.2f;
+                case GameState.Game:
+                    #region GameUpdateLogic
+
+                    // transition to pause menu
+                    if(IsKeyPressedOnce(Keys.Escape, kbState, kbStateOld))
+                    {
+                        gameState = GameState.Pause;
+                    }
+
+                    // object logic
+                    player.Update(gameTime, LevelManager.Instance.CurrentLevel);
+                    player.IsDead(beam);
+                    beam.Update(gameTime, LevelManager.Instance.CurrentLevel);
+                    closedDoor.Update(gameTime);
+                    closedDoor.Update(player);
+
+                    #region Zoom
+
+                    // zoom in (one press)
+                    if(kbState.IsKeyDown(Keys.OemPlus))
+                    {
+                        globalScale += 0.2f;
+                    }
+
+                    // zoom out (one press)
+                    if(kbState.IsKeyDown(Keys.OemMinus))
+                    {
+                        globalScale -= 0.2f;
+                    }
+
+                    // zoom bounds setting (min/max zoom level)
+                    if(globalScale > 8) { globalScale = 8; }  // max zoom
+                    if(globalScale < 2) { globalScale = 2; }    // min zoom
+
+                    #endregion
+
+                    #region MatrixUpdating
+
+                    // updates transformation matrix values
+
+                    // position: (x & y)
+                    tMatrix.M41 = screenRes.X / 2 - player.CenterPos.X * globalScale;
+                    tMatrix.M42 = screenRes.Y / 2 - player.CenterPos.Y * globalScale;
+
+                    // scale: (x & y)
+                    tMatrix.M11 = globalScale;
+                    tMatrix.M22 = globalScale;
+
+                    #endregion
+
+                    #region Penumbra
+
+                    playerLight.Position = player.CenterPos;
+                    penumbra.Transform = tMatrix;
+
+                    if(IsKeyPressedOnce(Keys.L, kbState, kbStateOld))
+                    {
+                        penumbra.Visible = !penumbra.Visible;
+                    }
+
+                    #endregion
+
+                    #endregion
+                    break;
+
+                case GameState.Pause:
+                    #region PauseUpdateLogic
+
+                    // turn off penumbra in pause menu
+                    penumbra.Visible = false;
+
+                    // transition back to game from pause menu
+                    if(IsKeyPressedOnce(Keys.Escape, kbState, kbStateOld))
+                    {
+                        penumbra.Visible = true;
+                        gameState = GameState.Game;
+                    }
+
+                    // FSM for currently selected menu items and moving between menu options
+                    switch(selectedPauseItem)
+                    {
+                        case PauseButtons.Resume:
+                            // transition to quit state
+                            if(IsKeyPressedOnce(Keys.Right, kbState, kbStateOld))
+                            {
+                                selectedPauseItem = PauseButtons.Quit;
+                            }
+
+                            if(kbState.IsKeyDown(Keys.Enter))
+                            {
+                                penumbra.Visible = true;
+                                gameState = GameState.Game;
+                            }
+
+                            break;
+
+                        case PauseButtons.Quit:
+                            // transition to resume state
+                            if(IsKeyPressedOnce(Keys.Left, kbState, kbStateOld))
+                            {
+                                selectedPauseItem = PauseButtons.Resume;
+                            }
+
+                            if(kbState.IsKeyDown(Keys.Enter))
+                            {
+                                Exit();
+                            }
+
+                            break;
+                    }
+
+                    #endregion
+                    break;
             }
-
-            // zoom out (one press)
-            if(kbState.IsKeyDown(Keys.OemMinus))
-            {
-                globalScale -= 0.2f;
-            }
-
-            // zoom bounds setting (min/max zoom level)
-            if(globalScale > 8) { globalScale = 8; }  // max zoom
-            if(globalScale < 2) { globalScale = 2; }    // min zoom
-
-            #endregion
-
-            #region MatrixUpdating
-
-            // updates transformation matrix values
-
-            // position: (x & y)
-            tMatrix.M41 = screenRes.X / 2 - player.CenterPos.X * globalScale;
-            tMatrix.M42 = screenRes.Y / 2 - player.CenterPos.Y * globalScale;
-
-            // scale: (x & y)
-            tMatrix.M11 = globalScale;
-            tMatrix.M22 = globalScale;
-
-            #endregion
-
-            #region Penumbra
-
-            playerLight.Position = player.CenterPos;
-            penumbra.Transform = tMatrix;
-
-            if(IsKeyPressedOnce(Keys.L, kbState, kbStateOld)) { 
-                penumbra.Visible = !penumbra.Visible;
-            }
-
-            #endregion
 
             base.Update(gameTime);
 
@@ -256,29 +350,75 @@ namespace Adumbration
             // Deferred sort mode is default, PointClamp makes it so
             //   pixel art doesn't get blurry when upscaled
             _spriteBatch.Begin(
-                SpriteSortMode.Deferred, 
-                null, 
+                SpriteSortMode.Deferred,
+                null,
                 SamplerState.PointClamp,
                 null,
                 null,
                 null,
                 tMatrix);
 
-            // Draw test level
-            LevelManager.Instance.Draw(_spriteBatch);
+            // main game drawing FSM
+            switch(gameState)
+            {
+                case GameState.Game:
+                    #region GameDrawing
 
-            // Draw Player
-            player.Draw(_spriteBatch);
+                    // Draw test level
+                    LevelManager.Instance.Draw(_spriteBatch);
 
-            // Draw test beam
-            beam.Draw(_spriteBatch);
-            
-            closedDoor.Draw(_spriteBatch);
+                    // Draw Player
+                    player.Draw(_spriteBatch);
+
+                    // Draw test beam
+                    beam.Draw(_spriteBatch);
+
+                    closedDoor.Draw(_spriteBatch);
+
+                    // Draw Closed Door
+                    //_spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+
+                    #endregion
+
+                    break;
+
+                case GameState.Pause:
+                    #region PauseDrawing
+
+                    // FSM for drawing the pause menu options
+                    switch(selectedPauseItem)
+                    {
+                        // TODO: make it so pause menu doesn't scale with the game
+
+                        // draw button "Resume" hovered, centered around player
+                        case PauseButtons.Resume:
+                            _spriteBatch.Draw(
+                                pauseResumeTexture,
+                                new Vector2(
+                                    player.CenterPos.X - pauseResumeTexture.Width / 2,
+                                    player.CenterPos.Y - pauseResumeTexture.Height / 2),
+                                Color.White);
+
+                            break;
+
+                        // draw button "Quit" hovered, centered around player
+                        case PauseButtons.Quit:
+                            _spriteBatch.Draw(
+                                pauseQuitTexture,
+                                new Vector2(
+                                    player.CenterPos.X - pauseResumeTexture.Width / 2,
+                                    player.CenterPos.Y - pauseResumeTexture.Height / 2),
+                                Color.White);
+
+                            break;
+                    }
+
+                    #endregion
+
+                    break;
+            }
 
             _spriteBatch.End();
-
-            // Draw Closed Door
-            //_spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
             base.Draw(gameTime);
         }
