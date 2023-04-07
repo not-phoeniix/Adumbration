@@ -72,6 +72,8 @@ namespace Adumbration
         private Player player;
         private Door closedDoor;
         private LightBeam beam;
+        private LightEmitter emitter;
+        private LightReceptor receptor;
 
         #endregion
 
@@ -163,6 +165,21 @@ namespace Adumbration
                     2,                                                 // - Width
                     2),                                                // - Height
                     Direction.Down);
+
+            // Emitter test
+            emitter = new LightEmitter(playerTexture,
+                new Rectangle(0, 0, 6, 8),
+                new Rectangle(50, 75, 6, 8),
+                Direction.Right,
+                whitePixelTexture);
+
+            // Receptor test
+            receptor = new LightReceptor(playerTexture,
+                new Rectangle(0, 0, 6, 8),
+                new Rectangle(150, 75, 6, 8),
+                new Rectangle(152, 77, 2, 2));
+            
+
             #endregion
 
             #region PenumbraSetup
@@ -231,10 +248,15 @@ namespace Adumbration
 
                     // object logic
                     player.Update(gameTime, LevelManager.Instance.CurrentLevel);
-                    player.IsDead(beam);
+                    player.IsDead(emitter.Beam);
                     beam.Update(gameTime, LevelManager.Instance.CurrentLevel);
                     closedDoor.Update(gameTime);
                     closedDoor.Update(player);
+                    beam.Update(gameTime, LevelManager.Instance.CurrentLevel);
+
+                    // Emitter and Receptor testing
+                    emitter.Update(gameTime, LevelManager.Instance.CurrentLevel);
+                    receptor.Update(gameTime, LevelManager.Instance.CurrentLevel, emitter.Beam);
 
                     #region Zoom
 
@@ -358,6 +380,8 @@ namespace Adumbration
                 null,
                 tMatrix);
 
+
+
             // main game drawing FSM
             switch(gameState)
             {
@@ -374,6 +398,11 @@ namespace Adumbration
                     beam.Draw(_spriteBatch);
 
                     closedDoor.Draw(_spriteBatch);
+
+                    // Emitter and Receptor testing
+                    emitter.Beam.Draw(_spriteBatch);
+                    emitter.Draw(_spriteBatch);
+                    receptor.Draw(_spriteBatch);
 
                     // Draw Closed Door
                     //_spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);

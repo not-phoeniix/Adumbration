@@ -20,32 +20,33 @@ namespace Adumbration
     internal class LightReceptor : Wall
     {
         // Fields
-        private Vector2 activationPoint;
+        private Rectangle activationPoint;
 
         // Event
         public event OnLightBeamReceivedDelegate OnActivation;
 
         //the constructor for this class
-        public LightReceptor(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, Vector2 activationPoint)
+        public LightReceptor(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, Rectangle activationPoint)
             : base(spriteSheet, sourceRect, position)
         {
             this.activationPoint = activationPoint;
         }
 
-        public void Update(GameTime gameTime, Level currentLevel)
+        public void Update(GameTime gameTime, Level currentLevel, LightBeam beam)
         {
-            foreach(LightEmitter emitter in currentLevel.TileList)
-            {
+            //foreach(LightEmitter emitter in currentLevel.TileList)
+            //{
                 // If the light beam is activated
-                if (IsColliding(emitter.Beam))
+                if (IsColliding(beam))
                 {
                     OnActivation();
+                    System.Diagnostics.Debug.WriteLine("Activated");
                 }
                 else
                 {
-                    return;
+                System.Diagnostics.Debug.WriteLine("Not Activated");
                 }
-            }            
+            //}            
         }
 
         //checks to see if the object that is colliding with is a lightbeam
@@ -53,7 +54,7 @@ namespace Adumbration
         //otherwise it will ignore other things and stay off
         public override bool IsColliding(GameObject obj)
         {
-            if (obj is LightBeam && obj.Position.Contains(activationPoint))
+            if (obj.Position.Intersects(activationPoint))
             {
                 return true;              
             }

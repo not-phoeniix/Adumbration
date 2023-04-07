@@ -48,18 +48,14 @@ namespace Adumbration
             this.beam = new LightBeam(
                 beamTexture,
                 new Rectangle(
-                    sourceRect.X + sourceRect.Width / 2,
-                sourceRect.Y + sourceRect.Height / 2,
+                    position.X + position.Width / 2,
+                position.Y + position.Height / 2,
                 2, 2), dir);
         }
 
-        public override void Draw(SpriteBatch sb)
+        public void Update(GameTime gameTime, Level currentLevel)
         {
-            // First draw light beam
-            beam.Draw(sb);
-            
-            // then draw emitter over it.
-            base.Draw(sb);
+            beam.Update(gameTime, currentLevel);
         }
     }
 }
