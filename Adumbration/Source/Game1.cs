@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Penumbra;
 
-// 
 // ===================================
 // GAME NAME:   Adumbration
 // TEAM NAME:   TBD Games
@@ -12,7 +11,6 @@ using Penumbra;
 //              Julian Alvia
 //              Alexander Gough
 // ===================================
-//
 
 namespace Adumbration
 {

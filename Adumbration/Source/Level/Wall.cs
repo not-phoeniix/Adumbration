@@ -21,13 +21,22 @@ namespace Adumbration
              : base(spriteSheet, sourceRect, position)
         {
             // creates shadow casting hull
-            hull = new Hull(new Vector2[]
-            {
-                new Vector2(position.X, position.Y),
-                new Vector2(position.X + position.Width, position.Y),
-                new Vector2(position.X + position.Width, position.Y + position.Height),
-                new Vector2(position.X, position.Y + position.Height)
-            });
+            hull = new Hull(
+                new Vector2[]
+                {
+                    new Vector2(
+                        position.X,
+                        position.Y),
+                    new Vector2(
+                        position.X + position.Width,
+                        position.Y),
+                    new Vector2(
+                        position.X + position.Width,
+                        position.Y + position.Height),
+                    new Vector2(
+                        position.X,
+                        position.Y + position.Height)
+                });
         }
 
         /// <summary>

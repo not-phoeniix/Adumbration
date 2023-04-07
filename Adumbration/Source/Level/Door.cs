@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.XAudio2;
+using Penumbra;
 
 
 namespace Adumbration
@@ -70,16 +71,16 @@ namespace Adumbration
         /// </summary>
         public Rectangle UnlockHitbox
         {
-            get { return UnlockHitbox; }
+            get { return unlockHitbox; }
         }
 
         /// <summary>
         /// Property that creates a hitbox for entering the door when it is unlocked.
         /// </summary>
-        /*public Rectangle EnterHitbox
+        public Rectangle EnterHitbox
         {
             get { return enterHitbox; }
-        }*/
+        }
 
         /// <summary>
         /// Gets the int that represents the level the door leads to.
@@ -113,11 +114,11 @@ namespace Adumbration
                 position.Width * 2,
                 position.Height * 2);
 
-            /*enterHitbox = new Rectangle(
-                position.X - position.Width / 2,
-                position.Y - position.Height / 2,
-                position.Width * 2,
-                position.Height * 2); */
+            enterHitbox = new Rectangle(
+                position.X - 1,
+                position.Y - 1,
+                position.Width + 2,
+                position.Height + 2);
         }
 
         // Methods
@@ -131,11 +132,7 @@ namespace Adumbration
         {
             if (isOpen)
             {
-                sourceRect.X = (level - 1) * 16;
-            }
-            else if (!isOpen)
-            {
-                sourceRect.X = 4 * 16;
+                sourceRect.Y = 16;
             }
         }
 
@@ -216,10 +213,10 @@ namespace Adumbration
             else
             {
                 ifOpen = true;
-                /*if (EnterHitbox.Intersects(myPlayer.Position))
+                if (EnterHitbox.Intersects(myPlayer.Position))
                 {
-
-                }*/
+                    
+                }
             }
 
             // Set the 'isOpen' field equal to the value of 'ifOpen'.

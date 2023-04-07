@@ -42,7 +42,7 @@ namespace Adumbration
             get
             {
                 // if the instance wasn't created yet, create it
-                if(instance == null)
+                if (instance == null)
                 {
                     instance = new LevelManager();
                 }
@@ -88,6 +88,7 @@ namespace Adumbration
             {
                 // test level
                 case GameLevels.TestLevel:
+
                     currentLevel = new Level(
                         levelSpritesheet, 
                         "BigLevelTest.txt");

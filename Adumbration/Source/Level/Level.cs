@@ -17,7 +17,7 @@ namespace Adumbration
         private char[,] levelLayout;            // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
         private Texture2D spritesheet;
-        private Hull[,] wallHulls;               // for shadow casting
+        private Hull[,] wallHulls;              // for shadow casting
 
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
@@ -43,7 +43,10 @@ namespace Adumbration
             get { return objectArray; }
         }
 
-        public Hull[,] WallHulls { get { return wallHulls; } }
+        public Hull[,] WallHulls
+        {
+            get { return wallHulls; }
+        }
 
         /// <summary>
         /// Resets a level.
