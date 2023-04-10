@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace Adumbration
@@ -121,7 +120,7 @@ namespace Adumbration
                         }
                     }
                     break;
-            }          
+            }
         }
 
         /// <summary>
