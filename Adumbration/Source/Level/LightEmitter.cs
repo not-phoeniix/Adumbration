@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SharpDX.XAudio2;
 
 namespace Adumbration
 {
@@ -17,6 +9,7 @@ namespace Adumbration
         private bool isOn;
         private LightBeam beam;
         private Direction dir;
+        private Level currentLevel;
 
         // Properties
         /// <summary>
@@ -37,25 +30,32 @@ namespace Adumbration
             get { return beam; }
         }
 
-        public LightEmitter(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, Direction dir, Texture2D beamTexture)
+        public LightEmitter(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, Direction dir, Level currentLevel)
             : base(spriteSheet, sourceRect, position)
         {
             this.dir = dir;
-            this.isOn = true;
+            isOn = true;
+            this.currentLevel = currentLevel;
 
             // Instantiate Light Beam at center point of emitter's 
             // Source rectangle
-            this.beam = new LightBeam(
-                beamTexture,
+            beam = new LightBeam(
+                spriteSheet,
                 new Rectangle(
-                    position.X + position.Width / 2,
-                position.Y + position.Height / 2,
-                2, 2), dir);
+                    position.X + position.Width / 2 - 1,
+                    position.Y + position.Height / 2,
+                    2, 2), 
+                dir);
         }
 
-        public void Update(GameTime gameTime, Level currentLevel)
+        public override void Update(GameTime gameTime)
         {
             beam.Update(gameTime, currentLevel);
+        }
+
+        public override void Draw(SpriteBatch sb)
+        {
+            base.Draw(sb);
         }
     }
 }

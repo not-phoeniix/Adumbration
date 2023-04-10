@@ -4,6 +4,7 @@ using Penumbra;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Collections.Generic;
 
 namespace Adumbration
 {
@@ -16,22 +17,25 @@ namespace Adumbration
         // Fields
         private char[,] levelLayout;            // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
-        private Texture2D spritesheet;
+        private Texture2D wallSpritesheet;
         private Hull[,] wallHulls;              // for shadow casting
+        private List<LightBeam> allBeams;       // all beams in the level currently
 
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
         /// </summary>
-        /// <param name="spritesheet">Texture2D wall spritesheet</param>
+        /// <param name="wallSpritesheet">Texture2D wall spritesheet</param>
         /// <param name="dataFilePath">File path of layout data file (Already in LevelData folder, only file name needed)</param>
-        public Level(Texture2D spritesheet, string dataFilePath)
+        public Level(Texture2D wallSpritesheet, string dataFilePath)
         {
-            this.spritesheet = spritesheet;
+            this.wallSpritesheet = wallSpritesheet;
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
             objectArray = LoadObjectsFromLayout(levelLayout);
             wallHulls = LoadHulls(objectArray);
+
+            allBeams = new List<LightBeam>();
         }
 
         /// <summary>
@@ -48,12 +52,9 @@ namespace Adumbration
             get { return wallHulls; }
         }
 
-        /// <summary>
-        /// Resets a level.
-        /// </summary>
-        public void ResetLevel()
+        internal List<LightBeam> Beams
         {
-            // should reset positions of all objects inside level, it's empty for now
+            get { return allBeams; }
         }
 
         /// <summary>
@@ -62,15 +63,28 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public void Update(GameTime gameTime)
         {
-            // This is mostly empty right now but should include update
-            //   logic for all objects in game, i.e. light beams and
-            //   mirrors and buttons and such.
+            allBeams.Clear();
+            
+            // updates all GameObjects each frame
+            foreach(GameObject obj in objectArray)
+            {
+                if(obj is LightEmitter emitter)
+                {
+                    allBeams.Add(emitter.Beam);
+                    emitter.Update(gameTime);
+                }
+                
+                if(obj is Mirror mirror)
+                {
+                    allBeams.Add(mirror.Beam);
+                    mirror.Update(gameTime);
+                }
+            }
         }
 
         /// <summary>
         /// Draws entire level.
         /// </summary>
-        /// <param name="gameTime">State of the game's time.</param>
         public void Draw(SpriteBatch sb)
         {
             // this loop draws all objects in the tileList array
@@ -81,6 +95,12 @@ namespace Adumbration
                     // draws object
                     objectArray[x, y].Draw(sb);
                 }
+            }
+
+            // draws all light beams after tile drawing
+            foreach(LightBeam beam in allBeams)
+            {
+                beam.Draw(sb);
             }
         }
 
@@ -188,7 +208,7 @@ namespace Adumbration
                         layout[x, y],   // number of object in file
                         x,              // tile position X
                         y,              // tile position Y
-                        spritesheet,    // Texture2D spritesheet
+                        wallSpritesheet,    // Texture2D spritesheet
                         16,             // sprite width
                         16);            // sprite height
 
@@ -202,17 +222,30 @@ namespace Adumbration
                         sideSizeX,
                         sideSizeY);
 
-                    // detects if rect is the coordinates of the floor sprite
-                    Rectangle floorSourceRect = new Rectangle(16, 16, 16, 16);
+                    // ******************************
+                    // ******** TILE LOADING ********
+                    // ******************************
+                    switch(layout[x, y])
+                    {
+                        // FLOOR
+                        case '_':
+                            returnArray[x, y] = new Floor(wallSpritesheet, sourceRect, positionRect);
+                            break;
 
-                    // fills array with respective objects
-                    if (sourceRect == floorSourceRect)
-                    {
-                        returnArray[x, y] = new Floor(spritesheet, sourceRect, positionRect);
-                    }
-                    else
-                    {
-                        returnArray[x, y] = new Wall(spritesheet, sourceRect, positionRect);
+                        // EMITTER
+                        case 'E':
+                            returnArray[x, y] = new LightEmitter(
+                                wallSpritesheet, 
+                                new Rectangle(16 * 3, 16 * 3, 16, 16),
+                                positionRect,
+                                Direction.Down,
+                                this);
+                            break;
+
+                        // WALL
+                        default:
+                            returnArray[x, y] = new Wall(wallSpritesheet, sourceRect, positionRect);
+                            break;
                     }
                 }
             }

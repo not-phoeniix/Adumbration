@@ -36,16 +36,16 @@ namespace Adumbration
         {
             //foreach(LightEmitter emitter in currentLevel.TileList)
             //{
-                // If the light beam is activated
-                if (IsColliding(beam))
-                {
-                    OnActivation();
-                    System.Diagnostics.Debug.WriteLine("Activated");
-                }
-                else
-                {
+            // If the light beam is activated
+            if (IsColliding(beam))
+            {
+                OnActivation();
+                System.Diagnostics.Debug.WriteLine("Activated");
+            }
+            else
+            {
                 System.Diagnostics.Debug.WriteLine("Not Activated");
-                }
+            }
             //}            
         }
 
@@ -56,7 +56,7 @@ namespace Adumbration
         {
             if (obj.Position.Intersects(activationPoint))
             {
-                return true;              
+                return true;
             }
             else
             {

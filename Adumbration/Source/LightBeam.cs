@@ -26,8 +26,8 @@ namespace Adumbration
         Direction dir;
 
         //constructor for this class
-        public LightBeam(Texture2D spriteSheet, Rectangle position, Direction dir)
-             : base(spriteSheet, new Rectangle(0, 0, 1, 1), position)
+        public LightBeam(Texture2D texture, Rectangle position, Direction dir)
+             : base(texture, new Rectangle(12, 4, 1, 1), position)  // this rectangle is 1 pixel of white
         {
             this.dir = dir;
         }
@@ -66,7 +66,7 @@ namespace Adumbration
                     foreach (GameObject tile in currentLevel.TileList)
                     {
                         // If it is colliding with a wall
-                        if (tile is Wall && IsColliding(tile))
+                        if (tile is Wall && tile is not LightEmitter && IsColliding(tile))
                         {
                             // Stop expansion
                             positionRect.X = tile.Position.X + tile.Position.Width;
@@ -98,7 +98,7 @@ namespace Adumbration
                     foreach (GameObject tile in currentLevel.TileList)
                     {
                         // If it is colliding with a wall
-                        if (tile is Wall && IsColliding(tile))
+                        if (tile is Wall && tile is not LightEmitter && IsColliding(tile))
                         {
                             // Stop expansion 
                             positionRect.Y = tile.Position.Y + tile.Position.Height;
@@ -114,7 +114,7 @@ namespace Adumbration
                     foreach (GameObject tile in currentLevel.TileList)
                     {
                         // If it is colliding with a wall
-                        if (tile is Wall && IsColliding(tile))
+                        if (tile is Wall && tile is not LightEmitter && IsColliding(tile))
                         {
                             // Stop expansion
                             positionRect.Height -= 1;

@@ -34,7 +34,7 @@ namespace Adumbration
 
         // states
         private KeyboardState kbState;
-        private KeyboardState kbStateOld;
+        private KeyboardState prevKbState;
         private GameState gameState;
 
         // menu enum
@@ -48,7 +48,9 @@ namespace Adumbration
         }
 
         // general game settings/fields
-        private Vector2 screenRes;
+        private Vector2 fullscreenRes;
+        private Vector2 windowedRes;
+        private bool IsFullscreen;
         private float globalScale;
         private Matrix tMatrix;
 
@@ -58,7 +60,6 @@ namespace Adumbration
         private Texture2D doorTexture;
         private Texture2D mirrorTexture;
         private Texture2D altFloorTexture;
-        private Texture2D altWallTexture;
         private Texture2D whitePixelTexture;    // 1x1 white pixel for drawing primitives
 
         // all ui textures
@@ -75,11 +76,6 @@ namespace Adumbration
         // Game objects
         private Player player;
         private Door closedDoor;
-        private LightBeam beam;
-
-        // Emitter and Receptor Testing
-        private LightEmitter emitter;
-        private LightReceptor receptor;
 
         #endregion
 
@@ -92,12 +88,24 @@ namespace Adumbration
 
         protected override void Initialize()
         {
-            // global field value setting
-            screenRes = new Vector2(1280, 720);
+            #region FieldInit
+
+            // resolution/fullscreen
+            IsFullscreen = false;
+            fullscreenRes = new Vector2(
+                    _graphics.GraphicsDevice.DisplayMode.Width,
+                    _graphics.GraphicsDevice.DisplayMode.Height);
+            windowedRes = new Vector2(1280, 720);
+
+            SetFullscreen(IsFullscreen, windowedRes);
+
+            // others
             globalScale = 4.0f;
             tMatrix = Matrix.Identity;
             gameState = GameState.Game;
             selectedPauseItem = PauseButtons.Resume;
+
+            #endregion
 
             #region PenumbraInit
 
@@ -126,7 +134,6 @@ namespace Adumbration
             doorTexture = Content.Load<Texture2D>("Sprites/sprite_doors");
             mirrorTexture = Content.Load<Texture2D>("Sprites/sprite_mirror");
             altFloorTexture = Content.Load<Texture2D>("Sprites/sprite_altFloors");
-            altWallTexture = Content.Load<Texture2D>("Sprites/sprite_altWalls");
             whitePixelTexture = Content.Load<Texture2D>("Sprites/sprite_whitePixel");
 
             // ui textures
@@ -150,41 +157,17 @@ namespace Adumbration
             closedDoor = new Door(
                 false,
                 doorTexture,
-                new Rectangle(                                          // Source Rectangle
-                    0,                                                  // - X Location
-                    0,                                                  // - Y Location
-                    16,                                                 // - Width
-                    16),                                                // - Height
-                new Rectangle(                                          // Position
-                    _graphics.PreferredBackBufferWidth / 2 - 215,       // - X Location
-                    _graphics.PreferredBackBufferHeight / 2 - 240,      // - Y Location
-                    16,                                                 // - Width
-                    16),                                                // - Height
-                1);                                                     // Level
-
-            // light beam test
-            beam = new LightBeam(
-                whitePixelTexture,
-                new Rectangle(
-                    _graphics.PreferredBackBufferWidth / 2 - 300,       // - X Location
-                    _graphics.PreferredBackBufferHeight / 2 - 110,      // - Y Location
-                    2,                                                 // - Width
-                    2),                                                // - Height
-                    Direction.Down);
-
-            // Emitter test
-            emitter = new LightEmitter(playerTexture,
-                new Rectangle(0, 0, 6, 8),
-                new Rectangle(50, 75, 6, 8),
-                Direction.Right,
-                whitePixelTexture);
-
-            // Receptor test
-            receptor = new LightReceptor(playerTexture,
-                new Rectangle(0, 0, 6, 8),
-                new Rectangle(150, 75, 6, 8),
-                new Rectangle(152, 77, 2, 2));
-            
+                new Rectangle(      // Source Rectangle
+                    0,              // - X Location
+                    0,              // - Y Location
+                    16,             // - Width
+                    16),            // - Height
+                new Rectangle(      // Position
+                    16 * 11,        // - X Location
+                    0,              // - Y Location
+                    16,             // - Width
+                    16),            // - Height
+                1);                 // Level
 
             #endregion
 
@@ -195,7 +178,7 @@ namespace Adumbration
             {
                 Scale = new Vector2(300),
                 Color = Color.White,
-                ShadowType = ShadowType.Illuminated
+                ShadowType = ShadowType.Occluded
             };
 
             // add lights
@@ -227,42 +210,36 @@ namespace Adumbration
             kbState = Keyboard.GetState();
 
             // ALT+ENTER toggles fullscreen
-            if(kbState.IsKeyDown(Keys.LeftAlt) && IsKeyPressedOnce(Keys.Enter, kbState, kbStateOld))
+            if(kbState.IsKeyDown(Keys.LeftAlt) && IsKeyPressedOnce(Keys.Enter, kbState, prevKbState))
             {
-                _graphics.ToggleFullScreen();
+                // toggles if game is fullscreen or not
+                IsFullscreen = !IsFullscreen;
+
+                // sets resolutions based on if game is fullscreen or not
+                Vector2 newRes = IsFullscreen ? fullscreenRes : windowedRes;
+
+                // set the state of fullscreen
+                SetFullscreen(IsFullscreen, newRes);
             }
 
-            // setting screen res if it changes
-            if(_graphics.PreferredBackBufferWidth != screenRes.X ||
-               _graphics.PreferredBackBufferHeight != screenRes.Y)
-            {
-                _graphics.PreferredBackBufferWidth = (int)screenRes.X;
-                _graphics.PreferredBackBufferHeight = (int)screenRes.Y;
-                _graphics.ApplyChanges();
-            }
-
+            // FULL UPDATE LOGIC
             switch(gameState)
             {
                 case GameState.Game:
                     #region GameUpdateLogic
 
                     // transition to pause menu
-                    if(IsKeyPressedOnce(Keys.Escape, kbState, kbStateOld))
+                    if(IsKeyPressedOnce(Keys.Escape, kbState, prevKbState))
                     {
                         gameState = GameState.Pause;
                     }
 
                     // object logic
+                    LevelManager.Instance.CurrentLevel.Update(gameTime);
                     player.Update(gameTime, LevelManager.Instance.CurrentLevel);
-                    player.IsDead(emitter.Beam);
-                    beam.Update(gameTime, LevelManager.Instance.CurrentLevel);
+                    player.IsDead(LevelManager.Instance.CurrentLevel.Beams[0]);
                     closedDoor.Update(gameTime);
                     closedDoor.Update(player);
-                    beam.Update(gameTime, LevelManager.Instance.CurrentLevel);
-
-                    // Emitter and Receptor testing
-                    emitter.Update(gameTime, LevelManager.Instance.CurrentLevel);
-                    receptor.Update(gameTime, LevelManager.Instance.CurrentLevel, emitter.Beam);
 
                     #region Zoom
 
@@ -289,8 +266,8 @@ namespace Adumbration
                     // updates transformation matrix values
 
                     // position: (x & y)
-                    tMatrix.M41 = screenRes.X / 2 - player.CenterPos.X * globalScale;
-                    tMatrix.M42 = screenRes.Y / 2 - player.CenterPos.Y * globalScale;
+                    tMatrix.M41 = _graphics.PreferredBackBufferWidth / 2 - player.CenterPos.X * globalScale;
+                    tMatrix.M42 = _graphics.PreferredBackBufferHeight / 2 - player.CenterPos.Y * globalScale;
 
                     // scale: (x & y)
                     tMatrix.M11 = globalScale;
@@ -303,7 +280,7 @@ namespace Adumbration
                     playerLight.Position = player.CenterPos;
                     penumbra.Transform = tMatrix;
 
-                    if(IsKeyPressedOnce(Keys.L, kbState, kbStateOld))
+                    if(IsKeyPressedOnce(Keys.L, kbState, prevKbState))
                     {
                         penumbra.Visible = !penumbra.Visible;
                     }
@@ -320,7 +297,7 @@ namespace Adumbration
                     penumbra.Visible = false;
 
                     // transition back to game from pause menu
-                    if(IsKeyPressedOnce(Keys.Escape, kbState, kbStateOld))
+                    if(IsKeyPressedOnce(Keys.Escape, kbState, prevKbState))
                     {
                         penumbra.Visible = true;
                         gameState = GameState.Game;
@@ -331,7 +308,7 @@ namespace Adumbration
                     {
                         case PauseButtons.Resume:
                             // transition to quit state
-                            if(IsKeyPressedOnce(Keys.Right, kbState, kbStateOld))
+                            if(IsKeyPressedOnce(Keys.Right, kbState, prevKbState))
                             {
                                 selectedPauseItem = PauseButtons.Quit;
                             }
@@ -346,7 +323,7 @@ namespace Adumbration
 
                         case PauseButtons.Quit:
                             // transition to resume state
-                            if(IsKeyPressedOnce(Keys.Left, kbState, kbStateOld))
+                            if(IsKeyPressedOnce(Keys.Left, kbState, prevKbState))
                             {
                                 selectedPauseItem = PauseButtons.Resume;
                             }
@@ -365,7 +342,8 @@ namespace Adumbration
 
             base.Update(gameTime);
 
-            kbStateOld = kbState;
+            // updates previous kb state
+            prevKbState = kbState;
         }
 
         protected override void Draw(GameTime gameTime)
@@ -386,8 +364,6 @@ namespace Adumbration
                 null,
                 tMatrix);
 
-
-
             // main game drawing FSM
             switch(gameState)
             {
@@ -400,18 +376,8 @@ namespace Adumbration
                     // Draw Player
                     player.Draw(_spriteBatch);
 
-                    // Draw test beam
-                    beam.Draw(_spriteBatch);
-
+                    // Draw closed door
                     closedDoor.Draw(_spriteBatch);
-
-                    // Emitter and Receptor testing
-                    emitter.Beam.Draw(_spriteBatch);
-                    emitter.Draw(_spriteBatch);
-                    receptor.Draw(_spriteBatch);
-
-                    // Draw Closed Door
-                    //_spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
                     #endregion
 
@@ -456,6 +422,19 @@ namespace Adumbration
             _spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        /// <summary>
+        /// Sets the state of the game window's fullscreen and resolution
+        /// </summary>
+        /// <param name="isFullscreen">Whether fullscreen or not</param>
+        /// <param name="resolution">Desired resolution to set</param>
+        private void SetFullscreen(bool isFullscreen, Vector2 resolution)
+        {
+            _graphics.IsFullScreen = isFullscreen;
+            _graphics.PreferredBackBufferWidth = (int)resolution.X;
+            _graphics.PreferredBackBufferHeight = (int)resolution.Y;
+            _graphics.ApplyChanges();
         }
 
         /// <summary>
