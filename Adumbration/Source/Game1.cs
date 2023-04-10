@@ -24,12 +24,6 @@ namespace Adumbration
         Pause
     }
 
-    public enum PauseButtons
-    {
-        Resume,
-        Quit
-    }
-
     public class Game1 : Game
     {
         #region Fields
@@ -42,6 +36,16 @@ namespace Adumbration
         private KeyboardState kbState;
         private KeyboardState kbStateOld;
         private GameState gameState;
+
+        // menu enum
+        private enum PauseButtons {
+            Resume,
+            Quit
+        }
+
+        private enum MainMenuButtons {
+            
+        }
 
         // general game settings/fields
         private Vector2 screenRes;
