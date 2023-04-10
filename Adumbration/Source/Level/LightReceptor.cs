@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SharpDX.Direct2D1;
 
 namespace Adumbration
 {
@@ -31,6 +33,7 @@ namespace Adumbration
         {
             this.activationPoint = activationPoint;
         }
+
 
         public void Update(GameTime gameTime, Level currentLevel, LightBeam beam)
         {

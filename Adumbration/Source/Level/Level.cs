@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
+using SharpDX.MediaFoundation;
 
 namespace Adumbration
 {
@@ -14,6 +15,8 @@ namespace Adumbration
     /// </summary>
     public class Level
     {
+        private SpriteBatch _spriteBatch;
+
         // Fields
         private char[,] levelLayout;            // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
@@ -79,6 +82,22 @@ namespace Adumbration
                     allBeams.Add(mirror.Beam);
                     mirror.Update(gameTime);
                 }
+
+                if (obj is LightReceptor receptor)
+                {
+                    receptor.OnActivation += Game1.PauseTheGame;
+                    //for all beams inside the allbeams class,
+                    //it will check if the receptor is colliding with it
+                    //then it will do a specific action
+                    for (int i = 0; i < allBeams.Count; i++)
+                    {
+                        if (receptor.IsColliding(allBeams[i]))
+                        {
+                            receptor.Update(gameTime);
+                            System.Diagnostics.Debug.WriteLine("IT WORKS");
+                        }
+                    }
+                }
             }
         }
 
@@ -98,7 +117,7 @@ namespace Adumbration
             }
 
             // draws all light beams after tile drawing
-            foreach(LightBeam beam in allBeams)
+            foreach (LightBeam beam in allBeams)
             {
                 beam.Draw(sb);
             }
@@ -240,6 +259,15 @@ namespace Adumbration
                                 positionRect,
                                 Direction.Down,
                                 this);
+                            break;
+
+                        //RECEPTOR(for now, this one is for if it's pointed up)
+                        case 'R':
+                            returnArray[x, y] = new LightReceptor(
+                                wallSpritesheet,
+                                new Rectangle(16 * 8, 16 * 3, 16, 16),
+                                new Rectangle(positionRect.X, positionRect.Y + 1, 16, 16),      //sets up the rectangle a bit lower
+                                new Rectangle(positionRect.X, positionRect.Y - 1, 16, 16));     //sets the beam hitbox a bit higher
                             break;
 
                         // WALL
@@ -428,5 +456,8 @@ namespace Adumbration
         }
 
         #endregion
+
+
+
     }
 }
