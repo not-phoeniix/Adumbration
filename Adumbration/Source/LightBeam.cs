@@ -82,7 +82,7 @@ namespace Adumbration
                     foreach (GameObject tile in currentLevel.TileList)
                     {
                         // If it is colliding with a wall
-                        if (tile is Wall && IsColliding(tile))
+                        if (tile is Wall && tile is not LightEmitter && IsColliding(tile))
                         {
                             // Stop expansion
                             positionRect.Width -= 1;
