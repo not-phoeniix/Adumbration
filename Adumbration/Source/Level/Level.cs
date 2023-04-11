@@ -24,6 +24,9 @@ namespace Adumbration
         private Hull[,] wallHulls;              // for shadow casting
         private List<LightBeam> allBeams;       // all beams in the level currently
 
+        // Mirror Testing
+        private Mirror mirror;
+
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
         /// </summary>
@@ -39,6 +42,14 @@ namespace Adumbration
             wallHulls = LoadHulls(objectArray);
 
             allBeams = new List<LightBeam>();
+        }
+
+        public void LoadMirrorTexture(Texture2D texture, Texture2D wallTexture)
+        {
+            mirror = new Mirror(texture, wallTexture,
+                new Rectangle(0, 0, 12, 12),
+                new Rectangle(16 * 8, 125, 12, 12),
+                MirrorType.Backward);
         }
 
         /// <summary>
@@ -58,6 +69,7 @@ namespace Adumbration
         internal List<LightBeam> Beams
         {
             get { return allBeams; }
+            set { allBeams = value; }
         }
 
         /// <summary>
@@ -79,8 +91,7 @@ namespace Adumbration
                 
                 if(obj is Mirror mirror)
                 {
-                    allBeams.Add(mirror.Beam);
-                    mirror.Update(gameTime);
+                    allBeams.Add(mirror?.Beam);
                 }
 
                 if (obj is LightReceptor receptor)
@@ -97,6 +108,12 @@ namespace Adumbration
                         }
                     }
                 }
+            }
+
+            mirror.Update(gameTime, this);
+            if(mirror.Beam != null)
+            {
+                allBeams.Add(mirror.Beam);
             }
         }
 
@@ -120,6 +137,8 @@ namespace Adumbration
             {
                 beam.Draw(sb);
             }
+
+            mirror.Draw(sb);
         }
 
         #region LevelLoading

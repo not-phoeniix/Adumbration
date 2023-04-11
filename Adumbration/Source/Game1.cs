@@ -145,7 +145,7 @@ namespace Adumbration
             #region ObjectCreation
 
             // LevelManager init
-            LevelManager.Instance.Initialize(wallTexture, GameLevels.TestLevel);
+            LevelManager.Instance.Initialize(wallTexture, GameLevels.TestLevel, mirrorTexture);
 
             // Player Object
             player = new Player(
@@ -168,7 +168,6 @@ namespace Adumbration
                     16,             // - Width
                     16),            // - Height
                 1);                 // Level
-
             #endregion
 
             #region PenumbraSetup
@@ -237,7 +236,7 @@ namespace Adumbration
                     // object logic
                     LevelManager.Instance.CurrentLevel.Update(gameTime);
                     player.Update(gameTime, LevelManager.Instance.CurrentLevel);
-                    player.IsDead(LevelManager.Instance.CurrentLevel.Beams[0]);
+                    player.IsDead(LevelManager.Instance.CurrentLevel.Beams);
                     closedDoor.Update(gameTime);
                     closedDoor.Update(player);
 
@@ -418,7 +417,6 @@ namespace Adumbration
 
                     break;
             }
-
             _spriteBatch.End();
 
             base.Draw(gameTime);

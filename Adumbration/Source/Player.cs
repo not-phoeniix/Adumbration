@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Adumbration
 {
@@ -235,14 +236,17 @@ namespace Adumbration
         /// If the player is killed, it will respawn at the start of the room.
         /// </summary>
         /// <param name="beam">The light beam.</param>
-        public void IsDead(GameObject beam)
+        internal void IsDead(List<LightBeam> beams)
         {
             // When the player collides with a light beam, respawn at starting point
             // This is just for the test room
-            if (this.IsColliding(beam) && !isDashing)
+            foreach(LightBeam beam in beams)
             {
-                positionRect.X = 50;
-                positionRect.Y = 50;
+                if (this.IsColliding(beam) && !isDashing)
+                {
+                    positionRect.X = 50;
+                    positionRect.Y = 50;
+                }
             }
         }
 
