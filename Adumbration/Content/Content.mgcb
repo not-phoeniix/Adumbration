@@ -13,6 +13,13 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Arcadepix.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Arcadepix.spritefont
+
 #begin Sprites/sprite_altFloors.png
 /importer:TextureImporter
 /processor:TextureProcessor
