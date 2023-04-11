@@ -85,7 +85,6 @@ namespace Adumbration
 
                 if (obj is LightReceptor receptor)
                 {
-                    receptor.OnActivation += Game1.PauseTheGame;
                     //for all beams inside the allbeams class,
                     //it will check if the receptor is colliding with it
                     //then it will do a specific action
