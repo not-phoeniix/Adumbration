@@ -56,7 +56,13 @@ namespace Adumbration
         /// <param name="gameTime"></param>
         public override void Update(GameTime gameTime)
         {
-            
+            KeyboardState currentState = Keyboard.GetState();
+            if (!pickedUp)
+            {
+
+            }
+
+            prevState = currentState;
         }
     }
 }

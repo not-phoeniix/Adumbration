@@ -286,6 +286,13 @@ namespace Adumbration
                                 new Rectangle(positionRect.X, positionRect.Y - 1, 16, 16));     //sets the beam hitbox a bit higher
                             break;
 
+                        case 'K':
+                            returnArray[x, y] = new KeyObject(
+                                textureDict["key"],
+                                new Rectangle(0, 0, 12, 12),
+                                new Rectangle(positionRect.X + 3, positionRect.Y + 3, 10, 10));
+                            break;
+
                         // WALL
                         default:
                             returnArray[x, y] = new Wall(wallTexture, sourceRect, positionRect);
