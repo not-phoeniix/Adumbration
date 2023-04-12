@@ -92,11 +92,11 @@ namespace Adumbration
         /// <summary>
         /// Player takes everything from parent class
         /// </summary>
-        /// <param name="spriteSheet">spritesheet where player's texture is</param>
+        /// <param name="spritesheet">spritesheet where player's texture is</param>
         /// <param name="sourceRect">The source rectangle within the spritesheet</param>
         /// <param name="position">position of the player</param>
-        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
-            : base(spriteSheet, sourceRect, position)
+        public Player(Texture2D spritesheet, Rectangle sourceRect, Rectangle position)
+            : base(spritesheet, sourceRect, position)
         {
             hasDash = true;
             currentMode = PlayerMode.NormalMode;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 
 namespace Adumbration
 {
@@ -55,16 +56,8 @@ namespace Adumbration
         #endregion
 
         // level info
-        private Texture2D levelSpritesheet;
+        private Dictionary<string, Texture2D> textureDict;
         private Level currentLevel;
-
-        /// <summary>
-        /// Get the sprite sheet
-        /// </summary>
-        public Texture2D LevelSpritesheet
-        {
-            get { return levelSpritesheet; }
-        }
 
         /// <summary>
         /// Get-only property for current level
@@ -79,12 +72,10 @@ namespace Adumbration
         /// </summary>
         /// <param name="levelSpritesheet"></param>
         /// <param name="startingLevel"></param>
-        public void Initialize(Texture2D levelSpritesheet, GameLevels startingLevel, Texture2D texture2D)
+        public void Initialize(Dictionary<string, Texture2D> textureDict, GameLevels startingLevel)
         {
-            this.levelSpritesheet = levelSpritesheet;
+            this.textureDict = textureDict;
             LoadLevel(startingLevel);
-
-            currentLevel.LoadMirrorTexture(texture2D, levelSpritesheet);
         }
 
         /// <summary>
@@ -101,7 +92,7 @@ namespace Adumbration
                 case GameLevels.TestLevel:
 
                     currentLevel = new Level(
-                        levelSpritesheet, 
+                        textureDict, 
                         "BigLevelTest.txt");
 
                     break;
@@ -110,7 +101,7 @@ namespace Adumbration
                 case GameLevels.TestLevel2:
 
                     currentLevel = new Level(
-                        levelSpritesheet,
+                        textureDict,
                         "BigLevelTest2.txt");
 
                     break;
