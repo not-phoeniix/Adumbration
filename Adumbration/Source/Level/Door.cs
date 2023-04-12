@@ -55,6 +55,41 @@ namespace Adumbration
         public event KeyPressDelegate OnKeyPress;
         #endregion
 
+        // Properties
+
+        /// <summary>
+        /// Property that allows boolean isOpen to be instantiated from the constructor.
+        /// </summary>
+        public bool IsOpen
+        {
+            get { return isOpen; }
+            set { isOpen = value; }
+        }
+
+        /// <summary>
+        /// Property that creates a hitbox for unlocking the door.
+        /// </summary>
+        public Rectangle UnlockHitbox
+        {
+            get { return unlockHitbox; }
+        }
+
+        /// <summary>
+        /// Property that creates a hitbox for entering the door when it is unlocked.
+        /// </summary>
+        public Rectangle EnterHitbox
+        {
+            get { return enterHitbox; }
+        }
+
+        /// <summary>
+        /// Gets the int that represents the level the door leads to.
+        /// </summary>
+        public int Level
+        {
+            get { return level; }
+        }
+
         // Constructor(s)
 
         /// <summary>
@@ -62,10 +97,9 @@ namespace Adumbration
         /// Requires the base constructor parameters.
         /// </summary>
         /// <param name="isOpen"></param>
-        /// <param name="textureDict"></param>
+        /// <param name="spriteSheet"></param>
         /// <param name="sourceRect"></param>
         /// <param name="position"></param>
-        /// <param name="level">Level that the door leads to</param>
         public Door(bool isOpen, Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position, int level)
              : base(textureDict["doors"], sourceRect, position)
         {
@@ -112,7 +146,7 @@ namespace Adumbration
 
             if (currentState.IsKeyUp(Keys.E) &&
                 previousState.IsKeyDown(Keys.E) &&
-                unlockHitbox.Contains(myPlayer.Position))
+                UnlockHitbox.Contains(myPlayer.Position))
             {
                 if (OnKeyPressOnce != null)
                 {
@@ -148,7 +182,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            return unlockHitbox.Intersects(obj.Position);
+            return UnlockHitbox.Intersects(obj.Position);
         }
 
         /// <summary>
@@ -178,13 +212,13 @@ namespace Adumbration
             // Then load the level connected to the door.
             else
             {
-                ifOpen = true;
-                if (enterHitbox.Intersects(myPlayer.Position))
-                {
-                    LevelManager.Instance.Initialize(
-                        textureDict,
-                        GameLevels.TestLevel2);
-                }
+                //ifOpen = true;
+                //if (EnterHitbox.Intersects(myPlayer.Position))
+                //{
+                //    LevelManager.Instance.Initialize(
+                //        textureDict,
+                //        GameLevels.TestLevel2);
+                //}
             }
 
             // Set the 'isOpen' field equal to the value of 'ifOpen'.
