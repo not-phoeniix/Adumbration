@@ -277,7 +277,7 @@ namespace Adumbration
                                 this);
                             break;
 
-                        //RECEPTOR(for now, this one is for if it's pointed up)
+                        // RECEPTOR(for now, this one is for if it's pointed up)
                         case 'R':
                             returnArray[x, y] = new LightReceptor(
                                 wallTexture,

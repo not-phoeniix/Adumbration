@@ -28,16 +28,16 @@ namespace Adumbration
 
     /// <summary>
     /// Alexander Gough
-    /// Door class that inherits from abstract GameObject.
+    /// Door class that inherits from the Wall Class.
     /// Will have an open and closed state.
-    /// Leads to other levels.
+    /// Leads to other levels or back to the hub room.
     /// </summary>
-    public class Door : GameObject
+    public class Door : Wall, IHitbox
     {
         // Fields
         private bool isOpen;
         private Rectangle unlockHitbox;
-        private Rectangle enterHitbox;
+        private Rectangle hitbox;
         private KeyboardState previousState;
         private int level;
         private Dictionary<string, Texture2D> textureDict;
@@ -54,6 +54,12 @@ namespace Adumbration
         /// </summary>
         public event KeyPressDelegate OnKeyPress;
         #endregion
+
+        // Property
+        public Rectangle Hitbox
+        {
+            get { return hitbox; }
+        }
 
         // Constructor(s)
 
@@ -80,7 +86,7 @@ namespace Adumbration
                 position.Width * 2,
                 position.Height * 2);
 
-            enterHitbox = new Rectangle(
+            hitbox = new Rectangle(
                 position.X - 1,
                 position.Y - 1,
                 position.Width + 2,
@@ -179,7 +185,7 @@ namespace Adumbration
             else
             {
                 ifOpen = true;
-                if (enterHitbox.Intersects(myPlayer.Position))
+                if (hitbox.Intersects(myPlayer.Position))
                 {
                     LevelManager.Instance.Initialize(
                         textureDict,
