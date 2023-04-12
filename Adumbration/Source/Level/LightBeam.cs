@@ -32,7 +32,7 @@ namespace Adumbration
 
         //constructor for this class
         public LightBeam(Texture2D texture, Rectangle position, Direction dir)
-             : base(texture, new Rectangle(12, 4, 1, 1), position)  // this rectangle is 1 pixel of white
+             : base(texture, new Rectangle(0, 0, 1, 1), position)
         {
             this.dir = dir;
         }
