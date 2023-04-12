@@ -20,7 +20,7 @@ namespace Adumbration
     internal class Mirror : GameObject
     {
         // Fields
-        private LightBeam reflectedBeam;
+        private List<LightBeam> reflectedBeams;
         private MirrorType type;
         private bool isLightColliding;
         private Texture2D whitePixelTexture;
@@ -39,17 +39,16 @@ namespace Adumbration
         {
             this.type = type;
             whitePixelTexture = textureDict["whitePixel"];
-            
-            reflectedBeam = null;
+            reflectedBeams = new List<LightBeam>();
             isLightColliding = false;
         }
 
         /// <summary>
         /// Returns the light beam attatched to this mirror, null if non existant
         /// </summary>
-        public LightBeam Beam
+        public List<LightBeam> ReflectedBeams
         {
-            get { return reflectedBeam; }
+            get { return reflectedBeams; }
         }
 
         public void Update(GameTime gameTime, Level currentLevel)
@@ -63,10 +62,14 @@ namespace Adumbration
                     // The mirror creates a new reflection
                     System.Diagnostics.Debug.WriteLine("collision");
                     isLightColliding = true;
-                    reflectedBeam = CreateReflection(beam.Direction);
+                    reflectedBeams.Add(CreateReflection(beam.Direction));
                 }
             }
-            reflectedBeam?.Update(gameTime, currentLevel);
+
+            foreach(LightBeam beam in reflectedBeams)
+            {
+                beam?.Update(gameTime, currentLevel);
+            }            
         }
 
         /// <summary>

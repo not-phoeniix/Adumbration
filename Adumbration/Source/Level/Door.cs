@@ -68,10 +68,9 @@ namespace Adumbration
         /// Requires the base constructor parameters.
         /// </summary>
         /// <param name="isOpen"></param>
-        /// <param name="textureDict"></param>
+        /// <param name="spriteSheet"></param>
         /// <param name="sourceRect"></param>
         /// <param name="position"></param>
-        /// <param name="level">Level that the door leads to</param>
         public Door(bool isOpen, Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position, int level)
              : base(textureDict["doors"], sourceRect, position)
         {
@@ -118,7 +117,7 @@ namespace Adumbration
 
             if (currentState.IsKeyUp(Keys.E) &&
                 previousState.IsKeyDown(Keys.E) &&
-                unlockHitbox.Contains(myPlayer.Position))
+                UnlockHitbox.Contains(myPlayer.Position))
             {
                 if (OnKeyPressOnce != null)
                 {
@@ -154,7 +153,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            return unlockHitbox.Intersects(obj.Position);
+            return UnlockHitbox.Intersects(obj.Position);
         }
 
         /// <summary>
