@@ -240,12 +240,15 @@ namespace Adumbration
         {
             // When the player collides with a light beam, respawn at starting point
             // This is just for the test room
-            foreach(LightBeam beam in beams)
+            if (currentMode == PlayerMode.NormalMode)
             {
-                if (this.IsColliding(beam) && !isDashing)
+                foreach (LightBeam beam in beams)
                 {
-                    positionRect.X = 50;
-                    positionRect.Y = 50;
+                    if (this.IsColliding(beam) && !isDashing)
+                    {
+                        positionRect.X = 50;
+                        positionRect.Y = 50;
+                    }
                 }
             }
         }
