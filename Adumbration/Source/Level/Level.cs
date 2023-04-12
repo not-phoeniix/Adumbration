@@ -14,8 +14,6 @@ namespace Adumbration
     /// </summary>
     public class Level
     {
-        private SpriteBatch _spriteBatch;
-
         // Fields
         private char[,] levelLayout;            // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
@@ -288,7 +286,7 @@ namespace Adumbration
                                 this);
                             break;
 
-                        //RECEPTOR(for now, this one is for if it's pointed up)
+                        // RECEPTOR(for now, this one is for if it's pointed up)
                         case 'R':
                             returnArray[x, y] = new LightReceptor(
                                 wallTexture,
