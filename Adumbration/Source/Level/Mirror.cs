@@ -23,14 +23,22 @@ namespace Adumbration
         private List<LightBeam> reflectedBeams;
         private MirrorType type;
         private bool isLightColliding;
-        private Texture2D wallTexture;
+        private Texture2D whitePixelTexture;
 
         //constructor for this class
-        public Mirror(Texture2D spriteSheet, Texture2D wallTexture, Rectangle sourceRect, Rectangle position, MirrorType type)
-             : base(spriteSheet, sourceRect, position)
+        public Mirror(Dictionary<string, Texture2D> textureDict, Rectangle position, MirrorType type)
+             : base(
+                   textureDict["mirror"], 
+                   new Rectangle(
+                       0, 
+                       0,
+                       textureDict["mirror"].Width,
+                       textureDict["mirror"].Height
+                       ),
+                   position)
         {
             this.type = type;
-            this.wallTexture = wallTexture;
+            whitePixelTexture = textureDict["whitePixel"];
             reflectedBeams = new List<LightBeam>();
             isLightColliding = false;
         }
@@ -82,25 +90,25 @@ namespace Adumbration
                     switch (beamDirection)
                     {
                         case Direction.Up:
-                            returnBeam = new LightBeam(wallTexture, 
+                            returnBeam = new LightBeam(whitePixelTexture, 
                                 new Rectangle(positionRect.X, positionRect.Y, 2, 2), 
                                 Direction.Right);
                             break;
 
                         case Direction.Down:
-                            returnBeam = new LightBeam(wallTexture,
+                            returnBeam = new LightBeam(whitePixelTexture,
                                new Rectangle(positionRect.X, positionRect.Y, 2, 2),
                                Direction.Left);
                             break;
 
                         case Direction.Right:
-                            returnBeam = new LightBeam(wallTexture,
+                            returnBeam = new LightBeam(whitePixelTexture,
                                new Rectangle(positionRect.X, positionRect.Y, 2, 2),
                                Direction.Up);
                             break;
 
                         case Direction.Left:
-                            returnBeam = new LightBeam(wallTexture,
+                            returnBeam = new LightBeam(whitePixelTexture,
                                new Rectangle(positionRect.X, positionRect.Y, 2, 2),
                                Direction.Down);
                             break;
@@ -115,25 +123,25 @@ namespace Adumbration
                     switch (beamDirection)
                     {
                         case Direction.Up:
-                            returnBeam = new LightBeam(wallTexture,
+                            returnBeam = new LightBeam(whitePixelTexture,
                                 new Rectangle(positionRect.X, positionRect.Y, 2, 2),
                                 Direction.Left);
                             break;
 
                         case Direction.Down:
-                            returnBeam = new LightBeam(wallTexture,
+                            returnBeam = new LightBeam(whitePixelTexture,
                                new Rectangle(positionRect.X, positionRect.Y, 2, 2),
                                Direction.Right);
                             break;
 
                         case Direction.Right:
-                            returnBeam = new LightBeam(wallTexture,
+                            returnBeam = new LightBeam(whitePixelTexture,
                                new Rectangle(positionRect.X, positionRect.Y, 2, 2),
                                Direction.Down);
                             break;
 
                         case Direction.Left:
-                            returnBeam = new LightBeam(wallTexture,
+                            returnBeam = new LightBeam(whitePixelTexture,
                                new Rectangle(positionRect.X, positionRect.Y, 2, 2),
                                Direction.Up);
                             break;

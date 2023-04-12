@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.XAudio2;
 using Penumbra;
-
+using System.Collections.Generic;
 
 namespace Adumbration
 {
@@ -40,6 +40,7 @@ namespace Adumbration
         private Rectangle enterHitbox;
         private KeyboardState previousState;
         private int level;
+        private Dictionary<string, Texture2D> textureDict;
 
         #region// Event(s)
 
@@ -54,41 +55,6 @@ namespace Adumbration
         public event KeyPressDelegate OnKeyPress;
         #endregion
 
-        // Properties
-
-        /// <summary>
-        /// Property that allows boolean isOpen to be instantiated from the constructor.
-        /// </summary>
-        public bool IsOpen
-        {
-            get { return isOpen; }
-            set { isOpen = value; }
-        }
-
-        /// <summary>
-        /// Property that creates a hitbox for unlocking the door.
-        /// </summary>
-        public Rectangle UnlockHitbox
-        {
-            get { return unlockHitbox; }
-        }
-
-        /// <summary>
-        /// Property that creates a hitbox for entering the door when it is unlocked.
-        /// </summary>
-        public Rectangle EnterHitbox
-        {
-            get { return enterHitbox; }
-        }
-
-        /// <summary>
-        /// Gets the int that represents the level the door leads to.
-        /// </summary>
-        public int Level
-        {
-            get { return level; }
-        }
-
         // Constructor(s)
 
         /// <summary>
@@ -96,14 +62,16 @@ namespace Adumbration
         /// Requires the base constructor parameters.
         /// </summary>
         /// <param name="isOpen"></param>
-        /// <param name="spriteSheet"></param>
+        /// <param name="textureDict"></param>
         /// <param name="sourceRect"></param>
         /// <param name="position"></param>
-        public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, int level)
-             : base(spriteSheet, sourceRect, position)
+        /// <param name="level">Level that the door leads to</param>
+        public Door(bool isOpen, Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position, int level)
+             : base(textureDict["doors"], sourceRect, position)
         {
             this.isOpen = isOpen;
             this.level = level;
+            this.textureDict = textureDict;
 
             // Create door hitboxes
             unlockHitbox = new Rectangle(
@@ -144,7 +112,7 @@ namespace Adumbration
 
             if (currentState.IsKeyUp(Keys.E) &&
                 previousState.IsKeyDown(Keys.E) &&
-                UnlockHitbox.Contains(myPlayer.Position))
+                unlockHitbox.Contains(myPlayer.Position))
             {
                 if (OnKeyPressOnce != null)
                 {
@@ -180,7 +148,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            return UnlockHitbox.Intersects(obj.Position);
+            return unlockHitbox.Intersects(obj.Position);
         }
 
         /// <summary>
@@ -211,11 +179,11 @@ namespace Adumbration
             else
             {
                 ifOpen = true;
-                if (EnterHitbox.Intersects(myPlayer.Position))
+                if (enterHitbox.Intersects(myPlayer.Position))
                 {
-                    //LevelManager.Instance.Initialize(
-                    //    LevelManager.Instance.LevelSpritesheet,
-                    //    GameLevels.TestLevel2);
+                    LevelManager.Instance.Initialize(
+                        textureDict,
+                        GameLevels.TestLevel2);
                 }
             }
 
