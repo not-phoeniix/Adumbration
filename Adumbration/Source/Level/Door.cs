@@ -28,16 +28,16 @@ namespace Adumbration
 
     /// <summary>
     /// Alexander Gough
-    /// Door class that inherits from abstract GameObject.
+    /// Door class that inherits from the Wall Class.
     /// Will have an open and closed state.
-    /// Leads to other levels.
+    /// Leads to other levels or back to the hub room.
     /// </summary>
-    public class Door : GameObject
+    public class Door : Wall, IHitbox
     {
         // Fields
         private bool isOpen;
         private Rectangle unlockHitbox;
-        private Rectangle enterHitbox;
+        private Rectangle hitbox;
         private KeyboardState previousState;
         private int level;
         private Dictionary<string, Texture2D> textureDict;
@@ -55,6 +55,12 @@ namespace Adumbration
         public event KeyPressDelegate OnKeyPress;
         #endregion
 
+        // Property
+        public Rectangle Hitbox
+        {
+            get { return hitbox; }
+        }
+
         // Constructor(s)
 
         /// <summary>
@@ -62,10 +68,9 @@ namespace Adumbration
         /// Requires the base constructor parameters.
         /// </summary>
         /// <param name="isOpen"></param>
-        /// <param name="textureDict"></param>
+        /// <param name="spriteSheet"></param>
         /// <param name="sourceRect"></param>
         /// <param name="position"></param>
-        /// <param name="level">Level that the door leads to</param>
         public Door(bool isOpen, Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position, int level)
              : base(textureDict["doors"], sourceRect, position)
         {
@@ -80,7 +85,7 @@ namespace Adumbration
                 position.Width * 2,
                 position.Height * 2);
 
-            enterHitbox = new Rectangle(
+            hitbox = new Rectangle(
                 position.X - 1,
                 position.Y - 1,
                 position.Width + 2,
@@ -112,7 +117,7 @@ namespace Adumbration
 
             if (currentState.IsKeyUp(Keys.E) &&
                 previousState.IsKeyDown(Keys.E) &&
-                unlockHitbox.Contains(myPlayer.Position))
+                UnlockHitbox.Contains(myPlayer.Position))
             {
                 if (OnKeyPressOnce != null)
                 {
@@ -148,7 +153,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            return unlockHitbox.Intersects(obj.Position);
+            return UnlockHitbox.Intersects(obj.Position);
         }
 
         /// <summary>
@@ -179,7 +184,7 @@ namespace Adumbration
             else
             {
                 ifOpen = true;
-                if (enterHitbox.Intersects(myPlayer.Position))
+                if (hitbox.Intersects(myPlayer.Position))
                 {
                     LevelManager.Instance.Initialize(
                         textureDict,

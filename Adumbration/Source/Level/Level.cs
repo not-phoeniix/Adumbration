@@ -25,6 +25,9 @@ namespace Adumbration
         // Mirror Testing
         private Mirror mirror;
 
+        // Multiple beam testing
+        private LightBeam testBeam;
+
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
         /// </summary>
@@ -44,6 +47,8 @@ namespace Adumbration
             allBeams = new List<LightBeam>();
 
             mirror = new Mirror(textureDict, new Rectangle(16 * 8, 125, 12, 12), MirrorType.Backward);
+
+            //testBeam = new LightBeam()
         }
 
         /// <summary>
@@ -87,7 +92,7 @@ namespace Adumbration
                 
                 if(obj is Mirror mirror)
                 {
-                    allBeams.Add(mirror?.Beam);
+                    //allBeams.Add(mirror?.Beam);
                 }
 
                 if (obj is LightReceptor receptor)
@@ -107,9 +112,9 @@ namespace Adumbration
             }
 
             mirror.Update(gameTime, this);
-            if(mirror.Beam != null)
+            foreach(LightBeam beam in mirror.ReflectedBeams)
             {
-                allBeams.Add(mirror.Beam);
+                allBeams.Add(beam);
             }
         }
 
@@ -268,14 +273,14 @@ namespace Adumbration
                         // EMITTER
                         case 'E':
                             returnArray[x, y] = new LightEmitter(
-                                textureDict,
+                                textureDict["mirror"],
                                 new Rectangle(16 * 3, 16 * 3, 16, 16),
                                 positionRect,
                                 Direction.Down,
                                 this);
                             break;
 
-                        //RECEPTOR(for now, this one is for if it's pointed up)
+                        // RECEPTOR(for now, this one is for if it's pointed up)
                         case 'R':
                             returnArray[x, y] = new LightReceptor(
                                 wallTexture,
