@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using SharpDX.MediaFoundation;
+using SharpDX.Direct3D9;
 
 namespace Adumbration
 {
@@ -27,6 +28,9 @@ namespace Adumbration
         // Mirror Testing
         private Mirror mirror;
 
+        // Multiple beam testing
+        private LightBeam testBeam;
+
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
         /// </summary>
@@ -42,6 +46,8 @@ namespace Adumbration
             wallHulls = LoadHulls(objectArray);
 
             allBeams = new List<LightBeam>();
+
+            //testBeam = new LightBeam()
         }
 
         public void LoadMirrorTexture(Texture2D texture, Texture2D wallTexture)
