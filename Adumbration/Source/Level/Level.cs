@@ -93,7 +93,7 @@ namespace Adumbration
                 
                 if(obj is Mirror mirror)
                 {
-                    allBeams.Add(mirror?.Beam);
+                    //allBeams.Add(mirror?.Beam);
                 }
 
                 if (obj is LightReceptor receptor)
@@ -113,9 +113,9 @@ namespace Adumbration
             }
 
             mirror.Update(gameTime, this);
-            if(mirror.Beam != null)
+            foreach(LightBeam beam in mirror.ReflectedBeams)
             {
-                allBeams.Add(mirror.Beam);
+                allBeams.Add(beam);
             }
         }
 

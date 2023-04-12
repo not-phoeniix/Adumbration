@@ -213,9 +213,9 @@ namespace Adumbration
                 ifOpen = true;
                 if (EnterHitbox.Intersects(myPlayer.Position))
                 {
-                    LevelManager.Instance.Initialize(
-                        LevelManager.Instance.LevelSpritesheet,
-                        GameLevels.TestLevel2);
+                    //LevelManager.Instance.Initialize(
+                    //    LevelManager.Instance.LevelSpritesheet,
+                    //    GameLevels.TestLevel2);
                 }
             }
 
