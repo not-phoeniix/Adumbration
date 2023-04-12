@@ -14,7 +14,7 @@ namespace Adumbration
     /// be what the player picks up
     /// so that they can unlock the final door in the end
     /// </summary>
-    internal class Keys : GameObject
+    internal class KeyObject : GameObject
     {
         //field
         private Rectangle hitBox;
@@ -34,7 +34,7 @@ namespace Adumbration
         /// <param name="spriteSheet"> the spritesheet of the things Nikki has drawn </param>
         /// <param name="sourceRect"> the spritesheet's position of the key </param>
         /// <param name="position"> the actual position of the rectangle </param>
-        public Keys(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
+        public KeyObject(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
             : base(spriteSheet, sourceRect, position)
         {
             hitBox = new Rectangle(
