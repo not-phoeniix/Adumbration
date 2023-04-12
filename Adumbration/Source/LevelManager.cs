@@ -79,10 +79,12 @@ namespace Adumbration
         /// </summary>
         /// <param name="levelSpritesheet"></param>
         /// <param name="startingLevel"></param>
-        public void Initialize(Texture2D levelSpritesheet, GameLevels startingLevel)
+        public void Initialize(Texture2D levelSpritesheet, GameLevels startingLevel, Texture2D texture2D)
         {
             this.levelSpritesheet = levelSpritesheet;
             LoadLevel(startingLevel);
+
+            currentLevel.LoadMirrorTexture(texture2D, levelSpritesheet);
         }
 
         /// <summary>

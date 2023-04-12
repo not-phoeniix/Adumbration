@@ -12,13 +12,20 @@
     <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Content\AsepriteProjects\**" />
+    <Compile Remove="Content\Sprites\UI\**" />
+    <Compile Remove="NonInteractable Objects\**" />
+    <EmbeddedResource Remove="Content\AsepriteProjects\**" />
+    <EmbeddedResource Remove="Content\Sprites\UI\**" />
+    <EmbeddedResource Remove="NonInteractable Objects\**" />
+    <None Remove="Content\AsepriteProjects\**" />
+    <None Remove="Content\Sprites\UI\**" />
+    <None Remove="NonInteractable Objects\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Content.Builder.Task" Version="3.8.1.303" />
     <PackageReference Include="MonoGame.Penumbra.DesktopGL" Version="3.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Content\AsepriteProjects\" />
-    <Folder Include="NonInteractable Objects\" />
   </ItemGroup>
   <Target Name="RestoreDotnetTools" BeforeTargets="Restore">
     <Message Text="Restoring dotnet tools" Importance="High" />
