@@ -115,19 +115,19 @@ namespace Adumbration
         {
             KeyboardState currentState = Keyboard.GetState();
 
-            if (currentState.IsKeyUp(Keys.E) &&
-                previousState.IsKeyDown(Keys.E) &&
-                UnlockHitbox.Contains(myPlayer.Position))
-            {
-                if (OnKeyPressOnce != null)
-                {
-                    OnKeyPressOnce(Keys.E, currentState, previousState);
-                }
-                if (OnKeyPress != null)
-                {
-                    OnKeyPress(myPlayer, currentState, previousState);
-                }
-            }
+            //if (currentState.IsKeyUp(Keys.E) &&
+            //    previousState.IsKeyDown(Keys.E) &&
+            //    UnlockHitbox.Contains(myPlayer.Position))
+            //{
+            //    if (OnKeyPressOnce != null)
+            //    {
+            //        OnKeyPressOnce(Keys.E, currentState, previousState);
+            //    }
+            //    if (OnKeyPress != null)
+            //    {
+            //        OnKeyPress(myPlayer, currentState, previousState);
+            //    }
+            //}
             previousState = currentState;
         }
 
@@ -151,10 +151,10 @@ namespace Adumbration
         /// </summary>
         /// <param name="obj">References the object that may collide with a door's hitbox.</param>
         /// <returns>True if collision occurs, otherwise false.</returns>
-        public override bool IsColliding(GameObject obj)
-        {
-            return UnlockHitbox.Intersects(obj.Position);
-        }
+        //public override bool IsColliding(GameObject obj)
+        //{
+        //    //return UnlockHitbox.Intersects(obj.Position);
+        //}
 
         /// <summary>
         /// Loads the next level.
