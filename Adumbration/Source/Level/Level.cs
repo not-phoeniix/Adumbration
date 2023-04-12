@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
-using SharpDX.MediaFoundation;
 
 namespace Adumbration
 {
@@ -20,9 +19,10 @@ namespace Adumbration
         // Fields
         private char[,] levelLayout;            // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
-        private Texture2D wallSpritesheet;
         private Hull[,] wallHulls;              // for shadow casting
         private List<LightBeam> allBeams;       // all beams in the level currently
+        private Texture2D wallTexture;
+        private Dictionary<string, Texture2D> textureDict;
 
         // Mirror Testing
         private Mirror mirror;
@@ -32,9 +32,11 @@ namespace Adumbration
         /// </summary>
         /// <param name="wallSpritesheet">Texture2D wall spritesheet</param>
         /// <param name="dataFilePath">File path of layout data file (Already in LevelData folder, only file name needed)</param>
-        public Level(Texture2D wallSpritesheet, string dataFilePath)
+        public Level(Dictionary<string, Texture2D> textureDict, string dataFilePath)
         {
-            this.wallSpritesheet = wallSpritesheet;
+            this.textureDict = textureDict;
+
+            wallTexture = textureDict["walls"];
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
@@ -42,14 +44,8 @@ namespace Adumbration
             wallHulls = LoadHulls(objectArray);
 
             allBeams = new List<LightBeam>();
-        }
 
-        public void LoadMirrorTexture(Texture2D texture, Texture2D wallTexture)
-        {
-            mirror = new Mirror(texture, wallTexture,
-                new Rectangle(0, 0, 12, 12),
-                new Rectangle(16 * 8, 125, 12, 12),
-                MirrorType.Backward);
+            mirror = new Mirror(textureDict, new Rectangle(16 * 8, 125, 12, 12), MirrorType.Backward);
         }
 
         /// <summary>
@@ -247,7 +243,7 @@ namespace Adumbration
                         layout[x, y],   // number of object in file
                         x,              // tile position X
                         y,              // tile position Y
-                        wallSpritesheet,    // Texture2D spritesheet
+                        wallTexture,    // Texture2D spritesheet
                         16,             // sprite width
                         16);            // sprite height
 
@@ -268,13 +264,13 @@ namespace Adumbration
                     {
                         // FLOOR
                         case '_':
-                            returnArray[x, y] = new Floor(wallSpritesheet, sourceRect, positionRect);
+                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
                             break;
 
                         // EMITTER
                         case 'E':
                             returnArray[x, y] = new LightEmitter(
-                                wallSpritesheet, 
+                                textureDict,
                                 new Rectangle(16 * 3, 16 * 3, 16, 16),
                                 positionRect,
                                 Direction.Down,
@@ -284,7 +280,7 @@ namespace Adumbration
                         //RECEPTOR(for now, this one is for if it's pointed up)
                         case 'R':
                             returnArray[x, y] = new LightReceptor(
-                                wallSpritesheet,
+                                wallTexture,
                                 new Rectangle(16 * 8, 16 * 3, 16, 16),
                                 new Rectangle(positionRect.X, positionRect.Y + 1, 16, 16),      //sets up the rectangle a bit lower
                                 new Rectangle(positionRect.X, positionRect.Y - 1, 16, 16));     //sets the beam hitbox a bit higher
@@ -292,7 +288,7 @@ namespace Adumbration
 
                         // WALL
                         default:
-                            returnArray[x, y] = new Wall(wallSpritesheet, sourceRect, positionRect);
+                            returnArray[x, y] = new Wall(wallTexture, sourceRect, positionRect);
                             break;
                     }
                 }

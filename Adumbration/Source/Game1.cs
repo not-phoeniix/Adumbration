@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Penumbra;
+using System.Collections.Generic;
 
 // ===================================
 // GAME NAME:   Adumbration
@@ -54,17 +55,7 @@ namespace Adumbration
         private float globalScale;
         private Matrix tMatrix;
 
-        // all game textures
-        private Texture2D playerTexture;
-        private Texture2D wallTexture;
-        private Texture2D doorTexture;
-        private Texture2D mirrorTexture;
-        private Texture2D altFloorTexture;
-        private Texture2D whitePixelTexture;    // 1x1 white pixel for drawing primitives
-
-        // all ui textures
-        private Texture2D pauseResumeTexture;
-        private Texture2D pauseQuitTexture;
+        private Dictionary<string, Texture2D> textureDict;
 
         // menu tracking
         private PauseButtons selectedPauseItem;
@@ -128,35 +119,37 @@ namespace Adumbration
 
             #region TextureLoading
 
+            textureDict = new Dictionary<string, Texture2D>();
+
             // game sprites
-            playerTexture = Content.Load<Texture2D>("Sprites/sprite_player");
-            wallTexture = Content.Load<Texture2D>("Sprites/sprite_walls");
-            doorTexture = Content.Load<Texture2D>("Sprites/sprite_doors");
-            mirrorTexture = Content.Load<Texture2D>("Sprites/sprite_mirror");
-            altFloorTexture = Content.Load<Texture2D>("Sprites/sprite_altFloors");
-            whitePixelTexture = Content.Load<Texture2D>("Sprites/sprite_whitePixel");
+            textureDict.Add("player", Content.Load<Texture2D>("Sprites/sprite_player"));
+            textureDict.Add("walls", Content.Load<Texture2D>("Sprites/sprite_walls"));
+            textureDict.Add("doors", Content.Load<Texture2D>("Sprites/sprite_doors"));
+            textureDict.Add("mirror", Content.Load<Texture2D>("Sprites/sprite_mirror"));
+            textureDict.Add("floors", Content.Load<Texture2D>("Sprites/sprite_altFloors"));
+            textureDict.Add("whitePixel", Content.Load<Texture2D>("Sprites/sprite_whitePixel"));
 
             // ui textures
-            pauseResumeTexture = Content.Load<Texture2D>("UI/ui_pauseResume");
-            pauseQuitTexture = Content.Load<Texture2D>("UI/ui_pauseQuit");
+            textureDict.Add("pauseResume", Content.Load<Texture2D>("UI/ui_pauseResume"));
+            textureDict.Add("pauseQuit", Content.Load<Texture2D>("UI/ui_pauseQuit"));
 
             #endregion
 
             #region ObjectCreation
 
             // LevelManager init
-            LevelManager.Instance.Initialize(wallTexture, GameLevels.TestLevel, mirrorTexture);
+            LevelManager.Instance.Initialize(textureDict, GameLevels.TestLevel);
 
             // Player Object
             player = new Player(
-                playerTexture,                  // spritesheet
+                textureDict["player"],          // spritesheet in dict
                 new Rectangle(0, 0, 6, 8),      // source
                 new Rectangle(50, 50, 6, 8));   // initial pos
 
             // Door Object
             closedDoor = new Door(
                 false,
-                doorTexture,
+                textureDict,
                 new Rectangle(      // Source Rectangle
                     0,              // - X Location
                     0,              // - Y Location
@@ -393,10 +386,10 @@ namespace Adumbration
                         // draw button "Resume" hovered, centered around player
                         case PauseButtons.Resume:
                             _spriteBatch.Draw(
-                                pauseResumeTexture,
+                                textureDict["pauseResume"],
                                 new Vector2(
-                                    player.CenterPos.X - pauseResumeTexture.Width / 2,
-                                    player.CenterPos.Y - pauseResumeTexture.Height / 2),
+                                    player.CenterPos.X - textureDict["pauseResume"].Width / 2,
+                                    player.CenterPos.Y - textureDict["pauseResume"].Height / 2),
                                 Color.White);
 
                             break;
@@ -404,10 +397,10 @@ namespace Adumbration
                         // draw button "Quit" hovered, centered around player
                         case PauseButtons.Quit:
                             _spriteBatch.Draw(
-                                pauseQuitTexture,
+                                textureDict["pauseQuit"],
                                 new Vector2(
-                                    player.CenterPos.X - pauseResumeTexture.Width / 2,
-                                    player.CenterPos.Y - pauseResumeTexture.Height / 2),
+                                    player.CenterPos.X - textureDict["pauseQuit"].Width / 2,
+                                    player.CenterPos.Y - textureDict["pauseQuit"].Height / 2),
                                 Color.White);
 
                             break;

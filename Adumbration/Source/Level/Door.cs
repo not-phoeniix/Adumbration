@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.XAudio2;
 using Penumbra;
-
+using System.Collections.Generic;
 
 namespace Adumbration
 {
@@ -40,6 +40,7 @@ namespace Adumbration
         private Rectangle enterHitbox;
         private KeyboardState previousState;
         private int level;
+        private Dictionary<string, Texture2D> textureDict;
 
         #region// Event(s)
 
@@ -99,11 +100,12 @@ namespace Adumbration
         /// <param name="spriteSheet"></param>
         /// <param name="sourceRect"></param>
         /// <param name="position"></param>
-        public Door(bool isOpen, Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, int level)
-             : base(spriteSheet, sourceRect, position)
+        public Door(bool isOpen, Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position, int level)
+             : base(textureDict["doors"], sourceRect, position)
         {
             this.isOpen = isOpen;
             this.level = level;
+            this.textureDict = textureDict;
 
             // Create door hitboxes
             unlockHitbox = new Rectangle(
@@ -214,7 +216,7 @@ namespace Adumbration
                 if (EnterHitbox.Intersects(myPlayer.Position))
                 {
                     LevelManager.Instance.Initialize(
-                        LevelManager.Instance.LevelSpritesheet,
+                        textureDict,
                         GameLevels.TestLevel2);
                 }
             }
