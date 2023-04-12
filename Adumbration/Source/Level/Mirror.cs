@@ -23,14 +23,15 @@ namespace Adumbration
         private List<LightBeam> reflectedBeams;
         private MirrorType type;
         private bool isLightColliding;
+        private bool lightAlreadyCollided;
         private Texture2D whitePixelTexture;
 
         //constructor for this class
         public Mirror(Dictionary<string, Texture2D> textureDict, Rectangle position, MirrorType type)
              : base(
-                   textureDict["mirror"], 
+                   textureDict["mirror"],
                    new Rectangle(
-                       0, 
+                       0,
                        0,
                        textureDict["mirror"].Width,
                        textureDict["mirror"].Height
@@ -41,6 +42,7 @@ namespace Adumbration
             whitePixelTexture = textureDict["whitePixel"];
             reflectedBeams = new List<LightBeam>();
             isLightColliding = false;
+            lightAlreadyCollided = false;
         }
 
         /// <summary>
@@ -54,29 +56,29 @@ namespace Adumbration
         public void Update(GameTime gameTime, Level currentLevel)
         {
             // For each light beam in the level
-            foreach(LightBeam beam in currentLevel.Beams)
+            foreach (LightBeam beam in currentLevel.Beams)
             {
                 // If it collides with the Mirror
                 if (IsColliding(beam) && !isLightColliding)
                 {
                     // The mirror creates a new reflection
                     System.Diagnostics.Debug.WriteLine("collision");
+                    reflectedBeams.Add(CreateReflection(beam));
                     isLightColliding = true;
-                    reflectedBeams.Add(CreateReflection(beam.Direction));
                 }
             }
 
-            foreach(LightBeam beam in reflectedBeams)
+            foreach (LightBeam beam in reflectedBeams)
             {
                 beam?.Update(gameTime, currentLevel);
-            }            
+            }
         }
 
         /// <summary>
         /// Creates a reflected light beam
         /// </summary>
         /// <param name="beam">The beam that is causin the reflection</param>
-        public LightBeam CreateReflection(Direction beamDirection)
+        public LightBeam CreateReflection(LightBeam incomingBeam)
         {
             LightBeam returnBeam = null;
 
@@ -87,29 +89,29 @@ namespace Adumbration
 
                     // Determine beam direction then create new
                     // reflected beam properly
-                    switch (beamDirection)
+                    switch (incomingBeam.Direction)
                     {
                         case Direction.Up:
-                            returnBeam = new LightBeam(whitePixelTexture, 
-                                new Rectangle(positionRect.X, positionRect.Y, 2, 2), 
+                            returnBeam = new LightBeam(whitePixelTexture,
+                                new Rectangle(incomingBeam.X, incomingBeam.Y - incomingBeam.Height, 2, 2),
                                 Direction.Right);
                             break;
 
                         case Direction.Down:
                             returnBeam = new LightBeam(whitePixelTexture,
-                               new Rectangle(positionRect.X, positionRect.Y, 2, 2),
+                               new Rectangle(incomingBeam.X, incomingBeam.Y + incomingBeam.Height, 2, 2),
                                Direction.Left);
                             break;
 
                         case Direction.Right:
                             returnBeam = new LightBeam(whitePixelTexture,
-                               new Rectangle(positionRect.X, positionRect.Y, 2, 2),
+                               new Rectangle(incomingBeam.X - incomingBeam.Width, positionRect.Y, 2, 2),
                                Direction.Up);
                             break;
 
                         case Direction.Left:
                             returnBeam = new LightBeam(whitePixelTexture,
-                               new Rectangle(positionRect.X, positionRect.Y, 2, 2),
+                               new Rectangle(incomingBeam.X, incomingBeam.Y, 2, 2),
                                Direction.Down);
                             break;
                     }
@@ -120,23 +122,23 @@ namespace Adumbration
 
                     // Determine beam direction then create new
                     // reflected beam properly
-                    switch (beamDirection)
+                    switch (incomingBeam.Direction)
                     {
                         case Direction.Up:
                             returnBeam = new LightBeam(whitePixelTexture,
-                                new Rectangle(positionRect.X, positionRect.Y, 2, 2),
+                                new Rectangle(incomingBeam.X, incomingBeam.Y, 2, 2),
                                 Direction.Left);
                             break;
 
                         case Direction.Down:
                             returnBeam = new LightBeam(whitePixelTexture,
-                               new Rectangle(positionRect.X, positionRect.Y, 2, 2),
+                               new Rectangle(incomingBeam.X, incomingBeam.Y + incomingBeam.Height, 2, 2),
                                Direction.Right);
                             break;
 
                         case Direction.Right:
                             returnBeam = new LightBeam(whitePixelTexture,
-                               new Rectangle(positionRect.X, positionRect.Y, 2, 2),
+                               new Rectangle(incomingBeam.X + incomingBeam.Width, incomingBeam.Y, 2, 2),
                                Direction.Down);
                             break;
 
@@ -148,7 +150,6 @@ namespace Adumbration
                     }
                     break;
             }
-
             return returnBeam;
         }
 
