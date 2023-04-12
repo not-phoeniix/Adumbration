@@ -126,6 +126,7 @@ namespace Adumbration
             textureDict.Add("walls", Content.Load<Texture2D>("Sprites/sprite_walls"));
             textureDict.Add("doors", Content.Load<Texture2D>("Sprites/sprite_doors"));
             textureDict.Add("mirror", Content.Load<Texture2D>("Sprites/sprite_mirror"));
+            textureDict.Add("key", Content.Load<Texture2D>("Sprites/sprite_key"));
             textureDict.Add("floors", Content.Load<Texture2D>("Sprites/sprite_altFloors"));
             textureDict.Add("whitePixel", Content.Load<Texture2D>("Sprites/sprite_whitePixel"));
 
