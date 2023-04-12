@@ -41,11 +41,13 @@ namespace Adumbration
         public GameObject[,] TileList
         {
             get { return objectArray; }
+            set { objectArray = value; }
         }
 
         public Hull[,] WallHulls
         {
             get { return wallHulls; }
+            set { wallHulls = value; }
         }
 
         /// <summary>
@@ -97,7 +99,7 @@ namespace Adumbration
         /// </summary>
         /// <param name="filename">String of file name</param>
         /// <returns>2D char array of level</returns>
-        private char[,] LoadLayoutFromFile(string filename)
+        public char[,] LoadLayoutFromFile(string filename)
         {
             char[,] returnLayout = new char[1, 1];
 
@@ -171,7 +173,7 @@ namespace Adumbration
         /// with various objects like walls/floors.
         /// </summary>
         /// <param name="layout"></param>
-        private GameObject[,] LoadObjectsFromLayout(char[,] layout)
+        public GameObject[,] LoadObjectsFromLayout(char[,] layout)
         {
             int levelWidth = layout.GetLength(0);
             int levelHeight = layout.GetLength(1);
@@ -225,7 +227,7 @@ namespace Adumbration
         /// </summary>
         /// <param name="levelObjects">2D array of all level objects</param>
         /// <returns>2D array of hulls</returns>
-        private Hull[,] LoadHulls(GameObject[,] levelObjects)
+        public Hull[,] LoadHulls(GameObject[,] levelObjects)
         {
             int levelWidth = levelObjects.GetLength(0);
             int levelHeight = levelObjects.GetLength(1);

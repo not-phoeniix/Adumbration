@@ -10,6 +10,7 @@ namespace Adumbration
     public enum GameLevels
     {
         TestLevel,
+        TestLevel2,
 
         Hub,
         Level1,
@@ -58,6 +59,14 @@ namespace Adumbration
         private Level currentLevel;
 
         /// <summary>
+        /// Get the sprite sheet
+        /// </summary>
+        public Texture2D LevelSpritesheet
+        {
+            get { return levelSpritesheet; }
+        }
+
+        /// <summary>
         /// Get-only property for current level
         /// </summary>
         public Level CurrentLevel
@@ -92,6 +101,15 @@ namespace Adumbration
                     currentLevel = new Level(
                         levelSpritesheet, 
                         "BigLevelTest.txt");
+
+                    break;
+
+                // test level
+                case GameLevels.TestLevel2:
+
+                    currentLevel = new Level(
+                        levelSpritesheet,
+                        "BigLevelTest2.txt");
 
                     break;
 

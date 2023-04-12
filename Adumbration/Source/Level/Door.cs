@@ -38,7 +38,6 @@ namespace Adumbration
         private bool isOpen;
         private Rectangle unlockHitbox;
         private Rectangle enterHitbox;
-        private int sourceXOrigin;
         private KeyboardState previousState;
         private int level;
 
@@ -105,7 +104,6 @@ namespace Adumbration
         {
             this.isOpen = isOpen;
             this.level = level;
-            sourceXOrigin = sourceRect.X;
 
             // Create door hitboxes
             unlockHitbox = new Rectangle(
@@ -215,7 +213,9 @@ namespace Adumbration
                 ifOpen = true;
                 if (EnterHitbox.Intersects(myPlayer.Position))
                 {
-                    
+                    LevelManager.Instance.Initialize(
+                        LevelManager.Instance.LevelSpritesheet,
+                        GameLevels.TestLevel2);
                 }
             }
 
