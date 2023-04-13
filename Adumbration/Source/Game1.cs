@@ -30,7 +30,7 @@ namespace Adumbration
 
     public class Game1 : Game
     {
-        #region Fields
+        #region // Fields
 
         // MonoGame fields
         private GraphicsDeviceManager _graphics;
@@ -76,7 +76,7 @@ namespace Adumbration
 
         protected override void Initialize()
         {
-            #region FieldInit
+            #region // Field inits
 
             // resolution/fullscreen
             IsFullscreen = false;
@@ -94,7 +94,7 @@ namespace Adumbration
 
             #endregion
 
-            #region PenumbraInit
+            #region // Penumbra inits
 
             // shading initializing
             penumbra = new PenumbraComponent(this);
@@ -103,6 +103,8 @@ namespace Adumbration
             // changing penumbra initial properties
             penumbra.SpriteBatchTransformEnabled = true;
             penumbra.AmbientColor = Color.FromNonPremultiplied(24, 20, 37, 255);
+
+            //penumbra.AmbientColor = Color.Red;
 
             #endregion
 
@@ -113,7 +115,7 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            #region TextureLoading
+            #region // Texture loading
 
             textureDict = new Dictionary<string, Texture2D>();
 
@@ -136,7 +138,7 @@ namespace Adumbration
 
             #endregion
 
-            #region ObjectCreation
+            #region // Object creation
 
             // LevelManager singleton init
             LevelManager.Instance.Initialize(textureDict, GameLevels.TestLevel);
@@ -146,7 +148,6 @@ namespace Adumbration
 
             // MainMenu singleton init
             MainMenu.Instance.Initialize(textureDict);
-            MainMenu.Instance.Exit += Exit;
 
             // Player Object
             player = new Player(
@@ -172,7 +173,7 @@ namespace Adumbration
 
             #endregion
 
-            #region PenumbraSetup
+            #region // Penumbra object setup
 
             // setting up player light
             playerLight = new PointLight()
@@ -181,9 +182,6 @@ namespace Adumbration
                 Color = Color.White,
                 ShadowType = ShadowType.Occluded
             };
-
-            // add lights
-            penumbra.Lights.Add(playerLight);
 
             // add hulls
             Hull[,] wallHulls = LevelManager.Instance.CurrentLevel.WallHulls;
@@ -200,9 +198,10 @@ namespace Adumbration
 
             #endregion
 
-            #region//Subscribing methods to events
+            #region // Subscribing methods to events
             closedDoor.OnKeyPressOnce += IsKeyPressedOnce;
             closedDoor.OnKeyPress += closedDoor.Interact;
+            MainMenu.Instance.Exit += Exit;
             #endregion
         }
 
@@ -227,9 +226,13 @@ namespace Adumbration
             switch(gameState)
             {
                 case GameState.Game:
-                    #region GameUpdateLogic
+                    #region // Game update logic
 
+                    // Penumbra enabled while in-game
                     penumbra.Visible = true;
+
+                    // clear prev lights
+                    penumbra.Lights.Clear();
 
                     // transition to pause menu
                     if(IsKeyPressedOnce(Keys.Escape, kbState, prevKbState))
@@ -280,13 +283,21 @@ namespace Adumbration
 
                     #region Penumbra
 
+                    // update player light location
                     playerLight.Position = player.CenterPos;
-                    penumbra.Transform = tMatrix;
 
-                    if(IsKeyPressedOnce(Keys.L, kbState, prevKbState))
+                    // add lights
+                    penumbra.Lights.Add(playerLight);
+                    foreach(LightBeam beam in LevelManager.Instance.CurrentLevel.Beams)
                     {
-                        penumbra.Visible = !penumbra.Visible;
+                        foreach(Light light in beam.Lights)
+                        {
+                            penumbra.Lights.Add(light);
+                        }
                     }
+
+                    // update t matrix w/ penumbra
+                    penumbra.Transform = tMatrix;
 
                     #endregion
 
@@ -294,7 +305,7 @@ namespace Adumbration
                     break;
 
                 case GameState.PauseMenu:
-                    #region PauseMenuUpdateLogic
+                    #region // Pause menu update logic
 
                     // turn off penumbra in pause menu
                     penumbra.Visible = false;
@@ -312,7 +323,7 @@ namespace Adumbration
                     break;
 
                 case GameState.MainMenu:
-                    #region MainMenuUpdateLogic
+                    #region // Main menu update logic
 
                     // turn off penumbra in main menu
                     penumbra.Visible = false;
@@ -336,7 +347,7 @@ namespace Adumbration
 
             GraphicsDevice.Clear(Color.FromNonPremultiplied(24, 20, 37, 255));
 
-            #region GameDrawing
+            #region // Game drawing
 
             // Deferred sort mode is default, PointClamp makes it so
             //   pixel art doesn't get blurry when upscaled
@@ -365,7 +376,7 @@ namespace Adumbration
 
             #endregion
 
-            #region MenuDrawing
+            #region // Menu drawing
 
             // MENU DRAWING (independent of transformation matrix)
             _spriteBatch.Begin(
@@ -403,6 +414,8 @@ namespace Adumbration
             base.Draw(gameTime);
         }
 
+        #region // Helper methods
+
         /// <summary>
         /// Sets the state of the game window's fullscreen and resolution
         /// </summary>
@@ -427,5 +440,8 @@ namespace Adumbration
         {
             return currentState.IsKeyDown(key) && !prevState.IsKeyDown(key);
         }
+
+        #endregion
+
     }
 }
