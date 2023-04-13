@@ -48,7 +48,8 @@ namespace Adumbration
 
             mirror = new Mirror(textureDict, new Rectangle(16 * 8, 125, 12, 12), MirrorType.Backward);
 
-            //testBeam = new LightBeam()
+            testBeam = new LightBeam(textureDict["whitePixel"],
+                new Rectangle(16 * 8 + 5, 180, 2, 2), Direction.Up);
         }
 
         /// <summary>
@@ -111,7 +112,10 @@ namespace Adumbration
                 }
             }
 
+            allBeams.Add(testBeam);
+            testBeam.Update(gameTime, this);
             mirror.Update(gameTime, this);
+
             foreach(LightBeam beam in mirror.ReflectedBeams)
             {
                 allBeams.Add(beam);
@@ -140,6 +144,8 @@ namespace Adumbration
             }
 
             mirror.Draw(sb);
+
+            testBeam.Draw(sb);
         }
 
         #region LevelLoading
