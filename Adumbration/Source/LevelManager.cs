@@ -93,7 +93,7 @@ namespace Adumbration
 
                     currentLevel = new Level(
                         textureDict, 
-                        "BigLevelTest.txt");
+                        "Level 1.txt");
 
                     break;
 
@@ -102,7 +102,7 @@ namespace Adumbration
 
                     currentLevel = new Level(
                         textureDict,
-                        "BigLevelTest2.txt");
+                        "Level 1.txt");
 
                     break;
 

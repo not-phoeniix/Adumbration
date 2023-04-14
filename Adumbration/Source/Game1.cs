@@ -229,7 +229,7 @@ namespace Adumbration
                     #region // Game update logic
 
                     // Penumbra enabled while in-game
-                    penumbra.Visible = true;
+                    penumbra.Visible = false;
 
                     // clear prev lights
                     penumbra.Lights.Clear();
