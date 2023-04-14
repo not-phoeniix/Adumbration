@@ -16,7 +16,7 @@ namespace Adumbration
         // Property
         public Rectangle Hitbox { get; }
 
-        // Methods
+        // Method
 
         /// <summary>
         /// Checks whether or not the class's hitbox is colliding with a GameObject.
