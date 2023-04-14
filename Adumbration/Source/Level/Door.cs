@@ -61,6 +61,12 @@ namespace Adumbration
             get { return hitbox; }
         }
 
+        public Rectangle UnlockHitbox
+        {
+            get { return unlockHitbox; }
+            set { unlockHitbox = value; }
+        }
+
         // Constructor(s)
 
         /// <summary>

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Penumbra;
 using System.Collections.Generic;
+using System.Configuration;
 
 // ===================================
 // GAME NAME:   Adumbration
@@ -20,14 +21,16 @@ namespace Adumbration
     /// </summary>
     public enum GameState
     {
-        Menu,
         Game,
-        Pause
+        MainMenu,
+        PauseMenu,
+        Help,
+        Stats
     }
 
     public class Game1 : Game
     {
-        #region Fields
+        #region // Fields
 
         // MonoGame fields
         private GraphicsDeviceManager _graphics;
@@ -36,17 +39,7 @@ namespace Adumbration
         // states
         private KeyboardState kbState;
         private KeyboardState prevKbState;
-        private GameState gameState;
-
-        // menu enum
-        private enum PauseButtons {
-            Resume,
-            Quit
-        }
-
-        private enum MainMenuButtons {
-            
-        }
+        private static GameState gameState;
 
         // general game settings/fields
         private Vector2 fullscreenRes;
@@ -55,10 +48,8 @@ namespace Adumbration
         private float globalScale;
         private Matrix tMatrix;
 
+        // textures
         private Dictionary<string, Texture2D> textureDict;
-
-        // menu tracking
-        private PauseButtons selectedPauseItem;
 
         // lighting stuff
         private PenumbraComponent penumbra;
@@ -70,6 +61,12 @@ namespace Adumbration
 
         #endregion
 
+        public static GameState GameState
+        {
+            get { return gameState; }
+            set { gameState = value; }
+        }
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -79,7 +76,7 @@ namespace Adumbration
 
         protected override void Initialize()
         {
-            #region FieldInit
+            #region // Field inits
 
             // resolution/fullscreen
             IsFullscreen = false;
@@ -93,12 +90,11 @@ namespace Adumbration
             // others
             globalScale = 4.0f;
             tMatrix = Matrix.Identity;
-            gameState = GameState.Game;
-            selectedPauseItem = PauseButtons.Resume;
+            gameState = GameState.MainMenu;
 
             #endregion
 
-            #region PenumbraInit
+            #region // Penumbra inits
 
             // shading initializing
             penumbra = new PenumbraComponent(this);
@@ -107,6 +103,8 @@ namespace Adumbration
             // changing penumbra initial properties
             penumbra.SpriteBatchTransformEnabled = true;
             penumbra.AmbientColor = Color.FromNonPremultiplied(24, 20, 37, 255);
+
+            //penumbra.AmbientColor = Color.Red;
 
             #endregion
 
@@ -117,7 +115,7 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            #region TextureLoading
+            #region // Texture loading
 
             textureDict = new Dictionary<string, Texture2D>();
 
@@ -133,13 +131,23 @@ namespace Adumbration
             // ui textures
             textureDict.Add("pauseResume", Content.Load<Texture2D>("UI/ui_pauseResume"));
             textureDict.Add("pauseQuit", Content.Load<Texture2D>("UI/ui_pauseQuit"));
+            textureDict.Add("mainStart", Content.Load<Texture2D>("UI/ui_mainStart"));
+            textureDict.Add("mainHelp", Content.Load<Texture2D>("UI/ui_mainHelp"));
+            textureDict.Add("mainStats", Content.Load<Texture2D>("UI/ui_mainStats"));
+            textureDict.Add("mainQuit", Content.Load<Texture2D>("UI/ui_mainQuit"));
 
             #endregion
 
-            #region ObjectCreation
+            #region // Object creation
 
-            // LevelManager init
+            // LevelManager singleton init
             LevelManager.Instance.Initialize(textureDict, GameLevels.TestLevel);
+
+            // PauseMenu singleton init
+            PauseMenu.Instance.Initialize(textureDict);
+
+            // MainMenu singleton init
+            MainMenu.Instance.Initialize(textureDict);
 
             // Player Object
             player = new Player(
@@ -162,9 +170,10 @@ namespace Adumbration
                     16,             // - Width
                     16),            // - Height
                 1);                 // Level
+
             #endregion
 
-            #region PenumbraSetup
+            #region // Penumbra object setup
 
             // setting up player light
             playerLight = new PointLight()
@@ -173,9 +182,6 @@ namespace Adumbration
                 Color = Color.White,
                 ShadowType = ShadowType.Occluded
             };
-
-            // add lights
-            penumbra.Lights.Add(playerLight);
 
             // add hulls
             Hull[,] wallHulls = LevelManager.Instance.CurrentLevel.WallHulls;
@@ -192,9 +198,10 @@ namespace Adumbration
 
             #endregion
 
-            #region//Subscribing methods to events
+            #region // Subscribing methods to events
             closedDoor.OnKeyPressOnce += IsKeyPressedOnce;
             closedDoor.OnKeyPress += closedDoor.Interact;
+            MainMenu.Instance.Exit += Exit;
             #endregion
         }
 
@@ -219,12 +226,18 @@ namespace Adumbration
             switch(gameState)
             {
                 case GameState.Game:
-                    #region GameUpdateLogic
+                    #region // Game update logic
+
+                    // Penumbra enabled while in-game
+                    penumbra.Visible = true;
+
+                    // clear prev lights
+                    penumbra.Lights.Clear();
 
                     // transition to pause menu
                     if(IsKeyPressedOnce(Keys.Escape, kbState, prevKbState))
                     {
-                        gameState = GameState.Pause;
+                        gameState = GameState.PauseMenu;
                     }
 
                     // object logic
@@ -270,21 +283,29 @@ namespace Adumbration
 
                     #region Penumbra
 
+                    // update player light location
                     playerLight.Position = player.CenterPos;
-                    penumbra.Transform = tMatrix;
 
-                    if(IsKeyPressedOnce(Keys.L, kbState, prevKbState))
+                    // add lights
+                    penumbra.Lights.Add(playerLight);
+                    foreach(LightBeam beam in LevelManager.Instance.CurrentLevel.Beams)
                     {
-                        penumbra.Visible = !penumbra.Visible;
+                        foreach(Light light in beam.Lights)
+                        {
+                            penumbra.Lights.Add(light);
+                        }
                     }
+
+                    // update t matrix w/ penumbra
+                    penumbra.Transform = tMatrix;
 
                     #endregion
 
                     #endregion
                     break;
 
-                case GameState.Pause:
-                    #region PauseUpdateLogic
+                case GameState.PauseMenu:
+                    #region // Pause menu update logic
 
                     // turn off penumbra in pause menu
                     penumbra.Visible = false;
@@ -292,42 +313,23 @@ namespace Adumbration
                     // transition back to game from pause menu
                     if(IsKeyPressedOnce(Keys.Escape, kbState, prevKbState))
                     {
-                        penumbra.Visible = true;
                         gameState = GameState.Game;
                     }
 
-                    // FSM for currently selected menu items and moving between menu options
-                    switch(selectedPauseItem)
-                    {
-                        case PauseButtons.Resume:
-                            // transition to quit state
-                            if(IsKeyPressedOnce(Keys.Right, kbState, prevKbState))
-                            {
-                                selectedPauseItem = PauseButtons.Quit;
-                            }
+                    // update menu logic
+                    PauseMenu.Instance.Update(kbState, prevKbState);
 
-                            if(kbState.IsKeyDown(Keys.Enter))
-                            {
-                                penumbra.Visible = true;
-                                gameState = GameState.Game;
-                            }
+                    #endregion
+                    break;
 
-                            break;
+                case GameState.MainMenu:
+                    #region // Main menu update logic
 
-                        case PauseButtons.Quit:
-                            // transition to resume state
-                            if(IsKeyPressedOnce(Keys.Left, kbState, prevKbState))
-                            {
-                                selectedPauseItem = PauseButtons.Resume;
-                            }
+                    // turn off penumbra in main menu
+                    penumbra.Visible = false;
 
-                            if(kbState.IsKeyDown(Keys.Enter))
-                            {
-                                Exit();
-                            }
-
-                            break;
-                    }
+                    // update menu logic
+                    MainMenu.Instance.Update(kbState, prevKbState);
 
                     #endregion
                     break;
@@ -341,10 +343,11 @@ namespace Adumbration
 
         protected override void Draw(GameTime gameTime)
         {
-            // start penumbra effect drawing
             penumbra.BeginDraw();
 
             GraphicsDevice.Clear(Color.FromNonPremultiplied(24, 20, 37, 255));
+
+            #region // Game drawing
 
             // Deferred sort mode is default, PointClamp makes it so
             //   pixel art doesn't get blurry when upscaled
@@ -357,64 +360,61 @@ namespace Adumbration
                 null,
                 tMatrix);
 
-            // main game drawing FSM
-            switch(gameState)
+            // main game drawing
+            if(gameState == GameState.Game)
             {
-                case GameState.Game:
-                    #region GameDrawing
+                // Draw level
+                LevelManager.Instance.Draw(_spriteBatch);
 
-                    // Draw test level
-                    LevelManager.Instance.Draw(_spriteBatch);
+                // Draw Player
+                player.Draw(_spriteBatch);
 
-                    // Draw Player
-                    player.Draw(_spriteBatch);
-
-                    // Draw closed door
-                    closedDoor.Draw(_spriteBatch);
-
-                    #endregion
-
-                    break;
-
-                case GameState.Pause:
-                    #region PauseDrawing
-
-                    // FSM for drawing the pause menu options
-                    switch(selectedPauseItem)
-                    {
-                        // TODO: make it so pause menu doesn't scale with the game
-
-                        // draw button "Resume" hovered, centered around player
-                        case PauseButtons.Resume:
-                            _spriteBatch.Draw(
-                                textureDict["pauseResume"],
-                                new Vector2(
-                                    player.CenterPos.X - textureDict["pauseResume"].Width / 2,
-                                    player.CenterPos.Y - textureDict["pauseResume"].Height / 2),
-                                Color.White);
-
-                            break;
-
-                        // draw button "Quit" hovered, centered around player
-                        case PauseButtons.Quit:
-                            _spriteBatch.Draw(
-                                textureDict["pauseQuit"],
-                                new Vector2(
-                                    player.CenterPos.X - textureDict["pauseQuit"].Width / 2,
-                                    player.CenterPos.Y - textureDict["pauseQuit"].Height / 2),
-                                Color.White);
-
-                            break;
-                    }
-
-                    #endregion
-
-                    break;
+                // Draw closed door
+                closedDoor.Draw(_spriteBatch);
             }
             _spriteBatch.End();
 
+            #endregion
+
+            #region // Menu drawing
+
+            // MENU DRAWING (independent of transformation matrix)
+            _spriteBatch.Begin(
+                SpriteSortMode.Deferred,
+                null,
+                SamplerState.PointClamp,
+                null,
+                null,
+                null,
+                null);
+
+            switch(gameState)
+            {
+                // draw pause menu
+                case GameState.PauseMenu:
+                    PauseMenu.Instance.Draw(
+                        _spriteBatch, 
+                        _graphics.GraphicsDevice.Viewport.Bounds);
+
+                    break;
+
+                // draw main menu
+                case GameState.MainMenu:
+                    MainMenu.Instance.Draw(
+                        _spriteBatch,
+                        _graphics.GraphicsDevice.Viewport.Bounds);
+
+                    break;
+            }
+
+            _spriteBatch.End();
+
+            #endregion
+
             base.Draw(gameTime);
         }
+
+        #region // Helper methods
 
         /// <summary>
         /// Sets the state of the game window's fullscreen and resolution
@@ -436,9 +436,12 @@ namespace Adumbration
         /// <param name="currentState">Current kb state</param>
         /// <param name="prevState">Previous frame's kb state</param>
         /// <returns></returns>
-        private bool IsKeyPressedOnce(Keys key, KeyboardState currentState, KeyboardState prevState)
+        public static bool IsKeyPressedOnce(Keys key, KeyboardState currentState, KeyboardState prevState)
         {
             return currentState.IsKeyDown(key) && !prevState.IsKeyDown(key);
         }
+
+        #endregion
+
     }
 }
