@@ -23,9 +23,6 @@ namespace Adumbration
         // Fields
         private List<LightBeam> reflectedBeams;
         private MirrorType type;
-        private bool isLightColliding;
-        private bool lightAlreadyCollided;
-        private Texture2D whitePixelTexture;
         private Rectangle hitbox;
 
         // Constructor
@@ -48,10 +45,7 @@ namespace Adumbration
                    position)
         {
             this.type = type;
-            whitePixelTexture = textureDict["whitePixel"];
             reflectedBeams = new List<LightBeam>();
-            isLightColliding = false;
-            lightAlreadyCollided = false;
 
             // Create hitbox rectangle
             hitbox = new Rectangle(
@@ -88,109 +82,9 @@ namespace Adumbration
         /// <param name="currentLevel">The current level.</param>
         public void Update(GameTime gameTime, Level currentLevel)
         {
-            //// For each light beam in the level
-            //foreach (LightBeam beam in currentLevel.Beams)
-            //{
-            //    // If it collides with the Mirror
-            //    if (IsColliding(beam) && !isLightColliding)
-            //    {
-            //        // The mirror creates a new reflection
-            //        System.Diagnostics.Debug.WriteLine("collision");
-            //        reflectedBeams.Add(CreateReflection(beam));
-            //        isLightColliding = true;
-            //    }
-            //}
-
-            //foreach (LightBeam beam in reflectedBeams)
-            //{
-            //    beam?.Update(gameTime, currentLevel);
-            //}
+           
         }
 
-        /// <summary>
-        /// Creates a reflected light beam
-        /// </summary>
-        /// <param name="incomingBeam">The beam that is causing the reflection.</param>
-        public LightBeam CreateReflection(LightBeam incomingBeam)
-        {
-            LightBeam returnBeam = null;
-
-        //    switch (type)
-        //    {
-        //        // If the mirror is the forward facing type:
-        //        case MirrorType.Forward:
-
-        //            // Determine beam direction then create new
-        //            // reflected beam properly
-        //            switch (incomingBeam.Direction)
-        //            {
-        //                case Direction.Up:
-        //                    returnBeam = new LightBeam(whitePixelTexture,
-        //                        new Rectangle(incomingBeam.X, incomingBeam.Y - incomingBeam.Height, 2, 2),
-        //                        Direction.Right);
-        //                    break;
-
-        //                case Direction.Down:
-        //                    returnBeam = new LightBeam(whitePixelTexture,
-        //                       new Rectangle(incomingBeam.X, incomingBeam.Y + incomingBeam.Height, 2, 2),
-        //                       Direction.Left);
-        //                    break;
-
-        //                case Direction.Right:
-        //                    returnBeam = new LightBeam(whitePixelTexture,
-        //                       new Rectangle(incomingBeam.X - incomingBeam.Width, positionRect.Y, 2, 2),
-        //                       Direction.Up);
-        //                    break;
-
-        //                case Direction.Left:
-        //                    returnBeam = new LightBeam(whitePixelTexture,
-        //                       new Rectangle(incomingBeam.X, incomingBeam.Y, 2, 2),
-        //                       Direction.Down);
-        //                    break;
-        //            }
-        //            break;
-
-        //        // If the mirror is the backwards facing type:
-        //        case MirrorType.Backward:
-
-        //            // Determine beam direction then create new
-        //            // reflected beam properly
-        //            switch (incomingBeam.Direction)
-        //            {
-        //                case Direction.Up:
-        //                    returnBeam = new LightBeam(whitePixelTexture,
-        //                        new Rectangle(incomingBeam.X, incomingBeam.Y, 2, 2),
-        //                        Direction.Left);
-        //                    break;
-
-        //                case Direction.Down:
-        //                    returnBeam = new LightBeam(whitePixelTexture,
-        //                       new Rectangle(incomingBeam.X, incomingBeam.Y + incomingBeam.Height, 2, 2),
-        //                       Direction.Right);
-        //                    break;
-
-        //                case Direction.Right:
-        //                    returnBeam = new LightBeam(whitePixelTexture,
-        //                       new Rectangle(incomingBeam.X + incomingBeam.Width, incomingBeam.Y, 2, 2),
-        //                       Direction.Down);
-        //                    break;
-
-        //                case Direction.Left:
-        //                    returnBeam = new LightBeam(whitePixelTexture,
-        //                       new Rectangle(positionRect.X, positionRect.Y, 2, 2),
-        //                       Direction.Up);
-        //                    break;
-        //            }
-        //            break;
-        //    }
-        //    return returnBeam;
-        //}
-
-        /// <summary>
-        /// Checks if a mirror and a LightBeam are colliding.
-        /// </summary>
-        /// <param name="obj">Reference to a game object.</param>
-        /// <returns>True if the collision occurs AND the object is a LightBeam, otherwise false.</returns>
         private bool BeamIsColliding(GameObject obj)
         {
             return Position.Intersects(obj.Position) && obj is LightBeam;

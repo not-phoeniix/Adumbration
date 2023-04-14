@@ -165,8 +165,8 @@ namespace Adumbration
             }
 
             allBeams.Add(testBeam);
-            testBeam.Update(gameTime, this);
-            mirror.Update(gameTime, this);
+            testBeam.Update(gameTime);
+            mirror.Update(gameTime);
         }
 
         /// <summary>

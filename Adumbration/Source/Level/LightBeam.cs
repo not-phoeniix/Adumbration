@@ -53,6 +53,7 @@ namespace Adumbration
         public int Width
         {
             get { return positionRect.Width; }
+            set { positionRect.Width = value; }
         }
 
         /// <summary>
@@ -61,6 +62,7 @@ namespace Adumbration
         public int Height
         {
             get { return positionRect.Height; }
+            set { positionRect.Height = value;}
         }
 
         #endregion
@@ -81,8 +83,10 @@ namespace Adumbration
         /// </summary>
         /// <param name="gameTime">The game's time</param>
         /// <param name="currentLevel">The level the player is currently on</param>
-        public void Update(GameTime gameTime, Level currentLevel)   // May have to debug when implementing mirrors
+        public void Update(GameTime gameTime)   // May have to debug when implementing mirrors
         {
+            Level currentLevel = LevelManager.Instance.CurrentLevel;
+
             // Clears all previous spotlights every frame
             lights.Clear();
 
@@ -253,24 +257,30 @@ namespace Adumbration
                         switch (this.Direction)
                         {
                             case Direction.Up:
+                                this.Y -= (tile.Position.Width - (this.X - tile.Position.X));
+                                this.Height += (tile.Position.Width - (this.X - tile.Position.X));
                                 reflectedBeam = new LightBeam(texture,
                                     new Rectangle(this.X, this.Y, 2, 2),
                                     Direction.Left);
                                 break;
 
                             case Direction.Down:
+                                positionRect.Height += (tile.Position.Width - (this.X - tile.Position.X));
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X, this.Y + this.Height, 2, 2),
                                    Direction.Right);
                                 break;
 
                             case Direction.Right:
+                                this.Width += (this.Y - tile.Position.Y);
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X + this.Width, this.Y, 2, 2),
                                    Direction.Down);
                                 break;
 
                             case Direction.Left:
+                                this.X -= (this.Y - tile.Position.Y);
+                                this.Width += (this.Y - tile.Position.Y);
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X, this.Y, 2, 2),
                                    Direction.Up);
@@ -278,8 +288,9 @@ namespace Adumbration
                         }
                     }
 
+                    isReflected = true;
                     currentLevel.Beams.Add(reflectedBeam);
-                    reflectedBeam?.Update(gameTime, currentLevel);
+                    reflectedBeam?.Update(gameTime);
                 }
             }
             #endregion
