@@ -400,8 +400,13 @@ namespace Adumbration
                             break;
 
                         // WALL
-                        default:
+                        case '0':
                             returnArray[x, y] = new Wall(wallTexture, sourceRect, positionRect);
+                            break;
+                        
+                        // DEFAULT PRINT ERROR MESSAGE
+                        default:
+                            Debug.WriteLine($"ERROR: Character [{layout[x, y]}] not recognized in the layout!");
                             break;
                     }
                 }
@@ -511,8 +516,13 @@ namespace Adumbration
                         // only checks if it's in the bounds
                         if(inBounds)
                         {
+                            bool correctChar =
+                                levelLayout[arrayX, arrayY] == '_' ||
+                                levelLayout[arrayX, arrayY] == 'S' ||
+                                levelLayout[arrayX, arrayY] == 'K';
+
                             // true if iterated coordinate is a floor ('_')
-                            if(levelLayout[arrayX, arrayY] == '_')
+                            if(correctChar)
                             {
                                 // if a floor is detected NOT DIAGONALLY,
                                 //   set all the diagonal values to false

@@ -171,6 +171,8 @@ namespace Adumbration
             // LevelManager singleton init
             LevelManager.Instance.Initialize(textureDict, "BigLevelTest.txt", penumbra, player);
 
+            LevelManager.Instance.LoadLevel(GameLevels.TestLevel);
+
             #endregion
 
             #region // Penumbra object setup
