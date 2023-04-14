@@ -19,6 +19,7 @@ namespace Adumbration
         private GameObject[,] objectArray;      // full array of GameObject's
         private Hull[,] wallHulls;              // for shadow casting
         private List<LightBeam> allBeams;       // all beams in the level currently
+        private KeyObject levelKey;
         private Texture2D wallTexture;
         private Dictionary<string, Texture2D> textureDict;
         private Vector2 spawnPoint;
@@ -183,6 +184,8 @@ namespace Adumbration
                 }
             }
 
+            levelKey.Draw(sb);
+
             // draws all light beams after tile drawing
             foreach(LightBeam beam in allBeams)
             {
@@ -317,11 +320,21 @@ namespace Adumbration
                     // ******************************
                     switch(layout[x, y])
                     {
+                        case 'K':
+                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+
+                            levelKey = new KeyObject(
+                                textureDict["key"],
+                                new Rectangle(0, 0, 12, 12),
+                                new Rectangle(positionRect.X + 3, positionRect.Y + 3, 10, 10));
+                            break;
+
                         // SPAWN POINT
                         case 'S':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
                             spawnPoint = new Vector2(positionRect.X, positionRect.Y);
                             break;
+
                         // FLOOR
                         case '_':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
@@ -433,7 +446,9 @@ namespace Adumbration
             Vector2 returnRectCoord = new Vector2(4, 1);
 
             // if floor char, use the floor coords
-            if(tileValue == '_' || tileValue == 'S')
+            if( tileValue == '_' || 
+                tileValue == 'S' ||
+                tileValue == 'K')
             {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;

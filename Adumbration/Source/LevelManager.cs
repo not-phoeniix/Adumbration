@@ -59,6 +59,7 @@ namespace Adumbration
         // level info
         private Level currentLevel;
         private Player player;
+        private GameLevels currentLevelEnum;
 
         /// <summary>
         /// Get-only property for current level
@@ -87,6 +88,8 @@ namespace Adumbration
         /// <param name="level">Level to load</param>
         public void LoadLevel(GameLevels level)
         {
+            currentLevelEnum = level;
+
             // FSM for what level is being loaded
             switch(level)
             {
@@ -108,6 +111,13 @@ namespace Adumbration
                 default:
                     throw new Exception($"Error: level {level} does not exist!");
             }
+        }
+
+        /// <summary>
+        /// Resets current level
+        /// </summary>
+        public void ResetLevel() {
+            LoadLevel(currentLevelEnum);
         }
 
         #region GameLoop
