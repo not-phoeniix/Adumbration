@@ -191,7 +191,7 @@ namespace Adumbration
         /// </summary>
         /// <param name="obj">Reference to a game object.</param>
         /// <returns>True if the collision occurs AND the object is a LightBeam, otherwise false.</returns>
-        public bool BeamIsColliding(GameObject obj)
+        private bool BeamIsColliding(GameObject obj)
         {
             return Position.Intersects(obj.Position) && obj is LightBeam;
         }
