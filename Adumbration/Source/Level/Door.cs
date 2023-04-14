@@ -192,9 +192,7 @@ namespace Adumbration
                 ifOpen = true;
                 if (hitbox.Intersects(myPlayer.Position))
                 {
-                    LevelManager.Instance.Initialize(
-                        textureDict,
-                        GameLevels.TestLevel2);
+                    LevelManager.Instance.LoadLevel(GameLevels.TestLevel2);
                 }
             }
 

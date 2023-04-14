@@ -140,9 +140,6 @@ namespace Adumbration
 
             #region // Object creation
 
-            // LevelManager singleton init
-            LevelManager.Instance.Initialize(textureDict, GameLevels.TestLevel);
-
             // PauseMenu singleton init
             PauseMenu.Instance.Initialize(textureDict);
 
@@ -171,6 +168,9 @@ namespace Adumbration
                     16),            // - Height
                 1);                 // Level
 
+            // LevelManager singleton init
+            LevelManager.Instance.Initialize(textureDict, "BigLevelTest.txt", penumbra, player);
+
             #endregion
 
             #region // Penumbra object setup
@@ -182,19 +182,6 @@ namespace Adumbration
                 Color = Color.White,
                 ShadowType = ShadowType.Occluded
             };
-
-            // add hulls
-            Hull[,] wallHulls = LevelManager.Instance.CurrentLevel.WallHulls;
-            for(int y = 0; y < wallHulls.GetLength(1); y++)
-            {
-                for(int x = 0; x < wallHulls.GetLength(0); x++)
-                {
-                    if(wallHulls[x, y] != null)
-                    {
-                        penumbra.Hulls.Add(wallHulls[x, y]);
-                    }
-                }
-            }
 
             #endregion
 
