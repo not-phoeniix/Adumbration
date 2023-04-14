@@ -53,6 +53,11 @@ namespace Adumbration
             get { return reflectedBeams; }
         }
 
+        public MirrorType MirrorType
+        {
+            get { return type; }
+        }
+
         public void Update(GameTime gameTime, Level currentLevel)
         {
             // For each light beam in the level
