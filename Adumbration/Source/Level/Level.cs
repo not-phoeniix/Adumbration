@@ -14,20 +14,24 @@ namespace Adumbration
     /// </summary>
     public class Level
     {
-        // Fields
-        private char[,] levelLayout;            // copy of level text file, just int's
+        // level data
+        private string currentLevel;
+        private char[,] levelLayout;            // copy of level text file, just char's
         private GameObject[,] objectArray;      // full array of GameObject's
         private Hull[,] wallHulls;              // for shadow casting
-        private List<LightBeam> allBeams;       // all beams in the level currently
-        private KeyObject levelKey;
-        private Texture2D wallTexture;
-        private Dictionary<string, Texture2D> textureDict;
-        private Vector2 spawnPoint;
-        private string currentLevel;
+        
+        // misc
         private PenumbraComponent penumbra;
+        private Vector2 spawnPoint;
 
-        // Mirror Testing
-        private Mirror mirror;
+        // texture stuff
+        private Dictionary<string, Texture2D> textureDict;
+        private Texture2D wallTexture;
+
+        // level objects
+        private List<LightBeam> allBeams;
+        private List<Mirror> allMirrors;
+        private KeyObject levelKey;
 
         // Multiple beam testing
         private LightBeam testBeam;
@@ -45,16 +49,12 @@ namespace Adumbration
             this.wallTexture = textureDict["walls"];
             this.spawnPoint = new Vector2(0, 0);
             this.allBeams = new List<LightBeam>();
+            this.allMirrors = new List<Mirror>();
 
             // load whole level
             SetupLevel(dataFilePath, player);
 
             // testing objects:
-
-            mirror = new Mirror(
-                textureDict, 
-                new Rectangle(16 * 8, 125, 12, 12),
-                MirrorType.Backward);
 
             testBeam = new LightBeam(
                 textureDict["whitePixel"],
@@ -81,7 +81,16 @@ namespace Adumbration
         internal List<LightBeam> Beams
         {
             get { return allBeams; }
-            set { allBeams = value; }
+        }
+
+        internal List<Mirror> Mirrors
+        {
+            get { return allMirrors; }
+        }
+
+        internal KeyObject KeyObject
+        {
+            get { return levelKey; }
         }
 
         /// <summary>
@@ -153,7 +162,7 @@ namespace Adumbration
                         if(receptor.IsColliding(allBeams[i]))
                         {
                             receptor.Update(gameTime);
-                            System.Diagnostics.Debug.WriteLine("IT WORKS");
+                            Debug.WriteLine("IT WORKS");
                         }
                     }
                 }
@@ -166,7 +175,6 @@ namespace Adumbration
 
             allBeams.Add(testBeam);
             testBeam.Update(gameTime);
-            mirror.Update(gameTime);
         }
 
         /// <summary>
@@ -184,6 +192,7 @@ namespace Adumbration
                 }
             }
 
+            // draws level key
             levelKey.Draw(sb);
 
             // draws all light beams after tile drawing
@@ -192,7 +201,11 @@ namespace Adumbration
                 beam.Draw(sb);
             }
 
-            mirror.Draw(sb);
+            // draws all mirrors
+            foreach(Mirror mirror in allMirrors)
+            {
+                mirror.Draw(sb);
+            }
 
             testBeam.Draw(sb);
         }
@@ -320,6 +333,33 @@ namespace Adumbration
                     // ******************************
                     switch(layout[x, y])
                     {
+                        // FORWARD MIRROR
+                        case '/':
+                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+                            allMirrors.Add(new Mirror(
+                                textureDict["mirror"],
+                                new Rectangle(
+                                    positionRect.X + 2,
+                                    positionRect.Y + 2,
+                                    textureDict["mirror"].Width, 
+                                    textureDict["mirror"].Height),
+                                MirrorType.Forward));
+                            break;
+
+                        // BACKWARD MIRROR
+                        case '\\':
+                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+                            allMirrors.Add(new Mirror(
+                                textureDict["mirror"],
+                                new Rectangle(
+                                    positionRect.X + 2,
+                                    positionRect.Y + 2,
+                                    textureDict["mirror"].Width,
+                                    textureDict["mirror"].Height),
+                                MirrorType.Backward));
+                            break;
+
+                        // KEY
                         case 'K':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
 
@@ -359,23 +399,14 @@ namespace Adumbration
                                 new Rectangle(positionRect.X, positionRect.Y - 1, 16, 16));     //sets the beam hitbox a bit higher
                             break;
 
-                        case '/':
-                            returnArray[x, y] = new Mirror(
-                                textureDict,
-                                positionRect,
-                                MirrorType.Forward);
-                            break;
-
-                        case '\\':
-                            returnArray[x, y] = new Mirror(
-                                textureDict,
-                                positionRect,
-                                MirrorType.Backward);
-                            break;
-
                         // WALL
-                        default:
+                        case '0':
                             returnArray[x, y] = new Wall(wallTexture, sourceRect, positionRect);
+                            break;
+                        
+                        // DEFAULT PRINT ERROR MESSAGE
+                        default:
+                            Debug.WriteLine($"ERROR: Character [{layout[x, y]}] not recognized in the layout!");
                             break;
                     }
                 }
@@ -448,7 +479,9 @@ namespace Adumbration
             // if floor char, use the floor coords
             if( tileValue == '_' || 
                 tileValue == 'S' ||
-                tileValue == 'K')
+                tileValue == 'K' ||
+                tileValue == '/' ||
+                tileValue == '\\')
             {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;
@@ -483,8 +516,13 @@ namespace Adumbration
                         // only checks if it's in the bounds
                         if(inBounds)
                         {
+                            bool correctChar =
+                                levelLayout[arrayX, arrayY] == '_' ||
+                                levelLayout[arrayX, arrayY] == 'S' ||
+                                levelLayout[arrayX, arrayY] == 'K';
+
                             // true if iterated coordinate is a floor ('_')
-                            if(levelLayout[arrayX, arrayY] == '_')
+                            if(correctChar)
                             {
                                 // if a floor is detected NOT DIAGONALLY,
                                 //   set all the diagonal values to false

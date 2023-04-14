@@ -33,14 +33,14 @@ namespace Adumbration
         /// <param name="textureDict">The dictionary to get textures from.</param>
         /// <param name="position">The game position.</param>
         /// <param name="type">The type of mirror.</param>
-        public Mirror(Dictionary<string, Texture2D> textureDict, Rectangle position, MirrorType type)
+        public Mirror(Texture2D mirrorTexture, Rectangle position, MirrorType type)
              : base(
-                   textureDict["mirror"],
+                   mirrorTexture,
                    new Rectangle(
                        0,
                        0,
-                       textureDict["mirror"].Width,
-                       textureDict["mirror"].Height
+                       mirrorTexture.Width,
+                       mirrorTexture.Height
                        ),
                    position)
         {
@@ -76,15 +76,10 @@ namespace Adumbration
         // Methods
 
         /// <summary>
-        /// Updates the mirror
+        /// Checks if a mirror and a LightBeam are colliding.
         /// </summary>
-        /// <param name="gameTime">State of the game's time.</param>
-        /// <param name="currentLevel">The current level.</param>
-        public void Update(GameTime gameTime, Level currentLevel)
-        {
-           
-        }
-
+        /// <param name="obj">Reference to a game object.</param>
+        /// <returns>True if the collision occurs AND the object is a LightBeam, otherwise false.</returns>
         private bool BeamIsColliding(GameObject obj)
         {
             return Position.Intersects(obj.Position) && obj is LightBeam;
@@ -116,7 +111,12 @@ namespace Adumbration
         /// <param name="sb">SpriteBatch object to draw with.</param>
         public override void Draw(SpriteBatch sb)
         {
-            base.Draw(sb);
+            // shorthand if/else that flips mirror sprite horizontally depending on type
+            SpriteEffects fx = (type == MirrorType.Forward) ? 
+                SpriteEffects.FlipHorizontally : 
+                SpriteEffects.None;
+
+            sb.Draw(spriteSheet, positionRect, null, Color.White, 0, Vector2.Zero, fx, 0);
         }
 
         /// <summary>
