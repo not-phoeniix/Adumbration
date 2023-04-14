@@ -175,19 +175,17 @@ namespace Adumbration
 
             // If the door is not open set 'ifOpen' to true if the E key is pressed
             // AND when the door's unlock hitbox is colliding with the player.
-            if (!isOpen)
+            if (!isOpen &&
+                currentState.IsKeyUp(Keys.E) &&
+                previousState.IsKeyDown(Keys.E) &&
+                IsColliding(myPlayer))
             {
-                if (currentState.IsKeyUp(Keys.E) &&
-                    previousState.IsKeyDown(Keys.E) &&
-                    IsColliding(myPlayer))
-                {
-                    ifOpen = true;
-                }
+                ifOpen = true;
             }
 
             // If the door is open, set 'ifOpen' to true.
             // Then load the level connected to the door.
-            else
+            else if (isOpen)
             {
                 ifOpen = true;
                 if (hitbox.Intersects(myPlayer.Position))
