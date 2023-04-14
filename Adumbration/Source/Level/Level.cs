@@ -19,8 +19,12 @@ namespace Adumbration
         private GameObject[,] objectArray;      // full array of GameObject's
         private Hull[,] wallHulls;              // for shadow casting
         private List<LightBeam> allBeams;       // all beams in the level currently
+        private KeyObject levelKey;
         private Texture2D wallTexture;
         private Dictionary<string, Texture2D> textureDict;
+        private Vector2 spawnPoint;
+        private string currentLevel;
+        private PenumbraComponent penumbra;
 
         // Mirror Testing
         private Mirror mirror;
@@ -33,23 +37,29 @@ namespace Adumbration
         /// </summary>
         /// <param name="wallSpritesheet">Texture2D wall spritesheet</param>
         /// <param name="dataFilePath">File path of layout data file (Already in LevelData folder, only file name needed)</param>
-        public Level(Dictionary<string, Texture2D> textureDict, string dataFilePath)
+        public Level(Dictionary<string, Texture2D> textureDict, string dataFilePath, PenumbraComponent penumbra, Player player)
         {
+            // setting fields
             this.textureDict = textureDict;
+            this.penumbra = penumbra;
+            this.wallTexture = textureDict["walls"];
+            this.spawnPoint = new Vector2(0, 0);
+            this.allBeams = new List<LightBeam>();
 
-            wallTexture = textureDict["walls"];
+            // load whole level
+            SetupLevel(dataFilePath, player);
 
-            // loads and creates level from file path
-            levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
-            objectArray = LoadObjectsFromLayout(levelLayout);
-            wallHulls = LoadHulls(objectArray);
+            // testing objects:
 
-            allBeams = new List<LightBeam>();
+            mirror = new Mirror(
+                textureDict, 
+                new Rectangle(16 * 8, 125, 12, 12),
+                MirrorType.Backward);
 
-            mirror = new Mirror(textureDict, new Rectangle(16 * 8, 125, 12, 12), MirrorType.Backward);
-
-            testBeam = new LightBeam(textureDict["whitePixel"],
-                new Rectangle(16 * 8 + 5, 180, 2, 2), Direction.Up);
+            testBeam = new LightBeam(
+                textureDict["whitePixel"],
+                new Rectangle(16 * 8 + 5, 180, 2, 2), 
+                Direction.Up);
         }
 
         /// <summary>
@@ -72,6 +82,43 @@ namespace Adumbration
         {
             get { return allBeams; }
             set { allBeams = value; }
+        }
+
+        /// <summary>
+        /// Loads a level from current file path
+        /// </summary>
+        /// <param name="dataFileName">Name of text file (including extension)</param>
+        public void SetupLevel(string dataFileName, Player player) {
+            currentLevel = "../../../Source/LevelData/" + dataFileName;
+
+            // loads and creates level from file path
+            levelLayout = LoadLayoutFromFile(currentLevel);
+            objectArray = LoadObjectsFromLayout(levelLayout);
+            wallHulls = LoadHulls(objectArray);
+
+            // clears and sets up hulls for level collision
+            SetPenumbraHulls(penumbra);
+
+            // teleports player to spawn point
+            player.X = (int)spawnPoint.X;
+            player.Y = (int)spawnPoint.Y;
+        }
+
+        /// <summary>
+        /// Clears and reloads all hulls in level
+        /// </summary>
+        /// <param name="penumbra">Game1's PenumbraComponent</param>
+        private void SetPenumbraHulls(PenumbraComponent penumbra) {
+            penumbra.Hulls.Clear();
+
+            // fills hulls
+            for(int y = 0; y < wallHulls.GetLength(1); y++) {
+                for(int x = 0; x < wallHulls.GetLength(0); x++) {
+                    if(wallHulls[x, y] != null) {
+                        penumbra.Hulls.Add(wallHulls[x, y]);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -141,6 +188,8 @@ namespace Adumbration
                     objectArray[x, y].Draw(sb);
                 }
             }
+
+            levelKey.Draw(sb);
 
             // draws all light beams after tile drawing
             foreach(LightBeam beam in allBeams)
@@ -264,8 +313,6 @@ namespace Adumbration
                         sideSizeX,      // sprite width
                         sideSizeY);     // sprite height
 
-
-
                     // full pos on screen
                     Rectangle positionRect = new Rectangle(
                         x * sideSizeX,
@@ -278,6 +325,21 @@ namespace Adumbration
                     // ******************************
                     switch(layout[x, y])
                     {
+                        case 'K':
+                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+
+                            levelKey = new KeyObject(
+                                textureDict["key"],
+                                new Rectangle(0, 0, 12, 12),
+                                new Rectangle(positionRect.X + 3, positionRect.Y + 3, 10, 10));
+                            break;
+
+                        // SPAWN POINT
+                        case 'S':
+                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+                            spawnPoint = new Vector2(positionRect.X, positionRect.Y);
+                            break;
+
                         // FLOOR
                         case '_':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
@@ -300,13 +362,6 @@ namespace Adumbration
                                 new Rectangle(16 * 8, 16 * 3, 16, 16),
                                 new Rectangle(positionRect.X, positionRect.Y + 1, 16, 16),      //sets up the rectangle a bit lower
                                 new Rectangle(positionRect.X, positionRect.Y - 1, 16, 16));     //sets the beam hitbox a bit higher
-                            break;
-
-                        case 'K':
-                            returnArray[x, y] = new KeyObject(
-                                textureDict["key"],
-                                new Rectangle(0, 0, 12, 12),
-                                new Rectangle(positionRect.X + 3, positionRect.Y + 3, 10, 10));
                             break;
 
                         // WALL
@@ -382,7 +437,9 @@ namespace Adumbration
             Vector2 returnRectCoord = new Vector2(4, 1);
 
             // if floor char, use the floor coords
-            if(tileValue == '_')
+            if( tileValue == '_' || 
+                tileValue == 'S' ||
+                tileValue == 'K')
             {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;

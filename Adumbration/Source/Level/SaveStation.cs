@@ -26,7 +26,7 @@ namespace Adumbration
 
         // Constructor
 
-        
+
         public SaveStation(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
             : base(spriteSheet, sourceRect, position)
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Penumbra;
 using System;
 using System.Collections.Generic;
 
@@ -56,8 +57,9 @@ namespace Adumbration
         #endregion
 
         // level info
-        private Dictionary<string, Texture2D> textureDict;
         private Level currentLevel;
+        private Player player;
+        private GameLevels currentLevelEnum;
 
         /// <summary>
         /// Get-only property for current level
@@ -72,10 +74,11 @@ namespace Adumbration
         /// </summary>
         /// <param name="levelSpritesheet"></param>
         /// <param name="startingLevel"></param>
-        public void Initialize(Dictionary<string, Texture2D> textureDict, GameLevels startingLevel)
+        public void Initialize(Dictionary<string, Texture2D> textureDict, string levelDataPath, PenumbraComponent penumbra, Player player)
         {
-            this.textureDict = textureDict;
-            LoadLevel(startingLevel);
+            this.player = player;
+
+            currentLevel = new Level(textureDict, levelDataPath, penumbra, player);
         }
 
         /// <summary>
@@ -85,24 +88,34 @@ namespace Adumbration
         /// <param name="level">Level to load</param>
         public void LoadLevel(GameLevels level)
         {
+            currentLevelEnum = level;
+
             // FSM for what level is being loaded
             switch(level)
             {
                 // test level
                 case GameLevels.TestLevel:
 
+<<<<<<< HEAD
                     currentLevel = new Level(
                         textureDict, 
                         "Level 1.txt");
+=======
+                    currentLevel.SetupLevel("BigLevelTest.txt", player);
+>>>>>>> 92ff95352a97b1ffe63aaefad611a110a2e720be
 
                     break;
 
                 // test level
                 case GameLevels.TestLevel2:
 
+<<<<<<< HEAD
                     currentLevel = new Level(
                         textureDict,
                         "Level 1.txt");
+=======
+                    currentLevel.SetupLevel("BigLevelTest2.txt", player);
+>>>>>>> 92ff95352a97b1ffe63aaefad611a110a2e720be
 
                     break;
 
@@ -110,6 +123,13 @@ namespace Adumbration
                 default:
                     throw new Exception($"Error: level {level} does not exist!");
             }
+        }
+
+        /// <summary>
+        /// Resets current level
+        /// </summary>
+        public void ResetLevel() {
+            LoadLevel(currentLevelEnum);
         }
 
         #region GameLoop

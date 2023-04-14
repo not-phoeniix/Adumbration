@@ -27,7 +27,7 @@ namespace Adumbration
 
         public Rectangle Hitbox
         {
-            get { return this.hitbox; }
+            get { return hitbox; }
         }
 
         /// <summary>
@@ -88,12 +88,14 @@ namespace Adumbration
             //}
         }
 
+        /// <summary>
+        /// Checks if a key is colliding with an object.
+        /// </summary>
+        /// <param name="obj">Reference to a game object.</param>
+        /// <returns>True if the collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            if (positionRect.Intersects(obj.Position))
-            {
-                colliding = true;
-            }
+            colliding = positionRect.Intersects(obj.Position);
             return colliding;
         }
     }
