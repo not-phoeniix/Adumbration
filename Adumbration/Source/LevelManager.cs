@@ -96,26 +96,14 @@ namespace Adumbration
                 // test level
                 case GameLevels.TestLevel:
 
-<<<<<<< HEAD
-                    currentLevel = new Level(
-                        textureDict, 
-                        "Level 1.txt");
-=======
                     currentLevel.SetupLevel("BigLevelTest.txt", player);
->>>>>>> 92ff95352a97b1ffe63aaefad611a110a2e720be
 
                     break;
 
                 // test level
                 case GameLevels.TestLevel2:
 
-<<<<<<< HEAD
-                    currentLevel = new Level(
-                        textureDict,
-                        "Level 1.txt");
-=======
                     currentLevel.SetupLevel("BigLevelTest2.txt", player);
->>>>>>> 92ff95352a97b1ffe63aaefad611a110a2e720be
 
                     break;
 
