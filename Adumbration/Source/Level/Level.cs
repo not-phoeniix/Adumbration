@@ -78,7 +78,7 @@ namespace Adumbration
         /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, GameObject player)
         {
             allBeams.Clear();
 
@@ -109,6 +109,11 @@ namespace Adumbration
                             System.Diagnostics.Debug.WriteLine("IT WORKS");
                         }
                     }
+                }
+                
+                if (obj is KeyObject key)
+                {
+                    key.Update(gameTime, player);
                 }
             }
 

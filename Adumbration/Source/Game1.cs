@@ -241,11 +241,12 @@ namespace Adumbration
                     }
 
                     // object logic
-                    LevelManager.Instance.CurrentLevel.Update(gameTime);
+                    LevelManager.Instance.CurrentLevel.Update(gameTime, player);
                     player.Update(gameTime, LevelManager.Instance.CurrentLevel);
                     player.IsDead(LevelManager.Instance.CurrentLevel.Beams);
                     closedDoor.Update(gameTime);
                     closedDoor.Update(player);
+
 
                     #region Zoom
 

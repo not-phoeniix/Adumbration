@@ -20,6 +20,8 @@ namespace Adumbration
         private Rectangle hitBox;
         private bool pickedUp;
         KeyboardState prevState;
+        private bool colliding;
+        private int originY;
 
         //property
 
@@ -44,6 +46,8 @@ namespace Adumbration
                 position.Height + 1);           //height size
 
             pickedUp = false;
+            colliding = false;
+            originY = position.Y;
         }
 
 
@@ -54,15 +58,43 @@ namespace Adumbration
         /// aka you picked it up
         /// </summary>
         /// <param name="gameTime"></param>
-        public override void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, GameObject obj)
         {
             KeyboardState currentState = Keyboard.GetState();
-            if (!pickedUp)
-            {
 
+            //checks to see if the user clicked on the key
+            if (IsColliding(obj))
+            {
+                if (!pickedUp && currentState.IsKeyDown(Keys.E) && prevState.IsKeyUp(Keys.E))
+                {
+                    positionRect.Width = 0;
+                    positionRect.Height = 0;
+                }
             }
 
             prevState = currentState;
+
+
+            //in progress
+
+            //makes the key keep bouncing
+            //if (positionRect.Y < originY + 1)
+            //{
+            //    positionRect.Y += 1;
+            //}
+            //else
+            //{
+            //    positionRect.Y -= 1;
+            //}
+        }
+
+        public override bool IsColliding(GameObject obj)
+        {
+            if (positionRect.Intersects(obj.Position))
+            {
+                colliding = true;
+            }
+            return colliding;
         }
     }
 }
