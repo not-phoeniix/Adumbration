@@ -27,7 +27,7 @@ namespace Adumbration
 
         public Rectangle Hitbox
         {
-            get { return this.hitbox; }
+            get { return hitbox; }
         }
 
         /// <summary>
