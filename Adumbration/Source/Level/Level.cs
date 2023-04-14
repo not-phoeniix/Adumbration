@@ -124,7 +124,7 @@ namespace Adumbration
         /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, GameObject player)
         {
             allBeams.Clear();
 
@@ -155,6 +155,11 @@ namespace Adumbration
                             System.Diagnostics.Debug.WriteLine("IT WORKS");
                         }
                     }
+                }
+                
+                if (obj is KeyObject key)
+                {
+                    key.Update(gameTime, player);
                 }
             }
 
@@ -344,6 +349,13 @@ namespace Adumbration
                                 new Rectangle(16 * 8, 16 * 3, 16, 16),
                                 new Rectangle(positionRect.X, positionRect.Y + 1, 16, 16),      //sets up the rectangle a bit lower
                                 new Rectangle(positionRect.X, positionRect.Y - 1, 16, 16));     //sets the beam hitbox a bit higher
+                            break;
+
+                        case 'K':
+                            returnArray[x, y] = new KeyObject(
+                                textureDict["key"],
+                                new Rectangle(0, 0, 12, 12),
+                                new Rectangle(positionRect.X + 3, positionRect.Y + 3, 10, 10));
                             break;
 
                         // WALL

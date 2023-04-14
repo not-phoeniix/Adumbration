@@ -26,7 +26,7 @@ namespace Adumbration
 
         // Constructor
 
-
+        
         public SaveStation(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
             : base(spriteSheet, sourceRect, position)
         {
@@ -50,10 +50,10 @@ namespace Adumbration
         }
 
         /// <summary>
-        /// Saves the respawn point if the station's hitbox is colliding with the player
-        /// AND if the player presses the E key.
+        /// Saves the respawn point if the station's hitbox is colliding 
+        /// with the player AND if the player presses the E key.
         /// </summary>
-        /// <param name="myPlayer">Reference to Game1's player</param>
+        /// <param name="myPlayer">Reference to Game1's player.</param>
         /// <param name="currentState">The current state of the keyboard.</param>
         /// <param name="previousState">The previous state of the keyboard.</param>
         public void Interact(Player myPlayer, KeyboardState currentState, KeyboardState previousState)
@@ -62,7 +62,8 @@ namespace Adumbration
                 previousState.IsKeyDown(Keys.E) &&
                 IsColliding(myPlayer))
             {
-                // Saves the current respawn point
+                // Updates the respawn point to the level it is located in.
+
             }
         }
     }
