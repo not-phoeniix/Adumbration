@@ -5,7 +5,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
-using SharpDX.MediaFoundation;
 
 namespace Adumbration
 {
@@ -15,26 +14,30 @@ namespace Adumbration
     /// </summary>
     public class Level
     {
-        private SpriteBatch _spriteBatch;
-
         // Fields
         private char[,] levelLayout;            // copy of level text file, just int's
         private GameObject[,] objectArray;      // full array of GameObject's
-        private Texture2D wallSpritesheet;
         private Hull[,] wallHulls;              // for shadow casting
         private List<LightBeam> allBeams;       // all beams in the level currently
+        private Texture2D wallTexture;
+        private Dictionary<string, Texture2D> textureDict;
 
         // Mirror Testing
         private Mirror mirror;
+
+        // Multiple beam testing
+        private LightBeam testBeam;
 
         /// <summary>
         /// Creates a new level object, initializing and loading from a file
         /// </summary>
         /// <param name="wallSpritesheet">Texture2D wall spritesheet</param>
         /// <param name="dataFilePath">File path of layout data file (Already in LevelData folder, only file name needed)</param>
-        public Level(Texture2D wallSpritesheet, string dataFilePath)
+        public Level(Dictionary<string, Texture2D> textureDict, string dataFilePath)
         {
-            this.wallSpritesheet = wallSpritesheet;
+            this.textureDict = textureDict;
+
+            wallTexture = textureDict["walls"];
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile("../../../Source/LevelData/" + dataFilePath);
@@ -42,14 +45,11 @@ namespace Adumbration
             wallHulls = LoadHulls(objectArray);
 
             allBeams = new List<LightBeam>();
-        }
 
-        public void LoadMirrorTexture(Texture2D texture, Texture2D wallTexture)
-        {
-            mirror = new Mirror(texture, wallTexture,
-                new Rectangle(0, 0, 12, 12),
-                new Rectangle(16 * 8, 125, 12, 12),
-                MirrorType.Backward);
+            mirror = new Mirror(textureDict, new Rectangle(16 * 8, 125, 12, 12), MirrorType.Backward);
+
+            testBeam = new LightBeam(textureDict["whitePixel"],
+                new Rectangle(16 * 8 + 5, 180, 2, 2), Direction.Up);
         }
 
         /// <summary>
@@ -59,11 +59,13 @@ namespace Adumbration
         public GameObject[,] TileList
         {
             get { return objectArray; }
+            set { objectArray = value; }
         }
 
         public Hull[,] WallHulls
         {
             get { return wallHulls; }
+            set { wallHulls = value; }
         }
 
         internal List<LightBeam> Beams
@@ -79,7 +81,7 @@ namespace Adumbration
         public void Update(GameTime gameTime)
         {
             allBeams.Clear();
-            
+
             // updates all GameObjects each frame
             foreach(GameObject obj in objectArray)
             {
@@ -88,20 +90,20 @@ namespace Adumbration
                     allBeams.Add(emitter.Beam);
                     emitter.Update(gameTime);
                 }
-                
+
                 if(obj is Mirror mirror)
                 {
-                    allBeams.Add(mirror?.Beam);
+                    //allBeams.Add(mirror?.Beam);
                 }
 
-                if (obj is LightReceptor receptor)
+                if(obj is LightReceptor receptor)
                 {
                     //for all beams inside the allbeams class,
                     //it will check if the receptor is colliding with it
                     //then it will do a specific action
-                    for (int i = 0; i < allBeams.Count; i++)
+                    for(int i = 0; i < allBeams.Count; i++)
                     {
-                        if (receptor.IsColliding(allBeams[i]))
+                        if(receptor.IsColliding(allBeams[i]))
                         {
                             receptor.Update(gameTime);
                             System.Diagnostics.Debug.WriteLine("IT WORKS");
@@ -110,10 +112,13 @@ namespace Adumbration
                 }
             }
 
+            allBeams.Add(testBeam);
+            testBeam.Update(gameTime, this);
             mirror.Update(gameTime, this);
-            if(mirror.Beam != null)
+
+            foreach(LightBeam beam in mirror.ReflectedBeams)
             {
-                allBeams.Add(mirror.Beam);
+                allBeams.Add(beam);
             }
         }
 
@@ -123,9 +128,9 @@ namespace Adumbration
         public void Draw(SpriteBatch sb)
         {
             // this loop draws all objects in the tileList array
-            for (int y = 0; y < objectArray.GetLength(1); y++)
+            for(int y = 0; y < objectArray.GetLength(1); y++)
             {
-                for (int x = 0; x < objectArray.GetLength(0); x++)
+                for(int x = 0; x < objectArray.GetLength(0); x++)
                 {
                     // draws object
                     objectArray[x, y].Draw(sb);
@@ -133,12 +138,14 @@ namespace Adumbration
             }
 
             // draws all light beams after tile drawing
-            foreach (LightBeam beam in allBeams)
+            foreach(LightBeam beam in allBeams)
             {
                 beam.Draw(sb);
             }
 
             mirror.Draw(sb);
+
+            testBeam.Draw(sb);
         }
 
         #region LevelLoading
@@ -154,7 +161,7 @@ namespace Adumbration
         /// </summary>
         /// <param name="filename">String of file name</param>
         /// <returns>2D char array of level</returns>
-        private char[,] LoadLayoutFromFile(string filename)
+        public char[,] LoadLayoutFromFile(string filename)
         {
             char[,] returnLayout = new char[1, 1];
 
@@ -172,13 +179,13 @@ namespace Adumbration
                 int levelWidth, levelHeight;
 
                 // loops through every line until reading null
-                while ((lineString = reader.ReadLine()) != null)
+                while((lineString = reader.ReadLine()) != null)
                 {
                     // splits the line at beginning of read
                     string[] splitString = lineString.Split(",");
 
                     // sets array size & initializes ==========================
-                    if (lineNum == 1)
+                    if(lineNum == 1)
                     {
                         levelWidth = int.Parse(splitString[0]);
                         levelHeight = int.Parse(splitString[1]);
@@ -191,7 +198,7 @@ namespace Adumbration
                     else
                     {
                         // fills row in array with the split string
-                        for (int i = 0; i < splitString.Length; i++)
+                        for(int i = 0; i < splitString.Length; i++)
                         {
                             // removes space and parses to char
                             char trimmedChar = char.Parse(splitString[i].Trim());
@@ -205,7 +212,7 @@ namespace Adumbration
                     lineNum++;
                 }
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 // prints exception if there is one
                 Debug.WriteLine($"Error in file reading! Error: {ex.Message}");
@@ -213,7 +220,7 @@ namespace Adumbration
             finally
             {
                 // closes reader if it's not closed already
-                if (reader != null)
+                if(reader != null)
                 {
                     reader.Close();
                 }
@@ -228,7 +235,7 @@ namespace Adumbration
         /// with various objects like walls/floors.
         /// </summary>
         /// <param name="layout"></param>
-        private GameObject[,] LoadObjectsFromLayout(char[,] layout)
+        public GameObject[,] LoadObjectsFromLayout(char[,] layout)
         {
             int levelWidth = layout.GetLength(0);
             int levelHeight = layout.GetLength(1);
@@ -236,21 +243,23 @@ namespace Adumbration
             GameObject[,] returnArray = new GameObject[levelWidth, levelHeight];
 
             // iterates through array and adds objects
-            for (int y = 0; y < levelHeight; y++)
+            for(int y = 0; y < levelHeight; y++)
             {
-                for (int x = 0; x < levelWidth; x++)
+                for(int x = 0; x < levelWidth; x++)
                 {
+                    int sideSizeX = 16;
+                    int sideSizeY = 16;
+
                     // determines what source rect to add to list depending on neighboring tiles
                     Rectangle sourceRect = DetermineSourceRect(
                         layout[x, y],   // number of object in file
                         x,              // tile position X
                         y,              // tile position Y
-                        wallSpritesheet,    // Texture2D spritesheet
-                        16,             // sprite width
-                        16);            // sprite height
+                        wallTexture,    // Texture2D spritesheet
+                        sideSizeX,      // sprite width
+                        sideSizeY);     // sprite height
 
-                    int sideSizeX = sourceRect.Width;
-                    int sideSizeY = sourceRect.Height;
+
 
                     // full pos on screen
                     Rectangle positionRect = new Rectangle(
@@ -266,23 +275,23 @@ namespace Adumbration
                     {
                         // FLOOR
                         case '_':
-                            returnArray[x, y] = new Floor(wallSpritesheet, sourceRect, positionRect);
+                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
                             break;
 
                         // EMITTER
                         case 'E':
                             returnArray[x, y] = new LightEmitter(
-                                wallSpritesheet, 
+                                textureDict,
                                 new Rectangle(16 * 3, 16 * 3, 16, 16),
                                 positionRect,
                                 Direction.Down,
                                 this);
                             break;
 
-                        //RECEPTOR(for now, this one is for if it's pointed up)
+                        // RECEPTOR(for now, this one is for if it's pointed up)
                         case 'R':
                             returnArray[x, y] = new LightReceptor(
-                                wallSpritesheet,
+                                wallTexture,
                                 new Rectangle(16 * 8, 16 * 3, 16, 16),
                                 new Rectangle(positionRect.X, positionRect.Y + 1, 16, 16),      //sets up the rectangle a bit lower
                                 new Rectangle(positionRect.X, positionRect.Y - 1, 16, 16));     //sets the beam hitbox a bit higher
@@ -290,7 +299,7 @@ namespace Adumbration
 
                         // WALL
                         default:
-                            returnArray[x, y] = new Wall(wallSpritesheet, sourceRect, positionRect);
+                            returnArray[x, y] = new Wall(wallTexture, sourceRect, positionRect);
                             break;
                     }
                 }
@@ -304,7 +313,7 @@ namespace Adumbration
         /// </summary>
         /// <param name="levelObjects">2D array of all level objects</param>
         /// <returns>2D array of hulls</returns>
-        private Hull[,] LoadHulls(GameObject[,] levelObjects)
+        public Hull[,] LoadHulls(GameObject[,] levelObjects)
         {
             int levelWidth = levelObjects.GetLength(0);
             int levelHeight = levelObjects.GetLength(1);
@@ -325,11 +334,17 @@ namespace Adumbration
             return returnArray;
         }
 
-        // returns a source rectangle in wall
-        //   spritesheet based on surrounding tiles
-        //
-        // "num" is the number in the file read
-        // "pos" is position of current tile to check
+        /// <summary>
+        /// Determines the source rectangle of a wall according to surrounding tiles.
+        /// Automatically finds whether to use a corner/edge depending on surrounding floors
+        /// </summary>
+        /// <param name="tileValue">Current tile being checked</param>
+        /// <param name="tilePosX">X position of current tile in array</param>
+        /// <param name="tilePosY">X position of current tile in array</param>
+        /// <param name="spritesheet">Full spritesheet</param>
+        /// <param name="spriteWidth">Sprite's width</param>
+        /// <param name="spriteHeight">Sprite's height</param>
+        /// <returns>Calculated source rectangle</returns>
         private Rectangle DetermineSourceRect(
             char tileValue,
             int tilePosX,
@@ -338,6 +353,11 @@ namespace Adumbration
             int spriteWidth,
             int spriteHeight)
         {
+            // coords guide:
+            //  3,0     4,0     5,0
+            //  3,1     4,1     5,1
+            //  3,2     4,2     5,2
+
             // pixel dimensions divided by sizes of sprites,
             //   represents the number of sprites width and height wise
             int spritesheetWidth = spritesheet.Bounds.Width / spriteWidth;
@@ -350,7 +370,7 @@ namespace Adumbration
             Vector2 returnRectCoord = new Vector2(4, 1);
 
             // if floor char, use the floor coords
-            if (tileValue == '_')
+            if(tileValue == '_')
             {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;
@@ -364,9 +384,9 @@ namespace Adumbration
 
                 #region RegularWalls
 
-                for (int y = 0; y < 3; y++)
+                for(int y = 0; y < 3; y++)
                 {
-                    for (int x = 0; x < 3; x++)
+                    for(int x = 0; x < 3; x++)
                     {
                         // current positions of sub-array tile in big layout array
                         int arrayX = tilePosX - 1 + x;
@@ -383,21 +403,21 @@ namespace Adumbration
                                         arrayY < levelLayout.GetLength(1);
 
                         // only checks if it's in the bounds
-                        if (inBounds)
+                        if(inBounds)
                         {
                             // true if iterated coordinate is a floor ('_')
-                            if (levelLayout[arrayX, arrayY] == '_')
+                            if(levelLayout[arrayX, arrayY] == '_')
                             {
                                 // if a floor is detected NOT DIAGONALLY,
                                 //   set all the diagonal values to false
-                                if (x == 1 || y == 1)
+                                if(x == 1 || y == 1)
                                 {
                                     // double iteration loop for checking the array
-                                    for (int i = 0; i < spritesheetHeight; i++)
+                                    for(int i = 0; i < spritesheetHeight; i++)
                                     {
-                                        for (int j = 0; j < spritesheetWidth; j++)
+                                        for(int j = 0; j < spritesheetWidth; j++)
                                         {
-                                            if (i != 1 && j != 1 && j != 4)
+                                            if(i != 1 && j != 1 && j != 4)
                                             {
                                                 tileIsTrue[j, i] = false;
                                             }
@@ -416,7 +436,7 @@ namespace Adumbration
                 #region InverseCorners
 
                 // if bottom and right are true, clear and set to inverted top left
-                if (tileIsTrue[1, 2] && tileIsTrue[2, 1])
+                if(tileIsTrue[1, 2] && tileIsTrue[2, 1])
                 {
                     tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
@@ -424,7 +444,7 @@ namespace Adumbration
                 }
 
                 // if bottom and left are true, clear and set to inverted top right
-                if (tileIsTrue[1, 2] && tileIsTrue[0, 1])
+                if(tileIsTrue[1, 2] && tileIsTrue[0, 1])
                 {
                     tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
@@ -432,7 +452,7 @@ namespace Adumbration
                 }
 
                 // if top and right are true, clear and set to inverted bottom left
-                if (tileIsTrue[1, 0] && tileIsTrue[2, 1])
+                if(tileIsTrue[1, 0] && tileIsTrue[2, 1])
                 {
                     tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
@@ -440,7 +460,7 @@ namespace Adumbration
                 }
 
                 // if top and left are true, clear and set to inverted bottom right
-                if (tileIsTrue[1, 0] && tileIsTrue[0, 1])
+                if(tileIsTrue[1, 0] && tileIsTrue[0, 1])
                 {
                     tileIsTrue = new bool[spritesheetWidth, spritesheetHeight];
 
@@ -451,12 +471,12 @@ namespace Adumbration
 
                 // iteration thru bool array,
                 //   SETS FINAL RETURN COORD VALUES
-                for (int y = 0; y < spritesheetHeight; y++)
+                for(int y = 0; y < spritesheetHeight; y++)
                 {
-                    for (int x = 0; x < spritesheetWidth; x++)
+                    for(int x = 0; x < spritesheetWidth; x++)
                     {
                         // only sets coordinates if true
-                        if (tileIsTrue[x, y] == true)
+                        if(tileIsTrue[x, y] == true)
                         {
                             returnRectCoord.X = x;
                             returnRectCoord.Y = y;
@@ -474,8 +494,5 @@ namespace Adumbration
         }
 
         #endregion
-
-
-
     }
 }

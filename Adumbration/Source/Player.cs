@@ -92,11 +92,11 @@ namespace Adumbration
         /// <summary>
         /// Player takes everything from parent class
         /// </summary>
-        /// <param name="spriteSheet">spritesheet where player's texture is</param>
+        /// <param name="spritesheet">spritesheet where player's texture is</param>
         /// <param name="sourceRect">The source rectangle within the spritesheet</param>
         /// <param name="position">position of the player</param>
-        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
-            : base(spriteSheet, sourceRect, position)
+        public Player(Texture2D spritesheet, Rectangle sourceRect, Rectangle position)
+            : base(spritesheet, sourceRect, position)
         {
             hasDash = true;
             currentMode = PlayerMode.NormalMode;
@@ -240,12 +240,15 @@ namespace Adumbration
         {
             // When the player collides with a light beam, respawn at starting point
             // This is just for the test room
-            foreach(LightBeam beam in beams)
+            if (currentMode == PlayerMode.NormalMode)
             {
-                if (this.IsColliding(beam) && !isDashing)
+                foreach (LightBeam beam in beams)
                 {
-                    positionRect.X = 50;
-                    positionRect.Y = 50;
+                    if (this.IsColliding(beam) && !isDashing)
+                    {
+                        positionRect.X = 50;
+                        positionRect.Y = 50;
+                    }
                 }
             }
         }
