@@ -14,10 +14,10 @@ namespace Adumbration
     /// be what the player picks up
     /// so that they can unlock the final door in the end
     /// </summary>
-    internal class KeyObject : GameObject
+    internal class KeyObject : GameObject, IHitbox
     {
         //field
-        private Rectangle hitBox;
+        private Rectangle hitbox;
         private bool pickedUp;
         KeyboardState prevState;
         private bool colliding;
@@ -25,9 +25,9 @@ namespace Adumbration
 
         //property
 
-        public Rectangle HitBox
+        public Rectangle Hitbox
         {
-            get { return this.hitBox; }
+            get { return this.hitbox; }
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Adumbration
         public KeyObject(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
             : base(spriteSheet, sourceRect, position)
         {
-            hitBox = new Rectangle(
+            hitbox = new Rectangle(
                 position.X,                     //x pos
                 position.Y,                     //y pos
                 position.Width + 1,             //width size
