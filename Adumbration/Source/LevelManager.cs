@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Penumbra;
 using System;
 using System.Collections.Generic;
 
@@ -56,8 +57,8 @@ namespace Adumbration
         #endregion
 
         // level info
-        private Dictionary<string, Texture2D> textureDict;
         private Level currentLevel;
+        private Player player;
 
         /// <summary>
         /// Get-only property for current level
@@ -72,10 +73,11 @@ namespace Adumbration
         /// </summary>
         /// <param name="levelSpritesheet"></param>
         /// <param name="startingLevel"></param>
-        public void Initialize(Dictionary<string, Texture2D> textureDict, GameLevels startingLevel)
+        public void Initialize(Dictionary<string, Texture2D> textureDict, string levelDataPath, PenumbraComponent penumbra, Player player)
         {
-            this.textureDict = textureDict;
-            LoadLevel(startingLevel);
+            this.player = player;
+
+            currentLevel = new Level(textureDict, levelDataPath, penumbra, player);
         }
 
         /// <summary>
@@ -91,18 +93,14 @@ namespace Adumbration
                 // test level
                 case GameLevels.TestLevel:
 
-                    currentLevel = new Level(
-                        textureDict, 
-                        "BigLevelTest.txt");
+                    currentLevel.SetupLevel("BigLevelTest.txt", player);
 
                     break;
 
                 // test level
                 case GameLevels.TestLevel2:
 
-                    currentLevel = new Level(
-                        textureDict,
-                        "BigLevelTest2.txt");
+                    currentLevel.SetupLevel("BigLevelTest2.txt", player);
 
                     break;
 
@@ -117,9 +115,9 @@ namespace Adumbration
         /// <summary>
         /// Updates the logic of currently loaded level
         /// </summary>
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, GameObject obj)
         {
-            currentLevel.Update(gameTime);
+            currentLevel.Update(gameTime, obj);
         }
 
         /// <summary>
