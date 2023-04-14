@@ -117,7 +117,7 @@ namespace Adumbration
 
             if (currentState.IsKeyUp(Keys.E) &&
                 previousState.IsKeyDown(Keys.E) &&
-                UnlockHitbox.Contains(myPlayer.Position))
+                unlockHitbox.Contains(myPlayer.Position))
             {
                 if (OnKeyPressOnce != null)
                 {
@@ -153,7 +153,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            return UnlockHitbox.Intersects(obj.Position);
+            return unlockHitbox.Intersects(obj.Position);
         }
 
         /// <summary>

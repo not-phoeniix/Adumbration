@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Adumbration
 {
+    /// <summary>
+    /// Interface that defines a hitbox property and necessary methods.
+    /// </summary>
     public interface IHitbox
     {
         // Property
