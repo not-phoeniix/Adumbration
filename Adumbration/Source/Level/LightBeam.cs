@@ -27,6 +27,7 @@ namespace Adumbration
         // Fields
         private Direction dir;
         private List<Light> lights;
+        LightBeam reflectedBeam;
 
         #region // Properties
 
@@ -202,6 +203,16 @@ namespace Adumbration
             }
 
             #endregion
+
+            foreach(GameObject tile in currentLevel.TileList)
+            {
+                //// If it is colliding with a mirror
+                //if (tile is Mirror && IsColliding(tile))
+                //{
+                //    if ((Mirror))
+                //        }
+            }
+            
         }
 
         /// <summary>
