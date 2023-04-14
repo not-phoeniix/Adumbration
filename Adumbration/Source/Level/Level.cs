@@ -115,11 +115,6 @@ namespace Adumbration
             allBeams.Add(testBeam);
             testBeam.Update(gameTime, this);
             mirror.Update(gameTime, this);
-
-            foreach(LightBeam beam in mirror.ReflectedBeams)
-            {
-                allBeams.Add(beam);
-            }
         }
 
         /// <summary>
@@ -295,6 +290,20 @@ namespace Adumbration
                                 new Rectangle(16 * 8, 16 * 3, 16, 16),
                                 new Rectangle(positionRect.X, positionRect.Y + 1, 16, 16),      //sets up the rectangle a bit lower
                                 new Rectangle(positionRect.X, positionRect.Y - 1, 16, 16));     //sets the beam hitbox a bit higher
+                            break;
+
+                        case '/':
+                            returnArray[x, y] = new Mirror(
+                                textureDict,
+                                positionRect,
+                                MirrorType.Forward);
+                            break;
+
+                        case '\\':
+                            returnArray[x, y] = new Mirror(
+                                textureDict,
+                                positionRect,
+                                MirrorType.Backward);
                             break;
 
                         // WALL

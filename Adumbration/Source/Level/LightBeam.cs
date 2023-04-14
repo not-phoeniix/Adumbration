@@ -27,7 +27,10 @@ namespace Adumbration
         // Fields
         private Direction dir;
         private List<Light> lights;
-        LightBeam reflectedBeam;
+        private Texture2D texture;
+        private LightBeam reflectedBeam;
+        private bool isReflected;
+
 
         #region // Properties
 
@@ -67,8 +70,10 @@ namespace Adumbration
              : base(texture, new Rectangle(0, 0, 1, 1), position)
         {
             this.dir = dir;
-
             lights = new List<Light>();
+            this.texture = texture;
+            isReflected = false;
+            reflectedBeam = null;
         }
 
         /// <summary>
@@ -84,7 +89,7 @@ namespace Adumbration
             // Check the direction of the light beam first
             #region // Light size extending
 
-            switch(dir)
+            switch (dir)
             {
                 case Direction.Left:
                     // Expand left without moving origin
@@ -161,9 +166,9 @@ namespace Adumbration
             int skipNum = 10;
 
             // up and down facing lights
-            if(dir == Direction.Up || dir == Direction.Down)
+            if (dir == Direction.Up || dir == Direction.Down)
             {
-                for(int h = 0; h < positionRect.Height; h++)
+                for (int h = 0; h < positionRect.Height; h++)
                 {
                     // creates light object
                     PointLight light = new PointLight()
@@ -174,7 +179,7 @@ namespace Adumbration
                     };
 
                     // only adds the light every few pixels (determined by skip num)
-                    if(h % skipNum == 0)
+                    if (h % skipNum == 0)
                     {
                         lights.Add(light);
                     }
@@ -184,7 +189,7 @@ namespace Adumbration
             // left and right facing lights
             else
             {
-                for(int w = 0; w < positionRect.Width; w++)
+                for (int w = 0; w < positionRect.Width; w++)
                 {
                     // creates light object
                     PointLight light = new PointLight()
@@ -195,7 +200,7 @@ namespace Adumbration
                     };
 
                     // only adds the light every few pixels (determined by skip num)
-                    if(w % skipNum == 0)
+                    if (w % skipNum == 0)
                     {
                         lights.Add(light);
                     }
@@ -204,15 +209,81 @@ namespace Adumbration
 
             #endregion
 
-            foreach(GameObject tile in currentLevel.TileList)
+            #region// Reflecting
+            foreach (GameObject tile in currentLevel.TileList)
             {
-                //// If it is colliding with a mirror
-                //if (tile is Mirror && IsColliding(tile))
-                //{
-                //    if ((Mirror))
-                //        }
+                // if it is colliding with a mirror
+                if (tile is Mirror && IsColliding(tile) && !isReflected)
+                {
+                    if (((Mirror)tile).Type == MirrorType.Forward)
+                    {
+                        // Determine beam direction then create new
+                        // reflected beam properly
+                        switch (this.Direction)
+                        {
+                            case Direction.Up:
+                                reflectedBeam = new LightBeam(texture,
+                                    new Rectangle(this.X, this.Y - this.Height, 2, 2),
+                                    Direction.Right);
+                                break;
+
+                            case Direction.Down:
+                                reflectedBeam = new LightBeam(texture,
+                                   new Rectangle(this.X, this.Y + this.Height, 2, 2),
+                                   Direction.Left);
+                                break;
+
+                            case Direction.Right:
+                                reflectedBeam = new LightBeam(texture,
+                                   new Rectangle(this.X - this.Width, positionRect.Y, 2, 2),
+                                   Direction.Up);
+                                break;
+
+                            case Direction.Left:
+                                reflectedBeam = new LightBeam(texture,
+                                   new Rectangle(this.X, this.Y, 2, 2),
+                                   Direction.Down);
+                                break;
+                        }
+                    }
+                    else if (((Mirror)tile).Type == MirrorType.Backward)
+                    {
+                        // Determine beam direction then create new
+                        // reflected beam properly
+                        switch (this.Direction)
+                        {
+                            case Direction.Up:
+                                reflectedBeam = new LightBeam(texture,
+                                    new Rectangle(this.X, this.Y, 2, 2),
+                                    Direction.Left);
+                                break;
+
+                            case Direction.Down:
+                                reflectedBeam = new LightBeam(texture,
+                                   new Rectangle(this.X, this.Y + this.Height, 2, 2),
+                                   Direction.Right);
+                                break;
+
+                            case Direction.Right:
+                                reflectedBeam = new LightBeam(texture,
+                                   new Rectangle(this.X + this.Width, this.Y, 2, 2),
+                                   Direction.Down);
+                                break;
+
+                            case Direction.Left:
+                                reflectedBeam = new LightBeam(texture,
+                                   new Rectangle(this.X, this.Y, 2, 2),
+                                   Direction.Up);
+                                break;
+                        }
+                    }
+
+                    currentLevel.Beams.Add(reflectedBeam);
+                    reflectedBeam?.Update(gameTime, currentLevel);
+                }
             }
-            
+            #endregion
+
         }
 
         /// <summary>
