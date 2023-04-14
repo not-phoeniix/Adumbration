@@ -171,6 +171,8 @@ namespace Adumbration
             // LevelManager singleton init
             LevelManager.Instance.Initialize(textureDict, "BigLevelTest.txt", penumbra, player);
 
+            LevelManager.Instance.LoadLevel(GameLevels.TestLevel);
+
             #endregion
 
             #region // Penumbra object setup
@@ -216,7 +218,7 @@ namespace Adumbration
                     #region // Game update logic
 
                     // Penumbra enabled while in-game
-                    penumbra.Visible = false;
+                    penumbra.Visible = true;
 
                     // clear prev lights
                     penumbra.Lights.Clear();
