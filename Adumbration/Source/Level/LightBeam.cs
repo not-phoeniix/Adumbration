@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SharpDX.Direct2D1.Effects;
+using System.CodeDom;
 
 namespace Adumbration
 {
@@ -23,6 +25,7 @@ namespace Adumbration
     {
         // Fields
         Direction dir;
+        LightBeam reflectedBeam;
 
         // Properties
         public Direction Direction
@@ -35,6 +38,7 @@ namespace Adumbration
              : base(texture, new Rectangle(12, 4, 1, 1), position)  // this rectangle is 1 pixel of white
         {
             this.dir = dir;
+            reflectedBeam = null;
         }
 
         /// <summary>
@@ -127,6 +131,16 @@ namespace Adumbration
                     }
                     break;
             }
+
+            foreach(GameObject tile in currentLevel.TileList)
+            {
+                //// If it is colliding with a mirror
+                //if (tile is Mirror && IsColliding(tile))
+                //{
+                //    if ((Mirror))
+                //        }
+            }
+            
         }
 
         /// <summary>
