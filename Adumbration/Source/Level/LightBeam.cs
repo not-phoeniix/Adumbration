@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Penumbra;
+using SharpDX.Direct2D1.Effects;
 using System.Collections.Generic;
 using System.Windows.Forms.VisualStyles;
 
@@ -62,7 +63,7 @@ namespace Adumbration
         public int Height
         {
             get { return positionRect.Height; }
-            set { positionRect.Height = value;}
+            set { positionRect.Height = value; }
         }
 
         #endregion
@@ -214,88 +215,118 @@ namespace Adumbration
             #endregion
 
             #region// Reflecting
-            foreach (GameObject tile in currentLevel.TileList)
+            // Checking each mirror in the Level
+            foreach (Mirror mirror in currentLevel.Mirrors)
             {
-                // if it is colliding with a mirror
-                if (tile is Mirror && IsColliding(tile) && !isReflected)
+                // If it collides with mirror
+                if (IsColliding(mirror))
                 {
-                    if (((Mirror)tile).Type == MirrorType.Forward)
+                    // Check mirror type
+                    if (mirror.Type == MirrorType.Forward)
                     {
                         // Determine beam direction then create new
                         // reflected beam properly
                         switch (this.Direction)
                         {
                             case Direction.Up:
+                                // Stop Expansion
+                                positionRect.Y = mirror.Position.Y + mirror.Position.Height;
+                                positionRect.Height -= 1;
+
+                                // Make new beam
                                 reflectedBeam = new LightBeam(texture,
                                     new Rectangle(this.X, this.Y - this.Height, 2, 2),
                                     Direction.Right);
                                 break;
 
                             case Direction.Down:
+                                // Stop Expansion
+                                positionRect.Height -= 1;
+
+                                // Make new beam
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X, this.Y + this.Height, 2, 2),
                                    Direction.Left);
                                 break;
 
                             case Direction.Right:
+                                // Stop expansion
+                                positionRect.Width -= 1;
+
+                                //make new Beam
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X - this.Width, positionRect.Y, 2, 2),
                                    Direction.Up);
                                 break;
 
                             case Direction.Left:
+                                // Stop Expansion
+                                positionRect.X = mirror.Position.X + mirror.Position.Width;
+                                positionRect.Width -= 1;
+
+                                // Make new beam
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X, this.Y, 2, 2),
                                    Direction.Down);
                                 break;
                         }
                     }
-                    else if (((Mirror)tile).Type == MirrorType.Backward)
+                    else if (mirror.Type == MirrorType.Backward)
                     {
                         // Determine beam direction then create new
                         // reflected beam properly
                         switch (this.Direction)
                         {
                             case Direction.Up:
-                                this.Y -= (tile.Position.Width - (this.X - tile.Position.X));
-                                this.Height += (tile.Position.Width - (this.X - tile.Position.X));
+                                // Stop Expansion
+                                positionRect.Y = mirror.Position.Y + mirror.Position.Height;
+                                positionRect.Height -= 1;
+
+                                // Make new beam
                                 reflectedBeam = new LightBeam(texture,
                                     new Rectangle(this.X, this.Y, 2, 2),
                                     Direction.Left);
                                 break;
 
                             case Direction.Down:
-                                positionRect.Height += (tile.Position.Width - (this.X - tile.Position.X));
+                                // Stop Expansion
+                                positionRect.Height -= 1;
+
+                                // Make new beam
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X, this.Y + this.Height, 2, 2),
                                    Direction.Right);
                                 break;
 
                             case Direction.Right:
-                                this.Width += (this.Y - tile.Position.Y);
+                                // Stop expansion
+                                positionRect.Width -= 1;
+
+                                // Make new beam
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X + this.Width, this.Y, 2, 2),
                                    Direction.Down);
                                 break;
 
                             case Direction.Left:
-                                this.X -= (this.Y - tile.Position.Y);
-                                this.Width += (this.Y - tile.Position.Y);
+                                // Stop Expansion
+                                positionRect.X = mirror.Position.X + mirror.Position.Width;
+                                positionRect.Width -= 1;
+
+                                // Make new beam
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X, this.Y, 2, 2),
                                    Direction.Up);
                                 break;
                         }
                     }
-
                     isReflected = true;
-                    currentLevel.Beams.Add(reflectedBeam);
-                    reflectedBeam?.Update(gameTime);
                 }
             }
-            #endregion
-
         }
+
+            
+        #endregion
 
         /// <summary>
         /// the main colliding method like all the other gameobject 
