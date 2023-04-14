@@ -19,7 +19,6 @@
     <EmbeddedResource Remove="Content\Sprites\UI\**" />
     <EmbeddedResource Remove="NonInteractable Objects\**" />
     <None Remove="Content\AsepriteProjects\**" />
-    <None Remove="Content\Sprites\UI\**" />
     <None Remove="NonInteractable Objects\**" />
   </ItemGroup>
   <ItemGroup>
