@@ -138,11 +138,15 @@ namespace Adumbration
                 {
                     allBeams.Add(emitter.Beam);
                     emitter.Update(gameTime);
+                    if(emitter.Beam.ReflectedBeam != null)
+                    {
+                        allBeams.Add(emitter.Beam.ReflectedBeam);
+                    }
                 }
 
                 if(obj is Mirror mirror)
                 {
-                    //allBeams.Add(mirror?.Beam);
+                    
                 }
 
                 if(obj is LightReceptor receptor)

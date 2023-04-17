@@ -73,6 +73,11 @@ namespace Adumbration
             set { associatedMirror = value; }
         }
 
+        public LightBeam ReflectedBeam
+        {
+            get { return reflectedBeam; }
+        }
+
         #endregion
 
         //constructor for this class
@@ -167,13 +172,22 @@ namespace Adumbration
                         }
                     }
 
-                    //foreach (Mirror mirror in currentLevel.Mirrors)
-                    //{
-                    //    if (IsColliding(mirror))
-                    //    {
-                    //        positionRect.Height -= 1;
-                    //    }
-                    //}
+                    foreach (Mirror mirror in currentLevel.Mirrors)
+                    {
+                        if (IsColliding(mirror) && mirror != associatedMirror)
+                        {
+                            // Stop Expansion if it's not colliding with
+                            // an associated mirror
+                            positionRect.Height -= 1;
+
+                            // Make new beam
+                            reflectedBeam = new LightBeam(texture,
+                               new Rectangle(this.X, this.Y + this.Height, 2, 2),
+                               Direction.Right);
+
+                            reflectedBeam.Update(gameTime);
+                        }
+                    }
                     break;
             }
 
@@ -237,12 +251,10 @@ namespace Adumbration
                 // If it collides with mirror 
                 if (IsColliding(mirror) && !isReflected)
                 {
-                    // Associates that mirror with this specific light beam
-                    associatedMirror = mirror;
-
                     // and the current beam is reflecting
                     isReflected = true;
 
+                    associatedMirror = mirror;
                     // Check mirror type
                     if (mirror.Type == MirrorType.Forward)
                     {
