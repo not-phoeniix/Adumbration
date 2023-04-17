@@ -21,7 +21,6 @@ namespace Adumbration
     internal class Mirror : GameObject, IHitbox
     {
         // Fields
-        private List<LightBeam> reflectedBeams;
         private MirrorType type;
         private Rectangle hitbox;
 
@@ -45,7 +44,6 @@ namespace Adumbration
                    position)
         {
             this.type = type;
-            reflectedBeams = new List<LightBeam>();
 
             // Create hitbox rectangle
             hitbox = new Rectangle(
@@ -53,14 +51,6 @@ namespace Adumbration
                 position.Y - 1,
                 position.Width + 2,
                 position.Height + 2);
-        }
-
-        /// <summary>
-        /// Returns the light beam attatched to this mirror, null if non existant
-        /// </summary>
-        public List<LightBeam> ReflectedBeams
-        {
-            get { return reflectedBeams; }
         }
 
         public MirrorType Type

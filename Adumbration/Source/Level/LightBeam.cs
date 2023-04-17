@@ -166,6 +166,14 @@ namespace Adumbration
                             positionRect.Height -= 1;
                         }
                     }
+
+                    //foreach (Mirror mirror in currentLevel.Mirrors)
+                    //{
+                    //    if (IsColliding(mirror))
+                    //    {
+                    //        positionRect.Height -= 1;
+                    //    }
+                    //}
                     break;
             }
 
@@ -268,9 +276,9 @@ namespace Adumbration
                                 positionRect.Width -= 1;
 
                                 //make new Beam
-                                reflectedBeam = new LightBeam(texture,
-                                   new Rectangle(this.X - this.Width, positionRect.Y, 2, 2),
-                                   Direction.Up);
+                                //reflectedBeam = new LightBeam(texture,
+                                //   new Rectangle(this.X - this.Width, positionRect.Y, 2, 2),
+                                //   Direction.Up);
                                 break;
 
                             case Direction.Left:
@@ -306,7 +314,7 @@ namespace Adumbration
                             case Direction.Down:
                                 // Stop Expansion if it's not colliding with
                                 // an associated mirror
-                                    positionRect.Height -= 1;
+                                positionRect.Height -= 1;
 
                                 // Make new beam
                                 reflectedBeam = new LightBeam(texture,

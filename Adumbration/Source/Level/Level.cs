@@ -53,13 +53,6 @@ namespace Adumbration
 
             // load whole level
             SetupLevel(dataFilePath, player);
-
-            // testing objects:
-
-            testBeam = new LightBeam(
-                textureDict["whitePixel"],
-                new Rectangle(16 * 8 + 5, 180, 2, 2), 
-                Direction.Up);
         }
 
         /// <summary>
@@ -172,9 +165,6 @@ namespace Adumbration
                     key.Update(gameTime, player);
                 }
             }
-
-            allBeams.Add(testBeam);
-            testBeam.Update(gameTime);
         }
 
         /// <summary>
@@ -206,8 +196,6 @@ namespace Adumbration
             {
                 mirror.Draw(sb);
             }
-
-            testBeam.Draw(sb);
         }
 
         #region LevelLoading
