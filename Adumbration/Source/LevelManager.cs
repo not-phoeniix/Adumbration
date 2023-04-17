@@ -96,7 +96,7 @@ namespace Adumbration
                 // test level
                 case GameLevels.TestLevel:
 
-                    currentLevel.SetupLevel("BigLevelTest.txt", player);
+                    currentLevel.SetupLevel("Hub.txt", player);
 
                     break;
 

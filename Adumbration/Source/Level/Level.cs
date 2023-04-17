@@ -162,7 +162,7 @@ namespace Adumbration
                         if(receptor.IsColliding(allBeams[i]))
                         {
                             receptor.Update(gameTime);
-                            Debug.WriteLine("IT WORKS");
+                            //Debug.WriteLine("IT WORKS");
                         }
                     }
                 }

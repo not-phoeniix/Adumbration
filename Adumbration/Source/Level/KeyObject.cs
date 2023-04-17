@@ -69,6 +69,7 @@ namespace Adumbration
                 {
                     positionRect.Width = 0;
                     positionRect.Height = 0;
+                    System.Diagnostics.Debug.WriteLine("key taken");
                 }
             }
 
