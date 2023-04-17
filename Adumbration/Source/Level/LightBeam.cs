@@ -31,6 +31,7 @@ namespace Adumbration
         private Texture2D texture;
         private LightBeam reflectedBeam;
         private bool isReflected;
+        private Mirror associatedMirror;
 
 
         #region // Properties
@@ -66,6 +67,12 @@ namespace Adumbration
             set { positionRect.Height = value; }
         }
 
+        public Mirror AssociatedMirror
+        {
+            get { return associatedMirror; }
+            set { associatedMirror = value; }
+        }
+
         #endregion
 
         //constructor for this class
@@ -77,6 +84,7 @@ namespace Adumbration
             this.texture = texture;
             isReflected = false;
             reflectedBeam = null;
+            associatedMirror = null;
         }
 
         /// <summary>
@@ -218,9 +226,15 @@ namespace Adumbration
             // Checking each mirror in the Level
             foreach (Mirror mirror in currentLevel.Mirrors)
             {
-                // If it collides with mirror
-                if (IsColliding(mirror))
+                // If it collides with mirror 
+                if (IsColliding(mirror) && !isReflected)
                 {
+                    // Associates that mirror with this specific light beam
+                    associatedMirror = mirror;
+
+                    // and the current beam is reflecting
+                    isReflected = true;
+
                     // Check mirror type
                     if (mirror.Type == MirrorType.Forward)
                     {
@@ -268,6 +282,7 @@ namespace Adumbration
                                 reflectedBeam = new LightBeam(texture,
                                    new Rectangle(this.X, this.Y, 2, 2),
                                    Direction.Down);
+
                                 break;
                         }
                     }
@@ -289,8 +304,9 @@ namespace Adumbration
                                 break;
 
                             case Direction.Down:
-                                // Stop Expansion
-                                positionRect.Height -= 1;
+                                // Stop Expansion if it's not colliding with
+                                // an associated mirror
+                                    positionRect.Height -= 1;
 
                                 // Make new beam
                                 reflectedBeam = new LightBeam(texture,
@@ -321,11 +337,13 @@ namespace Adumbration
                         }
                     }
                     isReflected = true;
+                    currentLevel.Beams.Add(reflectedBeam);
+                    reflectedBeam?.Update(gameTime);
                 }
             }
         }
 
-            
+
         #endregion
 
         /// <summary>
