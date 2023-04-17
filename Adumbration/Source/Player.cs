@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Adumbration
 {
@@ -89,28 +90,27 @@ namespace Adumbration
 
         // Constructor
         /// <summary>
-        /// Player takes completely from Parent class
-        /// for the constructor
+        /// Player takes everything from parent class
         /// </summary>
-        public Player(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
-            : base(spriteSheet, sourceRect, position)
+        /// <param name="spritesheet">spritesheet where player's texture is</param>
+        /// <param name="sourceRect">The source rectangle within the spritesheet</param>
+        /// <param name="position">position of the player</param>
+        public Player(Texture2D spritesheet, Rectangle sourceRect, Rectangle position)
+            : base(spritesheet, sourceRect, position)
         {
             hasDash = true;
             currentMode = PlayerMode.NormalMode;
+
+            // Set player speed and dashspeed
+            speed = 2;
+            dashSpeed = speed * 5;
 
             // Animation data
             fps = 2.0;
             secondsPerFrame = 1.0 / fps;
             timeCounter = 0;
             currentFrame = 1;
-
-            // Set player speed
-            speed = 2;
-
-            // Set player dash speed
-            dashSpeed = speed * 2;
-
-            //widthOfSingleSprite = spriteSheet.Width;
+            widthOfSingleSprite = 7;
         }
 
         // Methods
@@ -134,475 +134,67 @@ namespace Adumbration
                 System.Diagnostics.Debug.WriteLine("normal mode");
             }
 
-            // Player States
-            switch (currentState)
+            // Player's current X and Y positions
+            int currentX = positionRect.X;
+            int currentY = positionRect.Y;
+
+            // Reset timer
+            if (!isDashing && currentDashTime != 0)
             {
-                case PlayerState.FacingLeft:
-                    {
-                        currentFrame = 1;
-                        sourceRect.X = 0;
-
-                        // If W is pressed, face up
-                        if (currentKbState.IsKeyDown(Keys.W))
-                        {
-                            currentState = PlayerState.FacingUp;
-                        }
-
-                        // If A is pressed, move left
-                        else if (currentKbState.IsKeyDown(Keys.A))
-                        {
-                            currentState = PlayerState.MovingLeft;
-                        }
-
-                        // If S is pressed, move down with MovingLeft animation
-                        else if (currentKbState.IsKeyDown(Keys.S))
-                        {
-                            currentState = PlayerState.MovingLeft;
-                        }
-
-                        // If D is pressed, face right
-                        else if (currentKbState.IsKeyDown(Keys.D))
-                        {
-                            currentState = PlayerState.FacingRight;
-                        }
-                        UpdateAnimation(gameTime);
-                        break;
-                    }
-
-                case PlayerState.MovingLeft:
-                    {
-                        currentFrame = 1;
-                        sourceRect.X = 0;
-
-                        // If W is pressed, move up
-                        if (currentKbState.IsKeyDown(Keys.W))
-                        {
-                            currentState = PlayerState.MovingUp;
-                        }
-
-                        // If A is pressed, move left
-                        else if (currentKbState.IsKeyDown(Keys.A))
-                        {
-                            currentState = PlayerState.MovingLeft;
-                        }
-
-                        // If S is pressed, move down with MovingLeft animation
-                        else if (currentKbState.IsKeyDown(Keys.S))
-                        {
-                            currentState = PlayerState.MovingLeft;
-                        }
-
-                        // If D is pressed, face right
-                        else if (currentKbState.IsKeyDown(Keys.D))
-                        {
-                            currentState = PlayerState.FacingRight;
-                        }
-
-                        // If nothing is pressed, face left
-                        else
-                        {
-                            currentState = PlayerState.FacingLeft;
-                        }
-                        UpdateAnimation(gameTime);
-                        break;
-                    }
-
-                case PlayerState.FacingRight:
-                    {
-                        currentFrame = 1;
-                        sourceRect.X = 0;
-
-                        // If W is pressed, face up
-                        if (currentKbState.IsKeyDown(Keys.W))
-                        {
-                            currentState = PlayerState.FacingUp;
-                        }
-
-                        // If A is pressed, face left
-                        else if (currentKbState.IsKeyDown(Keys.A))
-                        {
-                            currentState = PlayerState.FacingLeft;
-                        }
-
-                        // If S is pressed, move down with MovingRight animation
-                        else if (currentKbState.IsKeyDown(Keys.S))
-                        {
-                            currentState = PlayerState.MovingRight;
-                        }
-
-                        // If D is pressed, face right
-                        else if (currentKbState.IsKeyDown(Keys.D))
-                        {
-                            currentState = PlayerState.MovingRight;
-                        }
-                        UpdateAnimation(gameTime);
-                        break;
-                    }
-
-                case PlayerState.MovingRight:
-                    {
-                        currentFrame = 1;
-                        sourceRect.X = 0;
-
-                        // If W is pressed, move up
-                        if (currentKbState.IsKeyDown(Keys.W))
-                        {
-                            currentState = PlayerState.MovingUp;
-                        }
-
-                        // If A is pressed, face left
-                        else if (currentKbState.IsKeyDown(Keys.A))
-                        {
-                            currentState = PlayerState.FacingLeft;
-                        }
-
-                        // If S is pressed, move down with MovingRight animation
-                        else if (currentKbState.IsKeyDown(Keys.S))
-                        {
-                            currentState = PlayerState.MovingRight;
-                        }
-
-                        // If D is pressed, move right
-                        else if (currentKbState.IsKeyDown(Keys.D))
-                        {
-                            currentState = PlayerState.MovingRight;
-                        }
-
-                        // If nothing is pressed, face right
-                        else
-                        {
-                            currentState = PlayerState.FacingRight;
-                        }
-                        UpdateAnimation(gameTime);
-                        break;
-                    }
-
-                case PlayerState.FacingUp:
-                    {
-                        currentFrame = 3;
-                        sourceRect.X = 14;
-
-                        // If W is pressed, move up
-                        if (currentKbState.IsKeyDown(Keys.W))
-                        {
-                            currentState = PlayerState.MovingUp;
-                        }
-
-                        // If A is pressed, move left with MovingUp animation
-                        else if (currentKbState.IsKeyDown(Keys.A))
-                        {
-                            currentState = PlayerState.MovingUp;
-                        }
-
-                        // If S is pressed, face right
-                        else if (currentKbState.IsKeyDown(Keys.S))
-                        {
-                            currentState = PlayerState.FacingRight;
-                        }
-
-                        // If D is pressed, move right with MovingUp animation
-                        else if (currentKbState.IsKeyDown(Keys.D))
-                        {
-                            currentState = PlayerState.MovingUp;
-                        }
-
-                        // If nothing is pressed, continue facing up
-                        else
-                        {
-                            currentState = PlayerState.FacingUp;
-                        }
-                        UpdateAnimation(gameTime);
-                        break;
-                    }
-
-                case PlayerState.MovingUp:
-                    {
-                        currentFrame = 3;
-                        sourceRect.X = 14;
-
-                        // If W is pressed, move up
-                        if (currentKbState.IsKeyDown(Keys.W))
-                        {
-                            currentState = PlayerState.MovingUp;
-                        }
-
-                        // If A is pressed, move left with MovingUp animation
-                        else if (currentKbState.IsKeyDown(Keys.A))
-                        {
-                            currentState = PlayerState.MovingUp;
-                        }
-
-                        // If S is pressed, move down with MovingRight animation
-                        else if (currentKbState.IsKeyDown(Keys.S))
-                        {
-                            currentState = PlayerState.MovingRight;
-                        }
-
-                        // If D is pressed, move right with MovingUp animation
-                        else if (currentKbState.IsKeyDown(Keys.D))
-                        {
-                            currentState = PlayerState.MovingUp;
-                        }
-
-                        // If nothing is pressed, face up
-                        else
-                        {
-                            currentState = PlayerState.FacingUp;
-                        }
-                        UpdateAnimation(gameTime);
-                        break;
-                    }
+                currentDashTime = 0;
+                //hasDash = false;
+            }
+            // Increase timer
+            else if (isDashing)
+            {
+                currentDashTime += 0.1f;
             }
 
-            // Player Modes
-            switch (currentMode)
+            // If they are not or no longer dashing
+            if (!isDashing || currentDashTime > MaxDashTime)
             {
-                case PlayerMode.NormalMode:
-                    {
-                        // Player's current X and Y positions
-                        int currentX = positionRect.X;
-                        int currentY = positionRect.Y;
-
-                        // Reset timer
-                        if (!isDashing && currentDashTime != 0)
-                        {
-                            currentDashTime = 0;
-                            //hasDash = false;
-                            
-                            // Draw non-dash textures
-                            if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-                            {
-                                sourceRect.X = 0;
-                            }
-                            else if (currentState == PlayerState.MovingUp)
-                            {
-                                sourceRect.X = 14;
-                            }
-                        }
-                        // Increase timer
-                        else if (isDashing)
-                        {
-                            currentDashTime += 0.1f;
-
-                            // Draw dash textures
-                            if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-                            {
-                                sourceRect.X = 28;
-                            }
-                            else if (currentState == PlayerState.MovingUp)
-                            {
-                                sourceRect.X = 42;
-                            }
-                        }
-
-                        #region// Keeping this in case we need to go back to it
-                        //foreach (GameObject tile in currentLevel.TileList)
-                        //{
-                        //    // If the player is touching a wall
-                        //    if (tile is Wall && recPosition.Intersects(tile.Position))
-                        //    {
-                        //        // They're touching a wall
-                        //        isTouchingWall = true;
-                        //    }
-                        //    // Otherwise
-                        //    if (tile is Floor && recPosition.Intersects(tile.Position))
-                        //    {
-                        //        // They're not
-                        //        isTouchingWall = false;
-                        //    }
-                        //}
-                        #endregion
-
-                        #region// Diagonal Dashes           
-                        // North East
-                        if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&                                     // If moving north east
-                            hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
-                        {
-                            if (currentDashTime < MaxDashTime)
-                            {
-                                isDashing = true;
-                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                                {
-                                    // Changes position by 50 pixels in the diagonal direction
-                                    positionRect.X += 1;         // X component of the vector
-                                    positionRect.Y -= 1;         // Y component of the vector
-                                                                 //hasDash = false;
-                                }
-                            }
-                        }
-
-                        // North West
-                        if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&                                    // If moving north west
-                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
-                        {
-                            if (currentDashTime < MaxDashTime)
-                            {
-                                isDashing = true;
-                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                                {
-                                    // Changes position by 50 pixels in the diagonal direction
-                                    positionRect.X -= 1;         // X component of the vector
-                                    positionRect.Y -= 1;         // Y component of the vector
-                                                                 //hasDash = false;
-                                }
-                            }
-                        }
-
-                        // South East
-                        if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&                                   // If moving south east
-                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed
-                        {
-                            if (currentDashTime < MaxDashTime)
-                            {
-                                isDashing = true;
-                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                                {
-                                    // Changes position by 50 pixels in the diagonal direction
-                                    positionRect.X += 1;         // X component of the vector
-                                    positionRect.Y += 1;         // Y component of the vector
-                                                                 //hasDash = false;
-                                }
-                            }
-                        }
-
-                        // South West
-                        if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&                                   // If moving south west
-                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed                    
-                        {
-                            if (currentDashTime < MaxDashTime)
-                            {
-                                isDashing = true;
-                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                                {
-                                    // Changes position by 50 pixels in the diagonal direction
-                                    positionRect.X -= 1;         // X component of the vector
-                                    positionRect.Y += 1;         // Y component of the vector
-                                                                 //hasDash = false;
-                                }
-                            }
-                        }
-                        #endregion
-
-                        #region // Movement
-                        // North Movement
-                        NorthMovement(currentKbState, currentLevel, currentX);
-
-                        // East Movement
-                        EastMovement(currentKbState, currentLevel, currentX, currentY);
-
-                        // West Movement
-                        WestMovement(currentKbState, currentLevel, currentX, currentY);
-
-                        // South Movement
-                        SouthMovement(currentKbState, currentLevel, currentX, currentY);
-                        #endregion
-
-                        // In case we need to use them keep them here
-                        prevX = currentX;
-                        prevY = currentY;
-                        break;
-                    }
-                case PlayerMode.GodMode:
-                    {
-                        // Player's current X and Y positions
-                        int currentX = positionRect.X;
-                        int currentY = positionRect.Y;
-
-                        // Reset timer
-                        if (!isDashing && currentDashTime != 0)
-                        {
-                            currentDashTime = 0;
-                            //hasDash = false;
-                        }
-                        // Increase timer
-                        else if (isDashing)
-                        {
-                            currentDashTime += 0.1f;
-                        }
-
-                        #region// Diagonal Dashes           
-                        // North East
-                        if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.D) &&                                     // If moving north east
-                            hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
-                        {
-                            if (currentDashTime < MaxDashTime)
-                            {
-                                isDashing = true;
-                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                                {
-                                    // Changes position by 50 pixels in the diagonal direction
-                                    positionRect.X += 1;         // X component of the vector
-                                    positionRect.Y -= 1;         // Y component of the vector
-                                                                 //hasDash = false;
-                                }
-                            }
-                        }
-
-                        // North West
-                        if (currentKbState.IsKeyDown(Keys.W) && currentKbState.IsKeyDown(Keys.A) &&                                    // If moving north west
-                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                            // and space is pressed
-                        {
-                            if (currentDashTime < MaxDashTime)
-                            {
-                                isDashing = true;
-                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                                {
-                                    // Changes position by 50 pixels in the diagonal direction
-                                    positionRect.X -= 1;         // X component of the vector
-                                    positionRect.Y -= 1;         // Y component of the vector
-                                                                 //hasDash = false;
-                                }
-                            }
-                        }
-
-                        // South East
-                        if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.D) &&                                   // If moving south east
-                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed
-                        {
-                            if (currentDashTime < MaxDashTime)
-                            {
-                                isDashing = true;
-                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                                {
-                                    // Changes position by 50 pixels in the diagonal direction
-                                    positionRect.X += 1;         // X component of the vector
-                                    positionRect.Y += 1;         // Y component of the vector
-                                                                 //hasDash = false;
-                                }
-                            }
-                        }
-
-                        // South West
-                        if (currentKbState.IsKeyDown(Keys.S) && currentKbState.IsKeyDown(Keys.A) &&                                   // If moving south west
-                           hasDash && currentKbState.IsKeyDown(Keys.Space))                                                           // and space is pressed                    
-                        {
-                            if (currentDashTime < MaxDashTime)
-                            {
-                                isDashing = true;
-                                for (int i = 0; i < (int)(dashSpeed * Math.Cos(45)); i++)
-                                {
-                                    // Changes position by 50 pixels in the diagonal direction
-                                    positionRect.X -= 1;         // X component of the vector
-                                    positionRect.Y += 1;         // Y component of the vector
-                                                                 //hasDash = false;
-                                }
-                            }
-                        }
-                        #endregion
-
-                        #region//all movements inside the godmode that allows the user to leave the stage and explore the entire window
-                        GodNorthMove(currentKbState, currentLevel, currentX);
-
-                        GodEastMove(currentKbState, currentLevel, currentX, currentY);
-
-                        GodWestMove(currentKbState, currentLevel, currentX, currentY);
-
-                        GodSouthMove(currentKbState, currentLevel, currentX, currentY);
-                        #endregion
-
-                        break;
-                    }
+                // Draw non-dash textures
+                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
+                {
+                    sourceRect.X = 0;
+                }
+                else if (currentState == PlayerState.MovingUp)
+                {
+                    sourceRect.X = 14;
+                }
             }
+            // if they are in the midst of a dash
+            else if (isDashing)
+            {
+                // Draw dash textures
+                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
+                {
+                    sourceRect.X = 28;
+                }
+                else if (currentState == PlayerState.MovingUp)
+                {
+                    sourceRect.X = 42;
+                }
+            }
+
+            #region // Movement
+            // North Movement
+            NorthMovement(currentKbState, currentLevel, currentX);
+
+            // East Movement
+            EastMovement(currentKbState, currentLevel, currentX, currentY);
+
+            // West Movement
+            WestMovement(currentKbState, currentLevel, currentX, currentY);
+
+            // South Movement
+            SouthMovement(currentKbState, currentLevel, currentX, currentY);
+            #endregion
+
+            // In case we need to use them keep them here
+            prevX = currentX;
+            prevY = currentY;
+
             previousKbState = currentKbState;
         }
 
@@ -644,20 +236,24 @@ namespace Adumbration
         /// If the player is killed, it will respawn at the start of the room.
         /// </summary>
         /// <param name="beam">The light beam.</param>
-        public void IsDead(GameObject beam)
+        internal void IsDead(List<LightBeam> beams)
         {
             // When the player collides with a light beam, respawn at starting point
             // This is just for the test room
-            if (this.IsColliding(beam) && !isDashing)
+            if (currentMode == PlayerMode.NormalMode)
             {
-                positionRect.X = 50;
-                positionRect.Y = 50;
+                foreach (LightBeam beam in beams)
+                {
+                    if (this.IsColliding(beam) && !isDashing)
+                    {
+                        positionRect.X = 50;
+                        positionRect.Y = 50;
+                    }
+                }
             }
         }
 
-
-        #region//all normal mode movement methods
-
+        #region// Movement methods
         /// <summary>
         /// Controls player's movement north
         /// </summary>
@@ -670,11 +266,15 @@ namespace Adumbration
             {
                 // North Dash
                 // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space)
+                    && currentKbState.IsKeyUp(Keys.A)
+                    && currentKbState.IsKeyUp(Keys.S)                   // Player can only dash in one direction 
+                    && currentKbState.IsKeyUp(Keys.D))
                 {
                     if (currentDashTime < MaxDashTime)
                     {
-                        // They're dashing
+                        // They're dashing,
+                        // thus change position by dash speed
                         isDashing = true;
                         positionRect.Y -= dashSpeed;
                     }
@@ -685,15 +285,15 @@ namespace Adumbration
                     isDashing = false;
                 }
 
-                // Keeps player in window
                 // If player is not touching a top wall let them move in that direction
                 positionRect.Y -= speed;
+                currentState = PlayerState.MovingUp;
 
                 // While moving in the North direction
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // If it is colliding with a wall
-                    if (tile is Wall && IsColliding(tile))
+                    if (tile is Wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
                     {
                         // Snap the Player to the bottom of the wall
                         positionRect.Y = tile.Position.Height + tile.Position.Y;
@@ -716,14 +316,17 @@ namespace Adumbration
             {
                 // East Dash
                 // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space)
+                    && currentKbState.IsKeyUp(Keys.W)
+                    && currentKbState.IsKeyUp(Keys.S)                   // Player can only dash in one direction 
+                    && currentKbState.IsKeyUp(Keys.A))
                 {
                     if (currentDashTime < MaxDashTime)
                     {
-                        // They're dashing
+                        // They're dashing,
+                        // thus change position by dash speed;
                         isDashing = true;
                         positionRect.X += dashSpeed;
-
                     }
                 }
                 // Otherwise they're not
@@ -734,6 +337,7 @@ namespace Adumbration
 
                 // Keeps player in window
                 positionRect.X += speed;
+                currentState = PlayerState.MovingRight;
 
                 // makes player face RIGHT
                 playerIsFlipped = false;
@@ -742,7 +346,7 @@ namespace Adumbration
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // if the player is colliding with a wall
-                    if (tile is Wall && IsColliding(tile))
+                    if (tile is Wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
                     {
                         // Snap Player to the left side of the wall
                         positionRect.X = tile.Position.X - positionRect.Width;
@@ -768,11 +372,15 @@ namespace Adumbration
             {
                 // West Dash
                 // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space)
+                    && currentKbState.IsKeyUp(Keys.W)
+                    && currentKbState.IsKeyUp(Keys.S)                   // Player can only dash in one direction 
+                    && currentKbState.IsKeyUp(Keys.D))
                 {
                     if (currentDashTime < MaxDashTime)
                     {
-                        // They're dashing
+                        // They're dashing,
+                        // thus change posiition by dash speed
                         isDashing = true;
                         positionRect.X -= dashSpeed;
 
@@ -786,6 +394,7 @@ namespace Adumbration
 
                 // Keeps player in window
                 positionRect.X -= speed;
+                currentState = PlayerState.MovingLeft;
 
                 // makes player face LEFT
                 playerIsFlipped = true;
@@ -794,7 +403,7 @@ namespace Adumbration
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // If the player collides with a wall
-                    if (tile is Wall && IsColliding(tile))
+                    if (tile is Wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
                     {
                         // Snap the player to the right side of the wall
                         positionRect.X = tile.Position.Width + tile.Position.X;
@@ -821,14 +430,17 @@ namespace Adumbration
             {
                 // South Dash
                 // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
+                if (hasDash && currentKbState.IsKeyDown(Keys.Space)
+                    && currentKbState.IsKeyUp(Keys.A)
+                    && currentKbState.IsKeyUp(Keys.W)                   // Player can only dash in one direction 
+                    && currentKbState.IsKeyUp(Keys.D))
                 {
                     if (currentDashTime < MaxDashTime)
                     {
-                        // They're dashing
+                        // They're dashing,
+                        // thus update posiiton by dash speed
                         isDashing = true;
                         positionRect.Y += dashSpeed;
-
                     }
                 }
                 // Otherwise they're not
@@ -839,12 +451,13 @@ namespace Adumbration
 
                 // Move Player Down
                 positionRect.Y += speed;
+                currentState = PlayerState.MovingRight;
 
                 // While moving in the South direction
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // If the player collides with a wall
-                    if (tile is Wall && IsColliding(tile))
+                    if (tile is Wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
                     {
                         // Snap player to the top of the wall
                         positionRect.Y = tile.Position.Y - positionRect.Height;
@@ -861,165 +474,7 @@ namespace Adumbration
         }
         #endregion
 
-        #region//all god mode movement methods
-
-        /// <summary>
-        /// this is just an extra method to not get normal mode and god mode movement mixed up
-        /// </summary>
-        /// <param name="currentKbState"></param>
-        /// <param name="currentLevel"></param>
-        /// <param name="currentX"></param>
-        private void GodNorthMove(KeyboardState currentKbState, Level currentLevel, int currentX)
-        {
-            if (currentKbState.IsKeyDown(Keys.W))
-            {
-                // North Dash
-                // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
-                {
-                    if (currentDashTime < MaxDashTime)
-                    {
-                        // They're dashing
-                        isDashing = true;
-                        for (int i = 0; i < dashSpeed; i++)
-                        {
-                            positionRect.Y -= 1;
-                        }
-                    }
-                }
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                }
-
-                // Keeps player in window
-                // If player is not touching a top wall let them move in that direction
-                positionRect.Y -= speed;
-            }
-        }
-
-
-        /// <summary>
-        /// this is the god mode version of the east movement to ignore the walls
-        /// </summary>
-        /// <param name="currentKbState"></param>
-        /// <param name="currentLevel"></param>
-        /// <param name="currentX"></param>
-        /// <param name="currentY"></param>
-        private void GodEastMove(KeyboardState currentKbState, Level currentLevel, int currentX, int currentY)
-        {
-            if (currentKbState.IsKeyDown(Keys.D))
-            {
-                // East Dash
-                // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
-                {
-                    if (currentDashTime < MaxDashTime)
-                    {
-                        // They're dashing
-                        isDashing = true;
-                        for (int i = 0; i < dashSpeed; i++)
-                        {
-                            positionRect.X += 1;
-                        }
-                    }
-                }
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                }
-
-                // Keeps player in window
-                positionRect.X += speed;
-
-                // makes player face RIGHT
-                playerIsFlipped = false;
-
-
-            }
-        }
-
-        /// <summary>
-        /// god mode version of the west movement that ignores walls
-        /// </summary>
-        /// <param name="currentKbState"></param>
-        /// <param name="currentLevel"></param>
-        /// <param name="currentX"></param>
-        /// <param name="currentY"></param>
-        private void GodWestMove(KeyboardState currentKbState, Level currentLevel, int currentX, int currentY)
-        {
-            if (currentKbState.IsKeyDown(Keys.A))
-            {
-                // West Dash
-                // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
-                {
-                    if (currentDashTime < MaxDashTime)
-                    {
-                        // They're dashing
-                        isDashing = true;
-                        for (int i = 0; i < dashSpeed; i++)
-                        {
-                            positionRect.X -= 1;
-                        }
-                    }
-                }
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                }
-
-                // Keeps player in window
-                positionRect.X -= speed;
-
-                // makes player face LEFT
-                playerIsFlipped = true;
-
-
-            }
-        }
-
-        /// <summary>
-        /// god mode version of the south movement that ignores walls
-        /// </summary>
-        /// <param name="currentKbState"></param>
-        /// <param name="currentLevel"></param>
-        /// <param name="currentX"></param>
-        /// <param name="currentY"></param>
-        private void GodSouthMove(KeyboardState currentKbState, Level currentLevel, int currentX, int currentY)
-        {
-            if (currentKbState.IsKeyDown(Keys.S))
-            {
-                // South Dash
-                // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space))
-                {
-                    if (currentDashTime < MaxDashTime)
-                    {
-                        // They're dashing
-                        isDashing = true;
-                        for (int i = 0; i < dashSpeed; i++)
-                        {
-                            positionRect.Y += 1;
-                        }
-                    }
-                }
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                }
-
-                // Move Player Down
-                positionRect.Y += speed;
-            }
-        }
-        #endregion
-
-        #region//Animations
+        #region// Animations
         /// <summary>
         /// Helper for updating player's animation based on time.
         /// </summary>
@@ -1036,22 +491,31 @@ namespace Adumbration
                 currentFrame++;
                 if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
                 {
-                    if (currentFrame >= 3)
+                    if (currentFrame >= 3 || currentFrame == 1)
                     {
                         currentFrame = 1;
+                        sourceRect.X = 0;
+                    }
+                    else
+                    {
+                        currentFrame = currentFrame * widthOfSingleSprite;
                     }
                 }
                 else if (currentState == PlayerState.MovingUp)
                 {
-                    if (currentFrame >= 5)
+                    if (currentFrame >= 5 || currentFrame == 3)
                     {
                         currentFrame = 3;
+                    }
+                    else
+                    {
+                    currentFrame = currentFrame * widthOfSingleSprite;
                     }
                 }
 
                 // Reset time counter
                 timeCounter -= secondsPerFrame;
-            }
+                }
         }
 
         /// <summary>
@@ -1065,10 +529,10 @@ namespace Adumbration
                 spriteSheet,
                 positionRect,
                 new Rectangle(
-                    currentFrame * widthOfSingleSprite,
-                    0,
-                    widthOfSingleSprite,
-                    spriteSheet.Height),
+                currentFrame * widthOfSingleSprite,
+                0,
+                widthOfSingleSprite,
+                spriteSheet.Height),
                 Color.White,
                 0.0f,
                 Vector2.Zero,
@@ -1101,10 +565,10 @@ namespace Adumbration
                     spriteSheet,
                     positionRect,
                     new Rectangle(
-                        14,
-                        0,
-                        widthOfSingleSprite,
-                        spriteSheet.Height),
+                    14,
+                    0,
+                    widthOfSingleSprite,
+                    spriteSheet.Height),
                     Color.White,
                     0.0f,
                     Vector2.Zero,
@@ -1114,5 +578,32 @@ namespace Adumbration
         }
 
         #endregion
+
+        public void MoveMirror(Level currentLevel, KeyboardState currentState)
+        {
+            foreach (GameObject tile in currentLevel.TileList)
+            {
+                if(tile is Mirror && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
+                {
+                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.W))
+                    {
+                        tile.Y -= speed;
+                    }
+                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.S))
+                    {
+                        tile.Y += speed;
+                    }
+                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.A))
+                    {
+                        tile.X -= speed;    
+                    }
+                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.D))
+                    {
+                        tile.X += speed;
+                    }
+                }
+            }
+        }
+
     }
 }
