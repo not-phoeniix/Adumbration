@@ -246,8 +246,8 @@ namespace Adumbration
                 {
                     if (this.IsColliding(beam) && !isDashing)
                     {
-                        positionRect.X = 50;
-                        positionRect.Y = 50;
+                        LevelManager.Instance.ResetLevel();
+                        return;
                     }
                 }
             }

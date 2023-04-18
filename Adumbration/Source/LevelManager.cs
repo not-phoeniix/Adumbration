@@ -70,15 +70,14 @@ namespace Adumbration
         }
 
         /// <summary>
-        /// Initializes LevelManager singleton, must be run first for levels to work properly.
+        /// Initializes LevelManager singleton, must be run first for levels to work properly. LOADS HUB BY DEFAULT
         /// </summary>
         /// <param name="levelSpritesheet"></param>
         /// <param name="startingLevel"></param>
-        public void Initialize(Dictionary<string, Texture2D> textureDict, string levelDataPath, PenumbraComponent penumbra, Player player)
+        public void Initialize(Dictionary<string, Texture2D> textureDict, PenumbraComponent penumbra, Player player)
         {
+            currentLevel = new Level(textureDict, "Hub.txt", penumbra, player);
             this.player = player;
-
-            currentLevel = new Level(textureDict, levelDataPath, penumbra, player);
         }
 
         /// <summary>
@@ -90,27 +89,49 @@ namespace Adumbration
         {
             currentLevelEnum = level;
 
+            string levelDataPath;
+
             // FSM for what level is being loaded
+            // SETS THE PATH
             switch(level)
             {
-                // test level
-                case GameLevels.TestLevel:
-
-                    currentLevel.SetupLevel("BigLevelTest.txt", player);
-
+                case GameLevels.Hub:
+                    levelDataPath = "Hub.txt";
                     break;
 
-                // test level
+                case GameLevels.Level1:
+                    levelDataPath = "Level_1.txt";
+                    break;
+
+                case GameLevels.Level2:
+                    levelDataPath = "Level_2.txt";
+                    break;
+
+                case GameLevels.Level3:
+                    levelDataPath = "Level_3.txt";
+                    break;
+
+                case GameLevels.Level4:
+                    levelDataPath = "Level_4.txt";
+                    break;
+
+                // TEST LEVELS:
+
+                case GameLevels.TestLevel:
+                    levelDataPath = "BigLevelTest.txt";
+                    break;
+
                 case GameLevels.TestLevel2:
-
-                    currentLevel.SetupLevel("BigLevelTest2.txt", player);
-
+                    levelDataPath = "BigLevelTest2.txt";
                     break;
 
                 // throw exception if any other value is inputted
                 default:
                     throw new Exception($"Error: level {level} does not exist!");
             }
+
+            currentLevel.SetupLevel(levelDataPath, player);
+
         }
 
         /// <summary>

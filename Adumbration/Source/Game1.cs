@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Penumbra;
 using System.Collections.Generic;
-using System.Configuration;
 
 // ===================================
 // GAME NAME:   Adumbration
@@ -169,9 +168,9 @@ namespace Adumbration
                 1);                 // Level
 
             // LevelManager singleton init
-            LevelManager.Instance.Initialize(textureDict, "BigLevelTest.txt", penumbra, player);
+            LevelManager.Instance.Initialize(textureDict, penumbra, player);
 
-            LevelManager.Instance.LoadLevel(GameLevels.TestLevel);
+            LevelManager.Instance.LoadLevel(GameLevels.Level1);
 
             #endregion
 
@@ -383,7 +382,7 @@ namespace Adumbration
                 // draw pause menu
                 case GameState.PauseMenu:
                     PauseMenu.Instance.Draw(
-                        _spriteBatch, 
+                        _spriteBatch,
                         _graphics.GraphicsDevice.Viewport.Bounds);
 
                     break;

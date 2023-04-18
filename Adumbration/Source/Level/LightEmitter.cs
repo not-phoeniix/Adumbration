@@ -7,21 +7,25 @@ namespace Adumbration
     internal class LightEmitter : Wall
     {
         // Fields 
-        private bool isOn;
+        private bool enabledState;
+        private bool prevEnabledState;
+        private bool textureFlipped;
         private LightBeam beam;
         private Direction dir;
-        private Level currentLevel;
         private Texture2D whitePixelTexture;
+        private Rectangle enabledSource;
+        private Rectangle disabledSource;
+        private Vector2 beamStartPos;
 
         // Properties
         /// <summary>
         /// Get and set property for if the 
         /// Emitter is on
         /// </summary>
-        public bool IsOn
+        public bool Enabled
         {
-            get { return isOn; }
-            set { isOn = value; }
+            get { return enabledState; }
+            set { enabledState = value; }
         }
 
         /// <summary>
@@ -32,34 +36,92 @@ namespace Adumbration
             get { return beam; }
         }
 
-        public LightEmitter(Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position, Direction dir, Level currentLevel)
-            : base(textureDict["walls"], sourceRect, position)
+        /// <summary>
+        /// Creates a new LightEmitter tile
+        /// </summary>
+        /// <param name="textureDict">Dictionary of game textures</param>
+        /// <param name="position">Position to draw emitter</param>
+        /// <param name="dir">Direction of the emitter</param>
+        /// <param name="enabled">Whether to start the emitter enabled or not</param>
+        public LightEmitter(Dictionary<string, Texture2D> textureDict, Rectangle position, Direction dir, bool enabled)
+            : base(textureDict["walls"], new Rectangle(0, 0, 0, 0), position)
         {
             this.dir = dir;
-            isOn = true;
-            this.currentLevel = currentLevel;
+            this.enabledState = enabled;
+            textureFlipped = false;
 
             whitePixelTexture = textureDict["whitePixel"];
 
-            // Instantiate Light Beam at center point of emitter's 
-            // Source rectangle
-            beam = new LightBeam(
-                whitePixelTexture,
-                new Rectangle(
-                    position.X + position.Width / 2 - 1,
-                    position.Y + position.Height / 2,
-                    2, 2), 
-                dir);
+            // determines source rect depending on direction of emitter
+            switch(dir)
+            {
+                case Direction.Down:
+                    enabledSource = new Rectangle(3 * 16, 3 * 16, 16, 16);
+                    disabledSource = new Rectangle(0, 3 * 16, 16, 16);
+                    beamStartPos = new Vector2(7, 9);
+                    break;
+
+                case Direction.Up:
+                    enabledSource = new Rectangle(5 * 16, 3 * 16, 16, 16);
+                    disabledSource = new Rectangle(2 * 16, 3 * 16, 16, 16);
+                    beamStartPos = new Vector2(7, 1);
+                    break;
+
+                case Direction.Left:
+                    enabledSource = new Rectangle(4 * 16, 3 * 16, 16, 16);
+                    disabledSource = new Rectangle(1 * 16, 3 * 16, 16, 16);
+                    beamStartPos = new Vector2(1, 7);
+                    break;
+
+                case Direction.Right:
+                    enabledSource = new Rectangle(4 * 16, 3 * 16, 16, 16);
+                    disabledSource = new Rectangle(1 * 16, 3 * 16, 16, 16);
+                    beamStartPos = new Vector2(14, 7);
+                    textureFlipped = true;
+                    break;
+            }
         }
 
-        //public override void Update(GameTime gameTime)
-        //{
-        //    beam.Update(gameTime);
-        //}
+        public override void Update(GameTime gameTime)
+        {
+            #region // State updates
+
+            // creates beam if emitter is enabled
+            if(enabledState == true && prevEnabledState == false)
+            {
+                beam = new LightBeam(
+                    whitePixelTexture,
+                    new Rectangle(
+                        (int)beamStartPos.X + positionRect.X,
+                        (int)beamStartPos.Y + positionRect.Y,
+                        2, 
+                        2),
+                    dir);
+            }
+
+            // deletes beam if emitter isn't enabled
+            if(enabledState == false && prevEnabledState == true)
+            {
+                beam = null;
+            }
+
+            #endregion
+
+            prevEnabledState = enabledState;
+        }
 
         public override void Draw(SpriteBatch sb)
         {
-            base.Draw(sb);
+            // same as base.draw except flips texture sometimes
+            sb.Draw(
+                spriteSheet,
+                positionRect,
+                enabledState ? enabledSource : disabledSource,
+                Color.White,
+                0,
+                Vector2.Zero,
+                textureFlipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                0);
         }
     }
 }

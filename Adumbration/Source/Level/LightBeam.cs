@@ -1,10 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Penumbra;
-using SharpDX.Direct2D1.Effects;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows.Forms.VisualStyles;
 
 namespace Adumbration
 {
@@ -33,7 +30,7 @@ namespace Adumbration
         private LightBeam reflectedBeam;
         private bool isReflected;
         private Mirror associatedMirror;
-
+        private int expandSpeed;
 
         #region // Properties
 
@@ -91,6 +88,8 @@ namespace Adumbration
             isReflected = false;
             reflectedBeam = null;
             associatedMirror = null;
+            
+            expandSpeed = 3;
         }
 
         public LightBeam(Texture2D texture, Rectangle position, Direction dir, Mirror associatedMirror)
@@ -123,8 +122,8 @@ namespace Adumbration
             {
                 case Direction.Left:
                     // Expand left without moving origin
-                    positionRect.X -= 1;
-                    positionRect.Width += 1;
+                    positionRect.X -= expandSpeed;
+                    positionRect.Width += expandSpeed;
 
                     foreach (GameObject tile in currentLevel.TileList)
                     {
@@ -133,14 +132,14 @@ namespace Adumbration
                         {
                             // Stop expansion
                             positionRect.X = tile.Position.X + tile.Position.Width;
-                            positionRect.Width -= 1;
+                            positionRect.Width -= expandSpeed;
                         }
                     }
                     break;
 
                 case Direction.Right:
                     // Expand right without moving origin
-                    positionRect.Width += 1;
+                    positionRect.Width += expandSpeed;
 
                     foreach (GameObject tile in currentLevel.TileList)
                     {
@@ -148,7 +147,7 @@ namespace Adumbration
                         if (tile is Wall && tile is not LightEmitter && IsColliding(tile))
                         {
                             // Stop expansion
-                            positionRect.Width -= 1;
+                            positionRect.Width -= expandSpeed;
                         }
                     }
 
@@ -156,7 +155,7 @@ namespace Adumbration
                     {
                         if(IsColliding(mirror) && mirror != associatedMirror)
                         {
-                            positionRect.Width -= 1;
+                            positionRect.Width -= expandSpeed;
 
                             // Make new beam
 
@@ -168,7 +167,7 @@ namespace Adumbration
                                  new Rectangle(this.X + this.Width, this.Y, 2, 2),
                                     Direction.Down);
 
-                                reflectedBeam.Height += 1;
+                                reflectedBeam.Height += expandSpeed;
                             }
                         }
                     }
@@ -176,8 +175,8 @@ namespace Adumbration
 
                 case Direction.Up:
                     // Expand Up without moving origin
-                    positionRect.Y -= 1;
-                    positionRect.Height += 1;
+                    positionRect.Y -= expandSpeed;
+                    positionRect.Height += expandSpeed;
 
                     foreach (GameObject tile in currentLevel.TileList)
                     {
@@ -186,14 +185,14 @@ namespace Adumbration
                         {
                             // Stop expansion 
                             positionRect.Y = tile.Position.Y + tile.Position.Height;
-                            positionRect.Height -= 1;
+                            positionRect.Height -= expandSpeed;
                         }
                     }
                     break;
 
                 case Direction.Down:
                     // Expand Down without moving origin
-                    positionRect.Height += 1;
+                    positionRect.Height += expandSpeed;
 
                     foreach (GameObject tile in currentLevel.TileList)
                     {
@@ -201,7 +200,7 @@ namespace Adumbration
                         if (tile is Wall && tile is not LightEmitter && IsColliding(tile))
                         {
                             // Stop expansion
-                            positionRect.Height -= 1;
+                            positionRect.Height -= expandSpeed;
                         }
                     }
 
@@ -232,7 +231,7 @@ namespace Adumbration
 
                         if (IsColliding(mirror))
                         {
-                            positionRect.Height -= 1;
+                            positionRect.Height -= expandSpeed;
                         }
                     }
                     break;
