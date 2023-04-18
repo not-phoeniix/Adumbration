@@ -52,10 +52,10 @@ namespace Adumbration
                 dir);
         }
 
-        public override void Update(GameTime gameTime)
-        {
-            beam.Update(gameTime);
-        }
+        //public override void Update(GameTime gameTime)
+        //{
+        //    beam.Update(gameTime);
+        //}
 
         public override void Draw(SpriteBatch sb)
         {

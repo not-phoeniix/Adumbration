@@ -142,11 +142,11 @@ namespace Adumbration
                 if(obj is LightEmitter emitter)
                 {
                     allBeams.Add(emitter.Beam);
-                    emitter.Update(gameTime);
                     if(emitter.Beam.ReflectedBeam != null)
                     {
                         allBeams.Add(emitter.Beam.ReflectedBeam);
                     }
+                    //emitter.Update(gameTime);
                 }
 
                 if(obj is Mirror mirror)
@@ -173,6 +173,11 @@ namespace Adumbration
                 {
                     key.Update(gameTime, player);
                 }
+            }
+
+            for(int i = 0; i < allBeams.Count; i++)
+            {
+                allBeams[i].Update(gameTime);
             }
         }
 
