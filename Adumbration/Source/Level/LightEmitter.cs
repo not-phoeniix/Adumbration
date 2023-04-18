@@ -54,7 +54,7 @@ namespace Adumbration
 
         public override void Update(GameTime gameTime)
         {
-            beam.Update(gameTime, currentLevel);
+            beam.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch sb)

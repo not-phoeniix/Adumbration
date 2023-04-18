@@ -40,7 +40,7 @@ namespace Adumbration
             //foreach(LightEmitter emitter in currentLevel.TileList)
             //{
             // If the light beam is activated
-            if (IsColliding(beam))
+            if (IsColliding(beam) && beam != null)
             {
                 OnActivation();
                 System.Diagnostics.Debug.WriteLine("Activated");

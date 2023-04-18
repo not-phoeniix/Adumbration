@@ -72,7 +72,7 @@ namespace Adumbration
                         selectedButton = MenuButtons.Quit;
                     }
 
-                    if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev))
+                    if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
                         Game1.GameState = GameState.Game;
                     }
@@ -85,7 +85,7 @@ namespace Adumbration
                         selectedButton = MenuButtons.Resume;
                     }
 
-                    if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev))
+                    if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
                         Game1.GameState = GameState.MainMenu;
                     }
