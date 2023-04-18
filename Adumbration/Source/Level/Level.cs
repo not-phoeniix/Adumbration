@@ -93,6 +93,11 @@ namespace Adumbration
         public void SetupLevel(string dataFileName, Player player) {
             currentLevel = "../../../Source/LevelData/" + dataFileName;
 
+            // clears previous lists and objects
+            allBeams.Clear();
+            allMirrors.Clear();
+            levelKey = null;
+
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile(currentLevel);
             objectArray = LoadObjectsFromLayout(levelLayout);
