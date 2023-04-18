@@ -31,6 +31,7 @@ namespace Adumbration
         private bool isReflected;
         private Mirror associatedMirror;
         private int expandSpeed;
+        private Rectangle prevPosition;
 
         #region // Properties
 
@@ -76,6 +77,11 @@ namespace Adumbration
             get { return reflectedBeam; }
         }
 
+        public bool HasChanged
+        {
+            get { return prevPosition != positionRect; }
+        }
+
         #endregion
 
         //constructor for this class
@@ -89,7 +95,7 @@ namespace Adumbration
             reflectedBeam = null;
             associatedMirror = null;
             
-            expandSpeed = 3;
+            expandSpeed = 1;
         }
 
         public LightBeam(Texture2D texture, Rectangle position, Direction dir, Mirror associatedMirror)
@@ -113,7 +119,7 @@ namespace Adumbration
             Level currentLevel = LevelManager.Instance.CurrentLevel;
 
             // Clears all previous spotlights every frame
-            lights.Clear();
+            //lights.Clear();
 
             // Check the direction of the light beam first
             #region // Light size extending
@@ -238,58 +244,68 @@ namespace Adumbration
             }
 
             #endregion
-
+            
             #region // Adding point lights across beam
 
             // light properties (easy to tweak)
             float radius = 1;
             float intensity = 0.1f;
             int skipNum = 10;
-
-            // up and down facing lights
-            if (dir == Direction.Up || dir == Direction.Down)
+            
+            // only deletes and recreates lights along beam if the position changes
+            if(HasChanged)
             {
-                for (int h = 0; h < positionRect.Height; h++)
-                {
-                    // creates light object
-                    PointLight light = new PointLight()
-                    {
-                        Radius = radius,
-                        Intensity = intensity,
-                        Position = new Vector2(positionRect.X + positionRect.Width / 2, positionRect.Y + h)
-                    };
+                lights.Clear();
 
-                    // only adds the light every few pixels (determined by skip num)
-                    if (h % skipNum == 0)
+                // up and down facing lights
+                if(dir == Direction.Up || dir == Direction.Down)
+                {
+                    for(int h = 0; h < positionRect.Height; h++)
                     {
-                        lights.Add(light);
+                        // creates light object
+                        PointLight light = new PointLight()
+                        {
+                            Radius = radius,
+                            Intensity = intensity,
+                            Position = new Vector2(positionRect.X + positionRect.Width / 2, positionRect.Y + h)
+                        };
+
+                        // only adds the light every few pixels (determined by skip num)
+                        if(h % skipNum == 0)
+                        {
+                            lights.Add(light);
+                        }
                     }
                 }
-            }
 
-            // left and right facing lights
-            else
-            {
-                for (int w = 0; w < positionRect.Width; w++)
+                // left and right facing lights
+                else
                 {
-                    // creates light object
-                    PointLight light = new PointLight()
+                    for(int w = 0; w < positionRect.Width; w++)
                     {
-                        Radius = radius,
-                        Intensity = intensity,
-                        Position = new Vector2(positionRect.X + w, positionRect.Y + positionRect.Height / 2)
-                    };
+                        // creates light object
+                        PointLight light = new PointLight()
+                        {
+                            Radius = radius,
+                            Intensity = intensity,
+                            Position = new Vector2(positionRect.X + w, positionRect.Y + positionRect.Height / 2)
+                        };
 
-                    // only adds the light every few pixels (determined by skip num)
-                    if (w % skipNum == 0)
-                    {
-                        lights.Add(light);
+                        // only adds the light every few pixels (determined by skip num)
+                        if(w % skipNum == 0)
+                        {
+                            lights.Add(light);
+                        }
                     }
                 }
+
             }
 
             #endregion
 
+            // updates previous position rectangle,
+            //   kinda like a previous state update
+            prevPosition = positionRect;
         }
 
         /// <summary>

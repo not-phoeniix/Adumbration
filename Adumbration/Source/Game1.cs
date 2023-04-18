@@ -219,9 +219,6 @@ namespace Adumbration
                     // Penumbra enabled while in-game
                     penumbra.Visible = true;
 
-                    // clear prev lights
-                    penumbra.Lights.Clear();
-
                     // transition to pause menu
                     if(IsKeyPressedOnce(Keys.Escape, kbState, prevKbState))
                     {
@@ -234,7 +231,6 @@ namespace Adumbration
                     player.IsDead(LevelManager.Instance.CurrentLevel.Beams);
                     closedDoor.Update(gameTime);
                     closedDoor.Update(player);
-
 
                     #region Zoom
 
@@ -275,13 +271,23 @@ namespace Adumbration
                     // update player light location
                     playerLight.Position = player.CenterPos;
 
-                    // add lights
-                    penumbra.Lights.Add(playerLight);
+                    penumbra.Lights.Clear();
+
+                    // add player light if it doesn't exist in list yet
+                    if(!penumbra.Lights.Contains(playerLight))
+                    {
+                        penumbra.Lights.Add(playerLight);
+                    }
+
+                    // add beam lights if they don't exist in list yet
                     foreach(LightBeam beam in LevelManager.Instance.CurrentLevel.Beams)
                     {
                         foreach(Light light in beam.Lights)
                         {
-                            penumbra.Lights.Add(light);
+                            if(!penumbra.Lights.Contains(light))
+                            {
+                                penumbra.Lights.Add(light);
+                            }
                         }
                     }
 
