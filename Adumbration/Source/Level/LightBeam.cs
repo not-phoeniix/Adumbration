@@ -92,6 +92,17 @@ namespace Adumbration
             associatedMirror = null;
         }
 
+        public LightBeam(Texture2D texture, Rectangle position, Direction dir, Mirror associatedMirror)
+             : base(texture, new Rectangle(0, 0, 1, 1), position)
+        {
+            this.dir = dir;
+            lights = new List<Light>();
+            this.texture = texture;
+            isReflected = false;
+            reflectedBeam = null;
+            this.associatedMirror = associatedMirror;
+        }
+
         /// <summary>
         /// Updates beams rectangle per frame
         /// </summary>
@@ -139,6 +150,18 @@ namespace Adumbration
                             positionRect.Width -= 1;
                         }
                     }
+
+                    foreach(Mirror mirror in currentLevel.Mirrors)
+                    {
+                        if(IsColliding(mirror) && mirror == associatedMirror)
+                        {
+                            positionRect.Width -= 1;
+
+                            reflectedBeam = new LightBeam(texture,
+                               new Rectangle(this.X - this.Width, positionRect.Y, 2, 2),
+                               Direction.Up, associatedMirror);
+                        }
+                    }
                     break;
 
                 case Direction.Up:
@@ -174,18 +197,17 @@ namespace Adumbration
 
                     foreach (Mirror mirror in currentLevel.Mirrors)
                     {
+                        // If the beam is colliding with any mirror it is not reflecting
+                        // off of
                         if (IsColliding(mirror) && mirror != associatedMirror)
                         {
-                            // Stop Expansion if it's not colliding with
-                            // an associated mirror
+                            // Stop Expansion
                             positionRect.Height -= 1;
 
                             // Make new beam
                             reflectedBeam = new LightBeam(texture,
                                new Rectangle(this.X, this.Y + this.Height, 2, 2),
-                               Direction.Right);
-
-                            reflectedBeam.Update(gameTime);
+                               Direction.Right, associatedMirror);
                         }
                     }
                     break;
@@ -288,9 +310,9 @@ namespace Adumbration
                                 positionRect.Width -= 1;
 
                                 //make new Beam
-                                //reflectedBeam = new LightBeam(texture,
-                                //   new Rectangle(this.X - this.Width, positionRect.Y, 2, 2),
-                                //   Direction.Up);
+                                reflectedBeam = new LightBeam(texture,
+                                   new Rectangle(this.X - this.Width, positionRect.Y, 2, 2),
+                                   Direction.Up);
                                 break;
 
                             case Direction.Left:
@@ -358,9 +380,9 @@ namespace Adumbration
                     }
                     isReflected = true;
                     currentLevel.Beams.Add(reflectedBeam);
-                    reflectedBeam?.Update(gameTime);
                 }
             }
+            reflectedBeam?.Update(gameTime);
         }
 
 
