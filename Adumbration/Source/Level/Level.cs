@@ -139,19 +139,20 @@ namespace Adumbration
             // updates all GameObjects each frame
             foreach(GameObject obj in objectArray)
             {
+                // updating all emitters
                 if(obj is LightEmitter emitter)
                 {
-                    allBeams.Add(emitter.Beam);
                     emitter.Update(gameTime);
+                    
+                    if(emitter.Beam != null)
+                    {
+                        allBeams.Add(emitter.Beam);
+                    }
+
                     if(emitter.Beam.ReflectedBeam != null)
                     {
                         allBeams.Add(emitter.Beam.ReflectedBeam);
                     }
-                }
-
-                if(obj is Mirror mirror)
-                {
-                    
                 }
 
                 if(obj is LightReceptor receptor)
@@ -168,12 +169,22 @@ namespace Adumbration
                         }
                     }
                 }
-                
-                if (obj is KeyObject key)
-                {
-                    key.Update(gameTime, player);
-                }
             }
+
+            // updating all mirrors
+            foreach(Mirror mirror in allMirrors)
+            {
+                mirror.Update(gameTime);
+            }
+
+            // updating all beams outside emitter objects
+            foreach(LightBeam beam in allBeams)
+            {
+                beam.Update(gameTime);
+            }
+
+            // updating level key
+            levelKey?.Update(gameTime);
         }
 
         /// <summary>
@@ -192,7 +203,7 @@ namespace Adumbration
             }
 
             // draws level key
-            levelKey.Draw(sb);
+            levelKey?.Draw(sb);
 
             // draws all light beams after tile drawing
             foreach(LightBeam beam in allBeams)
@@ -325,6 +336,42 @@ namespace Adumbration
                         sideSizeX,
                         sideSizeY);
 
+                    #region // Direction logic
+
+                    // tracks if there is a floor to the left/right/up/down of current coords in layout:
+
+                    bool floorAbove = false;
+                    bool floorBelow = false;
+                    bool floorLeft = false;
+                    bool floorRight = false;
+
+                    if(y > 0 && layout[x, y - 1] == '_') { floorAbove = true; }
+                    if(y < levelHeight - 1 && layout[x, y + 1] == '_') { floorBelow = true; }
+                    if(x > 0 && layout[x - 1, y] == '_') { floorLeft = true; }
+                    if(x < levelWidth - 1 && layout[x + 1, y] == '_') { floorRight = true; }
+
+                    Direction dir;
+
+                    // sets beam direction based on neighboring floors
+                    if(floorAbove)
+                    {
+                        dir = Direction.Up;
+                    }
+                    else if(floorBelow)
+                    {
+                        dir = Direction.Down;
+                    }
+                    else if(floorLeft)
+                    {
+                        dir = Direction.Left;
+                    }
+                    else
+                    {
+                        dir = Direction.Right;
+                    }
+
+                    #endregion
+
                     // ******************************
                     // ******** TILE LOADING ********
                     // ******************************
@@ -381,19 +428,17 @@ namespace Adumbration
                         case 'E':
                             returnArray[x, y] = new LightEmitter(
                                 textureDict,
-                                new Rectangle(16 * 3, 16 * 3, 16, 16),
                                 positionRect,
-                                Direction.Down,
-                                this);
+                                dir,
+                                true);          // enabled or not at start
                             break;
 
-                        // RECEPTOR(for now, this one is for if it's pointed up)
+                        // RECEPTOR
                         case 'R':
                             returnArray[x, y] = new LightReceptor(
                                 wallTexture,
-                                new Rectangle(16 * 8, 16 * 3, 16, 16),
-                                new Rectangle(positionRect.X, positionRect.Y + 1, 16, 16),      //sets up the rectangle a bit lower
-                                new Rectangle(positionRect.X, positionRect.Y - 1, 16, 16));     //sets the beam hitbox a bit higher
+                                new Rectangle(positionRect.X, positionRect.Y, 16, 16),
+                                dir);
                             break;
 
                         // WALL

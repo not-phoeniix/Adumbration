@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.DirectoryServices.ActiveDirectory;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SharpDX.Direct2D1;
+using System.Collections.Generic;
 
 namespace Adumbration
 {
@@ -23,33 +16,75 @@ namespace Adumbration
     {
         // Fields
         private Rectangle activationPoint;
+        private bool textureFlipped;
 
         // Event
         public event OnLightBeamReceivedDelegate OnActivation;
 
         //the constructor for this class
-        public LightReceptor(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position, Rectangle activationPoint)
-            : base(spriteSheet, sourceRect, position)
+        public LightReceptor(Texture2D spriteSheet, Rectangle position, Direction dir)
+            : base(spriteSheet, new Rectangle(0, 0, 0, 0), position)
         {
-            this.activationPoint = activationPoint;
+            textureFlipped = false;
+
+            // activation point is 1 pixel expanded from position rectangle
+            activationPoint = new Rectangle(
+                positionRect.X - 1,
+                positionRect.Y - 1,
+                positionRect.Width + 2, 
+                positionRect.Height + 2);
+
+            // determines source rect depending on direction of receptor
+            switch(dir)
+            {
+                case Direction.Down:
+                    base.sourceRect = new Rectangle(6 * 16, 3 * 16, 16, 16);
+                    break;
+
+                case Direction.Up:
+                    base.sourceRect = new Rectangle(8 * 16, 3 * 16, 16, 16);
+                    break;
+
+                case Direction.Left:
+                    base.sourceRect = new Rectangle(7 * 16, 3 * 16, 16, 16);
+                    break;
+
+                case Direction.Right:
+                    base.sourceRect = new Rectangle(7 * 16, 3 * 16, 16, 16);
+                    textureFlipped = true;
+                    break;
+            }
         }
 
-
-        public void Update(GameTime gameTime, Level currentLevel, LightBeam beam)
+        public void Update(List<LightBeam> beams)
         {
-            //foreach(LightEmitter emitter in currentLevel.TileList)
-            //{
-            // If the light beam is activated
-            if (IsColliding(beam) && beam != null)
+            foreach(LightBeam beam in beams)
             {
-                OnActivation();
-                System.Diagnostics.Debug.WriteLine("Activated");
+                // If the light beam is activated
+                if(IsColliding(beam) && beam != null)
+                {
+                    OnActivation();
+                    System.Diagnostics.Debug.WriteLine("Activated");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Not Activated");
+                }
             }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine("Not Activated");
-            }
-            //}            
+        }
+
+        public override void Draw(SpriteBatch sb)
+        {
+            // same as base.draw except flips texture sometimes
+            sb.Draw(
+                spriteSheet,
+                positionRect,
+                sourceRect,
+                Color.White,
+                0,
+                Vector2.Zero,
+                textureFlipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                0);
         }
 
         //checks to see if the object that is colliding with is a lightbeam
