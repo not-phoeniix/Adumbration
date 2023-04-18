@@ -202,6 +202,11 @@ namespace Adumbration
                 beam.Update(gameTime);
             }
 
+            for(int i = 0; i < allBeams.Count; i++)
+            {
+                allBeams[i].Update(gameTime);
+            }
+
             // updating level key
             levelKey?.Update(gameTime);
         }
