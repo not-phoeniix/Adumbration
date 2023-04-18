@@ -111,9 +111,9 @@ namespace Adumbration
         /// Creates a reflected light beam
         /// </summary>
         /// <param name="incomingBeam">The beam that is causing the reflection.</param>
-        public LightBeam CreateReflection(LightBeam incomingBeam)
-        {
-            LightBeam returnBeam = null;
+        //public LightBeam CreateReflection(LightBeam incomingBeam)
+        //{
+            //LightBeam returnBeam = null;
 
         //    switch (type)
         //    {
