@@ -170,7 +170,7 @@ namespace Adumbration
             // LevelManager singleton init
             LevelManager.Instance.Initialize(textureDict, penumbra, player);
 
-            LevelManager.Instance.LoadLevel(GameLevels.Level1);
+            LevelManager.Instance.LoadLevel(GameLevels.Hub);
 
             #endregion
 
