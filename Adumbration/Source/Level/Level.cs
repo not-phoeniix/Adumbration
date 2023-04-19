@@ -183,6 +183,13 @@ namespace Adumbration
                         {
                             allBeams.Add(emitter.Beam.ReflectedBeam);
                         }
+
+                        if(emitter.Beam.ReflectedBeam != null && 
+                            emitter.Beam.ReflectedBeam.ReflectedBeam != null &&
+                            !allBeams.Contains(emitter.Beam.ReflectedBeam.ReflectedBeam))
+                        {
+                            allBeams.Add(emitter.Beam.ReflectedBeam.ReflectedBeam);
+                        }
                     }
                 }
 
