@@ -163,7 +163,7 @@ namespace Adumbration
                         }
 
                         // adds the beam's reflection as well if not null
-                        if(emitter.Beam.ReflectedBeam != null && 
+                        if (emitter.Beam.ReflectedBeam != null &&
                             !allBeams.Contains(emitter.Beam.ReflectedBeam))
                         {
                             allBeams.Add(emitter.Beam.ReflectedBeam);
@@ -200,11 +200,6 @@ namespace Adumbration
             foreach(LightBeam beam in allBeams)
             {
                 beam.Update(gameTime);
-            }
-
-            for(int i = 0; i < allBeams.Count; i++)
-            {
-                allBeams[i].Update(gameTime);
             }
 
             // updating level key

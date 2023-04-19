@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Penumbra;
+using SharpDX.Direct2D1.Effects;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Adumbration
 {
@@ -107,6 +109,8 @@ namespace Adumbration
             isReflected = false;
             reflectedBeam = null;
             this.associatedMirror = associatedMirror;
+
+            expandSpeed = 1;
         }
 
         /// <summary>
@@ -141,6 +145,40 @@ namespace Adumbration
                             positionRect.Width -= expandSpeed;
                         }
                     }
+
+                    foreach (Mirror mirror in currentLevel.Mirrors)
+                    {
+                        // If the beam is colliding with any mirror that isn't it's associated mirror
+                        // and it is not reflecting
+                        if (IsColliding(mirror) && mirror != associatedMirror && !isReflected)
+                        {
+                            // It is now reflecting
+                            isReflected = true;
+
+                            // Make new beam dependent on mirror
+                            if (mirror.Type == MirrorType.Backward)
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X, this.Y, 2, 2),
+                                 Direction.Up, mirror);
+                            }
+                            else
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X, this.Y, 2, 2),
+                                 Direction.Down, mirror);
+                            }
+                        }
+
+                        // If it is colliding with a mirror and is reflecting
+                        if (IsColliding(mirror) && isReflected)
+                        {
+                            // Stop expansion
+                            positionRect.X = mirror.Position.X + mirror.Position.Width;
+                            positionRect.Width -= expandSpeed;
+                        }
+                    }
+
                     break;
 
                 case Direction.Right:
@@ -157,24 +195,35 @@ namespace Adumbration
                         }
                     }
 
-                    foreach(Mirror mirror in currentLevel.Mirrors)
+                    foreach (Mirror mirror in currentLevel.Mirrors)
                     {
-                        if(IsColliding(mirror) && mirror != associatedMirror)
+                        // If the beam is colliding with any mirror that isn't it's associated mirror
+                        // and it is not reflecting
+                        if (IsColliding(mirror) && mirror != associatedMirror && !isReflected)
                         {
-                            positionRect.Width -= expandSpeed;
+                            // It is now reflecting
+                            isReflected = true;
 
-                            // Make new beam
-
-                            associatedMirror = mirror;
-
-                            if(mirror.Type == MirrorType.Backward)
+                            // Make new beam dependent on mirror
+                            if (mirror.Type == MirrorType.Backward)
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X + Width, this.Y, 2, 2),
+                                 Direction.Down, mirror);
+                            }
+                            else
                             {
                                 reflectedBeam = new LightBeam(texture,
                                  new Rectangle(this.X + this.Width, this.Y, 2, 2),
-                                    Direction.Down);
-
-                                reflectedBeam.Height += expandSpeed;
+                                 Direction.Up, mirror);
                             }
+                        }
+
+                        // If it is colliding with a mirror and is reflecting
+                        if (IsColliding(mirror) && isReflected)
+                        {
+                            // Stop Expansion
+                            positionRect.Width -= expandSpeed;
                         }
                     }
                     break;
@@ -191,6 +240,39 @@ namespace Adumbration
                         {
                             // Stop expansion 
                             positionRect.Y = tile.Position.Y + tile.Position.Height;
+                            positionRect.Height -= expandSpeed;
+                        }
+                    }
+
+                    foreach (Mirror mirror in currentLevel.Mirrors)
+                    {
+                        // If the beam is colliding with any mirror that isn't it's associated mirror
+                        // and it is not reflecting
+                        if (IsColliding(mirror) && mirror != associatedMirror && !isReflected)
+                        {
+                            // It is now reflecting
+                            isReflected = true;
+
+                            // Make new beam dependent on mirror
+                            if (mirror.Type == MirrorType.Backward)
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X, this.Y, 2, 2),
+                                 Direction.Left, mirror);
+                            }
+                            else
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X, this.Y, 2, 2),
+                                 Direction.Right, mirror);
+                            }
+                        }
+
+                        // If it is colliding with a mirror and is reflecting
+                        if (IsColliding(mirror) && isReflected)
+                        {
+                            // Stop expansion
+                            positionRect.Y = mirror.Position.Y + mirror.Position.Height;
                             positionRect.Height -= expandSpeed;
                         }
                     }
@@ -212,31 +294,32 @@ namespace Adumbration
 
                     foreach (Mirror mirror in currentLevel.Mirrors)
                     {
-                        // If the beam is colliding with any mirror it is not reflecting
-                        // off of
-                        if (IsColliding(mirror) && mirror != associatedMirror)
+                        // If the beam is colliding with any mirror that isn't it's associated mirror
+                        // and it is not reflecting
+                        if (IsColliding(mirror) && mirror != associatedMirror && !isReflected)
                         {
-                            associatedMirror = mirror;
+                            // It is now reflecting
+                            isReflected = true;
 
-                            // Make new beam
-                            if(mirror.Type == MirrorType.Backward)
+                            // Make new beam dependent on mirror
+                            if (mirror.Type == MirrorType.Backward)
                             {
                                 reflectedBeam = new LightBeam(texture,
                                  new Rectangle(this.X, this.Y + this.Height, 2, 2),
-                                 Direction.Right, associatedMirror);
+                                 Direction.Right, mirror);
                             }
-
                             else
                             {
                                 reflectedBeam = new LightBeam(texture,
                                  new Rectangle(this.X, this.Y + this.Height, 2, 2),
-                                 Direction.Left, associatedMirror);
-
+                                 Direction.Left, mirror);
                             }
                         }
 
-                        if (IsColliding(mirror))
+                        // If it is colliding with a mirror and is reflecting
+                        if (IsColliding(mirror) && isReflected)
                         {
+                            // Stop expansion
                             positionRect.Height -= expandSpeed;
                         }
                     }
@@ -304,7 +387,7 @@ namespace Adumbration
             #endregion
 
             // updates previous position rectangle,
-            //   kinda like a previous state update
+            // kinda like a previous state update
             prevPosition = positionRect;
         }
 

@@ -100,7 +100,7 @@ namespace Adumbration
                     break;
 
                 case GameLevels.Level1:
-                    levelDataPath = "Level_1.txt";
+                    levelDataPath = "BigLevelTest.txt";
                     break;
 
                 case GameLevels.Level2:
