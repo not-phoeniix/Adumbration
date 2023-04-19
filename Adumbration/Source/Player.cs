@@ -41,6 +41,7 @@ namespace Adumbration
         // Player variables
         private int speed;
         private int dashSpeed;
+        private List<bool> collectedKeys;
 
         // Whether player is flipped or not
         private bool playerIsFlipped;
@@ -88,6 +89,12 @@ namespace Adumbration
             }
         }
 
+        public List<bool> CollectedKeys
+        {
+            get{ return collectedKeys; }
+            set { collectedKeys = value; }
+        }
+
         // Constructor
         /// <summary>
         /// Player takes everything from parent class
@@ -101,9 +108,10 @@ namespace Adumbration
             hasDash = true;
             currentMode = PlayerMode.NormalMode;
 
-            // Set player speed and dashspeed
+            // Set player speed and dashspeed and the collectedKeys array to null
             speed = 2;
             dashSpeed = speed * 5;
+            collectedKeys = new List<bool>();
 
             // Animation data
             fps = 2.0;
