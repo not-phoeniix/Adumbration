@@ -42,7 +42,6 @@ namespace Adumbration
         {
             Start,
             Help,
-            Stats,
             Quit
         }
 
@@ -80,6 +79,7 @@ namespace Adumbration
                     if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
                         Game1.GameState = GameState.Game;
+                        LevelManager.Instance.LoadLevel(GameLevels.Hub);
                     }
 
                     break;
@@ -88,7 +88,7 @@ namespace Adumbration
                 case MenuButtons.Help:
                     if(Game1.IsKeyPressedOnce(Keys.Down, kbState, kbStatePrev))
                     {
-                        selectedButton = MenuButtons.Stats;
+                        selectedButton = MenuButtons.Quit;
                     }
 
                     if(Game1.IsKeyPressedOnce(Keys.Up, kbState, kbStatePrev))
@@ -98,26 +98,7 @@ namespace Adumbration
 
                     if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
-                        Game1.GameState = GameState.Help;
-                    }
-
-                    break;
-
-                // "STATS" HOVERED
-                case MenuButtons.Stats:
-                    if(Game1.IsKeyPressedOnce(Keys.Down, kbState, kbStatePrev))
-                    {
-                        selectedButton = MenuButtons.Quit;
-                    }
-
-                    if(Game1.IsKeyPressedOnce(Keys.Up, kbState, kbStatePrev))
-                    {
-                        selectedButton = MenuButtons.Help;
-                    }
-
-                    if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
-                    {
-                        Game1.GameState = GameState.Stats;
+                        Game1.GameState = GameState.HelpMenu;
                     }
 
                     break;
@@ -126,7 +107,7 @@ namespace Adumbration
                 case MenuButtons.Quit:
                     if(Game1.IsKeyPressedOnce(Keys.Up, kbState, kbStatePrev))
                     {
-                        selectedButton = MenuButtons.Stats;
+                        selectedButton = MenuButtons.Help;
                     }
 
                     if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
@@ -139,9 +120,9 @@ namespace Adumbration
         }
 
         /// <summary>
-        /// Draws the pause menu
+        /// Draws the main menu
         /// </summary>
-        /// <param name="sb"></param>
+        /// <param name="sb">SpriteBatch to draw with</param>
         public void Draw(SpriteBatch sb, Rectangle screenRect)
         {
             // FSM for drawing the pause menu options
@@ -158,14 +139,6 @@ namespace Adumbration
                 case MenuButtons.Help:
                     sb.Draw(
                         textureDict["mainHelp"],
-                        screenRect,
-                        Color.White);
-
-                    break;
-
-                case MenuButtons.Stats:
-                    sb.Draw(
-                        textureDict["mainStats"],
                         screenRect,
                         Color.White);
 

@@ -23,8 +23,7 @@ namespace Adumbration
         Game,
         MainMenu,
         PauseMenu,
-        Help,
-        Stats
+        HelpMenu
     }
 
     public class Game1 : Game
@@ -132,8 +131,8 @@ namespace Adumbration
             textureDict.Add("pauseQuit", Content.Load<Texture2D>("UI/ui_pauseQuit"));
             textureDict.Add("mainStart", Content.Load<Texture2D>("UI/ui_mainStart"));
             textureDict.Add("mainHelp", Content.Load<Texture2D>("UI/ui_mainHelp"));
-            textureDict.Add("mainStats", Content.Load<Texture2D>("UI/ui_mainStats"));
             textureDict.Add("mainQuit", Content.Load<Texture2D>("UI/ui_mainQuit"));
+            textureDict.Add("help", Content.Load<Texture2D>("UI/ui_help"));
 
             #endregion
 
@@ -144,6 +143,9 @@ namespace Adumbration
 
             // MainMenu singleton init
             MainMenu.Instance.Initialize(textureDict);
+
+            // HelpMenu singleton init
+            HelpMenu.Instance.Initialize(textureDict);
 
             // Player Object
             player = new Player(
@@ -328,6 +330,18 @@ namespace Adumbration
 
                     #endregion
                     break;
+
+                case GameState.HelpMenu:
+                    #region // Help menu update logic
+
+                    // turn off penumbra in help menu
+                    penumbra.Visible = false;
+
+                    // update menu logic
+                    HelpMenu.Instance.Update(kbState, prevKbState);
+
+                    #endregion
+                    break;
             }
 
             base.Update(gameTime);
@@ -396,6 +410,14 @@ namespace Adumbration
                 // draw main menu
                 case GameState.MainMenu:
                     MainMenu.Instance.Draw(
+                        _spriteBatch,
+                        _graphics.GraphicsDevice.Viewport.Bounds);
+
+                    break;
+
+                // draw help menu
+                case GameState.HelpMenu:
+                    HelpMenu.Instance.Draw(
                         _spriteBatch,
                         _graphics.GraphicsDevice.Viewport.Bounds);
 

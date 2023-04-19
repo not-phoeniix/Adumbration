@@ -78,12 +78,12 @@ namespace Adumbration
                     positionRect.Height = 0;
                     System.Diagnostics.Debug.WriteLine("key taken");
                     pickedUp = true;
-                }
 
-                //if the key is picked up it will add to the list once
-                if (pickedUp)
-                {
-                    player.CollectedKeys.Add(true);
+                    //if the key is picked up it will add to the list once
+                    if (pickedUp)
+                    {
+                        player.CollectedKeys.Add(true);
+                    }
                 }
             }
 
