@@ -116,9 +116,31 @@ namespace Adumbration
         /// <param name="myPlayer">Reference to Game1's player.</param>
         /// <param name="currentState">Current state of the keyboard.</param>
         /// <param name="previousState">Previous state of the keyboard.</param>
-        public void Interact(Player myPlayer, KeyboardState currentState, KeyboardState previousState)
+        public void Interact(Player myPlayer, KeyboardState currentState)
         {
+             if(IsColliding(myPlayer) && currentState.IsKeyDown(Keys.Space) 
+                && currentState.IsKeyDown(Keys.W))
+            {
+                positionRect.Y -= myPlayer.Speed; 
+            }
 
+            if (IsColliding(myPlayer) && currentState.IsKeyDown(Keys.Space)
+               && currentState.IsKeyDown(Keys.A))
+            {
+                positionRect.X -= myPlayer.Speed;
+            }
+
+            if (IsColliding(myPlayer) && currentState.IsKeyDown(Keys.Space)
+                && currentState.IsKeyDown(Keys.S))
+            {
+                positionRect.Y += myPlayer.Speed;
+            }
+
+            if (IsColliding(myPlayer) && currentState.IsKeyDown(Keys.Space)
+                && currentState.IsKeyDown(Keys.D))
+            {
+                positionRect.X += myPlayer.Speed;
+            }
         }
     }
 }

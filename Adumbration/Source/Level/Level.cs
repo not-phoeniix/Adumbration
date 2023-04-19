@@ -35,6 +35,7 @@ namespace Adumbration
 
         // signal stuff
         private Dictionary<int, List<GameObject>> receiversDict;
+        private bool completed;
 
         // Multiple beam testing
         private LightBeam testBeam;
@@ -53,6 +54,7 @@ namespace Adumbration
             this.spawnPoint = new Vector2(0, 0);
             this.allBeams = new List<LightBeam>();
             this.allMirrors = new List<Mirror>();
+            this.completed = false;
 
             // dictionary inits
             receiversDict = new Dictionary<int, List<GameObject>>();
@@ -77,6 +79,12 @@ namespace Adumbration
         {
             get { return wallHulls; }
             set { wallHulls = value; }
+        }
+
+        public Vector2 SpawnPoint
+        {
+            get { return spawnPoint; }
+            set { spawnPoint = value; }
         }
 
         internal List<LightBeam> Beams
@@ -144,7 +152,7 @@ namespace Adumbration
         /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        public void Update(GameTime gameTime, GameObject player)
+        public void Update(GameTime gameTime, Player player)
         {
             // updates all GameObjects each frame
             foreach(GameObject obj in objectArray)
@@ -203,7 +211,7 @@ namespace Adumbration
             }
 
             // updating level key
-            levelKey?.Update(gameTime);
+            levelKey?.Update(gameTime, player);
         }
 
         /// <summary>

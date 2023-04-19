@@ -167,7 +167,7 @@ namespace Adumbration
                     0,              // - Y Location
                     16,             // - Width
                     16),            // - Height
-                1);                 // Level
+                '1');               // Level
 
             // LevelManager singleton init
             LevelManager.Instance.Initialize(textureDict, penumbra, player);
