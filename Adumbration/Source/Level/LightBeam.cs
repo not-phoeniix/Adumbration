@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Penumbra;
+using SharpDX.Direct2D1.Effects;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace Adumbration
 {
@@ -31,6 +33,7 @@ namespace Adumbration
         private bool isReflected;
         private Mirror associatedMirror;
         private int expandSpeed;
+        private Rectangle prevPosition;
 
         #region // Properties
 
@@ -76,6 +79,11 @@ namespace Adumbration
             get { return reflectedBeam; }
         }
 
+        public bool HasChanged
+        {
+            get { return prevPosition != positionRect; }
+        }
+
         #endregion
 
         //constructor for this class
@@ -101,6 +109,8 @@ namespace Adumbration
             isReflected = false;
             reflectedBeam = null;
             this.associatedMirror = associatedMirror;
+
+            expandSpeed = 3;
         }
 
         /// <summary>
@@ -113,7 +123,7 @@ namespace Adumbration
             Level currentLevel = LevelManager.Instance.CurrentLevel;
 
             // Clears all previous spotlights every frame
-            lights.Clear();
+            //lights.Clear();
 
             // Check the direction of the light beam first
             #region // Light size extending
@@ -135,6 +145,40 @@ namespace Adumbration
                             positionRect.Width -= expandSpeed;
                         }
                     }
+
+                    foreach (Mirror mirror in currentLevel.Mirrors)
+                    {
+                        // If the beam is colliding with any mirror that isn't it's associated mirror
+                        // and it is not reflecting
+                        if (IsColliding(mirror) && mirror != associatedMirror && !isReflected)
+                        {
+                            // It is now reflecting
+                            isReflected = true;
+
+                            // Make new beam dependent on mirror
+                            if (mirror.Type == MirrorType.Backward)
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X, this.Y, 2, 2),
+                                 Direction.Up, mirror);
+                            }
+                            else
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X, this.Y, 2, 2),
+                                 Direction.Down, mirror);
+                            }
+                        }
+
+                        // If it is colliding with a mirror and is reflecting
+                        if (IsColliding(mirror) && isReflected)
+                        {
+                            // Stop expansion
+                            positionRect.X = mirror.Position.X + mirror.Position.Width;
+                            positionRect.Width -= expandSpeed;
+                        }
+                    }
+
                     break;
 
                 case Direction.Right:
@@ -151,24 +195,35 @@ namespace Adumbration
                         }
                     }
 
-                    foreach(Mirror mirror in currentLevel.Mirrors)
+                    foreach (Mirror mirror in currentLevel.Mirrors)
                     {
-                        if(IsColliding(mirror) && mirror != associatedMirror)
+                        // If the beam is colliding with any mirror that isn't it's associated mirror
+                        // and it is not reflecting
+                        if (IsColliding(mirror) && mirror != associatedMirror && !isReflected)
                         {
-                            positionRect.Width -= expandSpeed;
+                            // It is now reflecting
+                            isReflected = true;
 
-                            // Make new beam
-
-                            associatedMirror = mirror;
-
-                            if(mirror.Type == MirrorType.Backward)
+                            // Make new beam dependent on mirror
+                            if (mirror.Type == MirrorType.Backward)
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X + Width, this.Y, 2, 2),
+                                 Direction.Down, mirror);
+                            }
+                            else
                             {
                                 reflectedBeam = new LightBeam(texture,
                                  new Rectangle(this.X + this.Width, this.Y, 2, 2),
-                                    Direction.Down);
-
-                                reflectedBeam.Height += expandSpeed;
+                                 Direction.Up, mirror);
                             }
+                        }
+
+                        // If it is colliding with a mirror and is reflecting
+                        if (IsColliding(mirror) && isReflected)
+                        {
+                            // Stop Expansion
+                            positionRect.Width -= expandSpeed;
                         }
                     }
                     break;
@@ -185,6 +240,39 @@ namespace Adumbration
                         {
                             // Stop expansion 
                             positionRect.Y = tile.Position.Y + tile.Position.Height;
+                            positionRect.Height -= expandSpeed;
+                        }
+                    }
+
+                    foreach (Mirror mirror in currentLevel.Mirrors)
+                    {
+                        // If the beam is colliding with any mirror that isn't it's associated mirror
+                        // and it is not reflecting
+                        if (IsColliding(mirror) && mirror != associatedMirror && !isReflected)
+                        {
+                            // It is now reflecting
+                            isReflected = true;
+
+                            // Make new beam dependent on mirror
+                            if (mirror.Type == MirrorType.Backward)
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X, this.Y, 2, 2),
+                                 Direction.Left, mirror);
+                            }
+                            else
+                            {
+                                reflectedBeam = new LightBeam(texture,
+                                 new Rectangle(this.X, this.Y, 2, 2),
+                                 Direction.Right, mirror);
+                            }
+                        }
+
+                        // If it is colliding with a mirror and is reflecting
+                        if (IsColliding(mirror) && isReflected)
+                        {
+                            // Stop expansion
+                            positionRect.Y = mirror.Position.Y + mirror.Position.Height;
                             positionRect.Height -= expandSpeed;
                         }
                     }
@@ -206,31 +294,32 @@ namespace Adumbration
 
                     foreach (Mirror mirror in currentLevel.Mirrors)
                     {
-                        // If the beam is colliding with any mirror it is not reflecting
-                        // off of
-                        if (IsColliding(mirror) && mirror != associatedMirror)
+                        // If the beam is colliding with any mirror that isn't it's associated mirror
+                        // and it is not reflecting
+                        if (IsColliding(mirror) && mirror != associatedMirror && !isReflected)
                         {
-                            associatedMirror = mirror;
+                            // It is now reflecting
+                            isReflected = true;
 
-                            // Make new beam
-                            if(mirror.Type == MirrorType.Backward)
+                            // Make new beam dependent on mirror
+                            if (mirror.Type == MirrorType.Backward)
                             {
                                 reflectedBeam = new LightBeam(texture,
                                  new Rectangle(this.X, this.Y + this.Height, 2, 2),
-                                 Direction.Right, associatedMirror);
+                                 Direction.Right, mirror);
                             }
-
                             else
                             {
                                 reflectedBeam = new LightBeam(texture,
                                  new Rectangle(this.X, this.Y + this.Height, 2, 2),
-                                 Direction.Left, associatedMirror);
-
+                                 Direction.Left, mirror);
                             }
                         }
 
-                        if (IsColliding(mirror))
+                        // If it is colliding with a mirror and is reflecting
+                        if (IsColliding(mirror) && isReflected)
                         {
+                            // Stop expansion
                             positionRect.Height -= expandSpeed;
                         }
                     }
@@ -238,58 +327,68 @@ namespace Adumbration
             }
 
             #endregion
-
+            
             #region // Adding point lights across beam
 
             // light properties (easy to tweak)
             float radius = 1;
             float intensity = 0.1f;
             int skipNum = 10;
-
-            // up and down facing lights
-            if (dir == Direction.Up || dir == Direction.Down)
+            
+            // only deletes and recreates lights along beam if the position changes
+            if(HasChanged)
             {
-                for (int h = 0; h < positionRect.Height; h++)
-                {
-                    // creates light object
-                    PointLight light = new PointLight()
-                    {
-                        Radius = radius,
-                        Intensity = intensity,
-                        Position = new Vector2(positionRect.X + positionRect.Width / 2, positionRect.Y + h)
-                    };
+                lights.Clear();
 
-                    // only adds the light every few pixels (determined by skip num)
-                    if (h % skipNum == 0)
+                // up and down facing lights
+                if(dir == Direction.Up || dir == Direction.Down)
+                {
+                    for(int h = 0; h < positionRect.Height; h++)
                     {
-                        lights.Add(light);
+                        // creates light object
+                        PointLight light = new PointLight()
+                        {
+                            Radius = radius,
+                            Intensity = intensity,
+                            Position = new Vector2(positionRect.X + positionRect.Width / 2, positionRect.Y + h)
+                        };
+
+                        // only adds the light every few pixels (determined by skip num)
+                        if(h % skipNum == 0)
+                        {
+                            lights.Add(light);
+                        }
                     }
                 }
-            }
 
-            // left and right facing lights
-            else
-            {
-                for (int w = 0; w < positionRect.Width; w++)
+                // left and right facing lights
+                else
                 {
-                    // creates light object
-                    PointLight light = new PointLight()
+                    for(int w = 0; w < positionRect.Width; w++)
                     {
-                        Radius = radius,
-                        Intensity = intensity,
-                        Position = new Vector2(positionRect.X + w, positionRect.Y + positionRect.Height / 2)
-                    };
+                        // creates light object
+                        PointLight light = new PointLight()
+                        {
+                            Radius = radius,
+                            Intensity = intensity,
+                            Position = new Vector2(positionRect.X + w, positionRect.Y + positionRect.Height / 2)
+                        };
 
-                    // only adds the light every few pixels (determined by skip num)
-                    if (w % skipNum == 0)
-                    {
-                        lights.Add(light);
+                        // only adds the light every few pixels (determined by skip num)
+                        if(w % skipNum == 0)
+                        {
+                            lights.Add(light);
+                        }
                     }
                 }
+
             }
 
             #endregion
 
+            // updates previous position rectangle,
+            // kinda like a previous state update
+            prevPosition = positionRect;
         }
 
         /// <summary>

@@ -190,7 +190,22 @@ namespace Adumbration
                 ifOpen = true;
                 if (hitbox.Intersects(myPlayer.Position))
                 {
-                    LevelManager.Instance.LoadLevel(GameLevels.TestLevel2);
+                    if (level == 1)
+                    {
+                        LevelManager.Instance.LoadLevel(GameLevels.Level1);
+                    }
+                    else if (level == 2)
+                    {
+                        LevelManager.Instance.LoadLevel(GameLevels.Level2);
+                    }
+                    else if (level == 3)
+                    {
+                        LevelManager.Instance.LoadLevel(GameLevels.Level3);
+                    }
+                    else if (level == 4)
+                    {
+                        LevelManager.Instance.LoadLevel(GameLevels.Level4);
+                    }
                 }
             }
 

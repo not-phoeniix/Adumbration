@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Adumbration
 {
-    internal class LightEmitter : Wall
+    internal class LightEmitter : Wall, ISignal
     {
         // Fields 
         private bool enabledState;
@@ -16,6 +16,12 @@ namespace Adumbration
         private Rectangle enabledSource;
         private Rectangle disabledSource;
         private Vector2 beamStartPos;
+        private int signalNum;
+
+        public int SignalNum
+        {
+            get { return signalNum; }
+        }
 
         // Properties
         /// <summary>
@@ -43,12 +49,13 @@ namespace Adumbration
         /// <param name="position">Position to draw emitter</param>
         /// <param name="dir">Direction of the emitter</param>
         /// <param name="enabled">Whether to start the emitter enabled or not</param>
-        public LightEmitter(Dictionary<string, Texture2D> textureDict, Rectangle position, Direction dir, bool enabled)
+        public LightEmitter(Dictionary<string, Texture2D> textureDict, Rectangle position, Direction dir, bool enabled, int signalNum)
             : base(textureDict["walls"], new Rectangle(0, 0, 0, 0), position)
         {
             this.dir = dir;
             this.enabledState = enabled;
-            textureFlipped = false;
+            this.textureFlipped = false;
+            this.signalNum = signalNum;
 
             whitePixelTexture = textureDict["whitePixel"];
 

@@ -16,7 +16,7 @@ namespace Adumbration
     {
         // level data
         private string currentLevel;
-        private char[,] levelLayout;            // copy of level text file, just char's
+        private string[,] levelLayout;            // copy of level text file, just char's
         private GameObject[,] objectArray;      // full array of GameObject's
         private Hull[,] wallHulls;              // for shadow casting
         
@@ -32,6 +32,9 @@ namespace Adumbration
         private List<LightBeam> allBeams;
         private List<Mirror> allMirrors;
         private KeyObject levelKey;
+
+        // signal stuff
+        private Dictionary<int, List<GameObject>> receiversDict;
 
         // Multiple beam testing
         private LightBeam testBeam;
@@ -51,9 +54,14 @@ namespace Adumbration
             this.allBeams = new List<LightBeam>();
             this.allMirrors = new List<Mirror>();
 
+            // dictionary inits
+            receiversDict = new Dictionary<int, List<GameObject>>();
+
             // load whole level
             SetupLevel(dataFilePath, player);
         }
+
+        #region Properties
 
         /// <summary>
         /// Tile List associated with the level, 
@@ -86,6 +94,8 @@ namespace Adumbration
             get { return levelKey; }
         }
 
+        #endregion
+
         /// <summary>
         /// Loads a level from current file path
         /// </summary>
@@ -97,6 +107,8 @@ namespace Adumbration
             allBeams.Clear();
             allMirrors.Clear();
             levelKey = null;
+            receiversDict.Clear();
+            penumbra.Lights.Clear();
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile(currentLevel);
@@ -134,8 +146,6 @@ namespace Adumbration
         /// <param name="gameTime">State of the game's time.</param>
         public void Update(GameTime gameTime, GameObject player)
         {
-            allBeams.Clear();
-
             // updates all GameObjects each frame
             foreach(GameObject obj in objectArray)
             {
@@ -144,28 +154,37 @@ namespace Adumbration
                 {
                     emitter.Update(gameTime);
                     
+                    // adds main beam if not null
                     if(emitter.Beam != null)
                     {
-                        allBeams.Add(emitter.Beam);
-                    }
+                        if(!allBeams.Contains(emitter.Beam))
+                        {
+                            allBeams.Add(emitter.Beam);
+                        }
 
-                    if(emitter.Beam.ReflectedBeam != null)
-                    {
-                        allBeams.Add(emitter.Beam.ReflectedBeam);
+                        // adds the beam's reflection as well if not null
+                        if (emitter.Beam.ReflectedBeam != null &&
+                            !allBeams.Contains(emitter.Beam.ReflectedBeam))
+                        {
+                            allBeams.Add(emitter.Beam.ReflectedBeam);
+                        }
                     }
                 }
 
                 if(obj is LightReceptor receptor)
                 {
-                    //for all beams inside the allbeams class,
-                    //it will check if the receptor is colliding with it
-                    //then it will do a specific action
-                    for(int i = 0; i < allBeams.Count; i++)
+                    receptor.Update(allBeams);
+
+                    // signal checking, only works if signal is 1 or higher
+                    int objSignal = receptor.SignalNum;
+                    if(objSignal > 0 && receiversDict.ContainsKey(objSignal))
                     {
-                        if(receptor.IsColliding(allBeams[i]))
+                        foreach(GameObject rec in receiversDict[objSignal])
                         {
-                            receptor.Update(gameTime);
-                            //Debug.WriteLine("IT WORKS");
+                            if(rec is LightEmitter e)
+                            {
+                                e.Enabled = receptor.IsActivated;
+                            }
                         }
                     }
                 }
@@ -177,15 +196,10 @@ namespace Adumbration
                 mirror.Update(gameTime);
             }
 
-            // updating all beams outside emitter objects
+            // updating all beams, they are called outside emitter objects to decouple
             foreach(LightBeam beam in allBeams)
             {
                 beam.Update(gameTime);
-            }
-
-            for(int i = 0; i < allBeams.Count; i++)
-            {
-                allBeams[i].Update(gameTime);
             }
 
             // updating level key
@@ -236,9 +250,9 @@ namespace Adumbration
         /// </summary>
         /// <param name="filename">String of file name</param>
         /// <returns>2D char array of level</returns>
-        public char[,] LoadLayoutFromFile(string filename)
+        public string[,] LoadLayoutFromFile(string filename)
         {
-            char[,] returnLayout = new char[1, 1];
+            string[,] returnLayout = new string[1, 1];
 
             StreamReader reader = null;
 
@@ -266,7 +280,7 @@ namespace Adumbration
                         levelHeight = int.Parse(splitString[1]);
 
                         // initializes the list with given file values
-                        returnLayout = new char[levelWidth, levelHeight];
+                        returnLayout = new string[levelWidth, levelHeight];
                     }
 
                     // loading level & filling array ==========================
@@ -276,10 +290,10 @@ namespace Adumbration
                         for(int i = 0; i < splitString.Length; i++)
                         {
                             // removes space and parses to char
-                            char trimmedChar = char.Parse(splitString[i].Trim());
+                            string trimmedString = splitString[i].Trim();
 
                             // adds to layout
-                            returnLayout[i, lineNum - 2] = trimmedChar;
+                            returnLayout[i, lineNum - 2] = trimmedString;
                         }
                     }
 
@@ -310,7 +324,7 @@ namespace Adumbration
         /// with various objects like walls/floors.
         /// </summary>
         /// <param name="layout"></param>
-        public GameObject[,] LoadObjectsFromLayout(char[,] layout)
+        public GameObject[,] LoadObjectsFromLayout(string[,] layout)
         {
             int levelWidth = layout.GetLength(0);
             int levelHeight = layout.GetLength(1);
@@ -327,12 +341,12 @@ namespace Adumbration
 
                     // determines what source rect to add to list depending on neighboring tiles
                     Rectangle sourceRect = DetermineSourceRect(
-                        layout[x, y],   // number of object in file
-                        x,              // tile position X
-                        y,              // tile position Y
-                        wallTexture,    // Texture2D spritesheet
-                        sideSizeX,      // sprite width
-                        sideSizeY);     // sprite height
+                        layout[x, y][0],    // char value of object in layout
+                        x,                  // tile position X
+                        y,                  // tile position Y
+                        wallTexture,        // Texture2D spritesheet
+                        sideSizeX,          // sprite width
+                        sideSizeY);         // sprite height
 
                     // full pos on screen
                     Rectangle positionRect = new Rectangle(
@@ -350,12 +364,12 @@ namespace Adumbration
                     bool floorLeft = false;
                     bool floorRight = false;
 
-                    if(y > 0 && layout[x, y - 1] == '_') { floorAbove = true; }
-                    if(y < levelHeight - 1 && layout[x, y + 1] == '_') { floorBelow = true; }
-                    if(x > 0 && layout[x - 1, y] == '_') { floorLeft = true; }
-                    if(x < levelWidth - 1 && layout[x + 1, y] == '_') { floorRight = true; }
+                    if(y > 0 && layout[x, y - 1][0] == '_') { floorAbove = true; }
+                    if(y < levelHeight - 1 && layout[x, y + 1][0] == '_') { floorBelow = true; }
+                    if(x > 0 && layout[x - 1, y][0] == '_') { floorLeft = true; }
+                    if(x < levelWidth - 1 && layout[x + 1, y][0] == '_') { floorRight = true; }
 
-                    Direction dir;
+                    Direction dir = Direction.Down;
 
                     // sets beam direction based on neighboring floors
                     if(floorAbove)
@@ -370,17 +384,19 @@ namespace Adumbration
                     {
                         dir = Direction.Left;
                     }
-                    else
+                    else if(floorRight)
                     {
                         dir = Direction.Right;
                     }
 
                     #endregion
 
+                    int signal = -1;
+
                     // ******************************
                     // ******** TILE LOADING ********
                     // ******************************
-                    switch(layout[x, y])
+                    switch(layout[x, y][0])
                     {
                         // FORWARD MIRROR
                         case '/':
@@ -430,20 +446,57 @@ namespace Adumbration
                             break;
 
                         // EMITTER
+                        case 'e':
                         case 'E':
+                            if(layout[x, y].Length > 1)
+                            {
+                                signal = int.Parse(layout[x, y][1].ToString());
+                            }
+                            else
+                            {
+                                throw new Exception($"ERROR: Emitter at layout[{x}, {y}] does not contain a " +
+                                    "signal associated! (\"E#\", where # is an int 0-9)");
+                            }
+
+                            // uppercase E means enabled emitter, lowercase means disabled
+                            bool beamEnabled = layout[x, y][0] == 'E' ? true : false;
+
                             returnArray[x, y] = new LightEmitter(
                                 textureDict,
                                 positionRect,
                                 dir,
-                                true);          // enabled or not at start
+                                beamEnabled,           // enabled or not at start
+                                signal);
+
+                            // creates a new list if it doesn't exist yet
+                            if(!receiversDict.ContainsKey(signal))
+                            {
+                                receiversDict[signal] = new List<GameObject>();
+                            }
+
+                            // adds this object to the receiver list
+                            receiversDict[signal].Add(returnArray[x, y]);
+
                             break;
 
                         // RECEPTOR
                         case 'R':
+                            if(layout[x, y].Length > 1)
+                            {
+                                signal = int.Parse(layout[x, y][1].ToString());
+                            }
+                            else
+                            {
+                                throw new Exception($"ERROR: Receptor at layout[{x}, {y}] does " +
+                                    "not contain a signal associated! (\"E#\", where # is an int 0-9)");
+                            }
+
                             returnArray[x, y] = new LightReceptor(
                                 wallTexture,
                                 new Rectangle(positionRect.X, positionRect.Y, 16, 16),
-                                dir);
+                                dir,
+                                signal);
+
                             break;
 
                         // WALL
@@ -564,9 +617,9 @@ namespace Adumbration
                         if(inBounds)
                         {
                             bool correctChar =
-                                levelLayout[arrayX, arrayY] == '_' ||
-                                levelLayout[arrayX, arrayY] == 'S' ||
-                                levelLayout[arrayX, arrayY] == 'K';
+                                levelLayout[arrayX, arrayY][0] == '_' ||
+                                levelLayout[arrayX, arrayY][0] == 'S' ||
+                                levelLayout[arrayX, arrayY][0] == 'K';
 
                             // true if iterated coordinate is a floor ('_')
                             if(correctChar)

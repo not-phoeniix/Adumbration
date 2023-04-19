@@ -4,27 +4,37 @@ using System.Collections.Generic;
 
 namespace Adumbration
 {
-    // Delegate for activating or deactivating emitter / door
-    public delegate void OnLightBeamReceivedDelegate();
-
     /// <summary>
     /// the light receptor class will basically be a wall tile 
     /// that catches the light
     /// it's 
     /// </summary>
-    internal class LightReceptor : Wall
+    internal class LightReceptor : Wall, ISignal
     {
         // Fields
         private Rectangle activationPoint;
         private bool textureFlipped;
+        private int signalNum;
+        private bool isActivated;
 
-        // Event
-        public event OnLightBeamReceivedDelegate OnActivation;
+        public int SignalNum
+        {
+            get { return signalNum; }
+        }
+
+        /// <summary>
+        /// Returns whether this receptor is currently activated
+        /// </summary>
+        public bool IsActivated
+        {
+            get { return isActivated; }
+        }
 
         //the constructor for this class
-        public LightReceptor(Texture2D spriteSheet, Rectangle position, Direction dir)
+        public LightReceptor(Texture2D spriteSheet, Rectangle position, Direction dir, int signalNum)
             : base(spriteSheet, new Rectangle(0, 0, 0, 0), position)
         {
+            this.signalNum = signalNum;
             textureFlipped = false;
 
             // activation point is 1 pixel expanded from position rectangle
@@ -56,19 +66,28 @@ namespace Adumbration
             }
         }
 
+        //for all beams inside the allbeams list,
+        //it will check if the receptor is colliding with it
+        //then it will 
+
+        /// <summary>
+        /// For all beams inside the list, it'll check for collision 
+        /// and change the property for IsActivated if colliding
+        /// </summary>
+        /// <param name="beams">List of beams required to check for collision</param>
         public void Update(List<LightBeam> beams)
         {
+            isActivated = false;
+
             foreach(LightBeam beam in beams)
             {
                 // If the light beam is activated
                 if(IsColliding(beam) && beam != null)
                 {
-                    OnActivation();
-                    System.Diagnostics.Debug.WriteLine("Activated");
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("Not Activated");
+                    isActivated = true;
+                    //System.Diagnostics.Debug.WriteLine("Activated");
+                    //  writeline's every frame KILL the framerate ^ 
+                    //  be careful w/ them...
                 }
             }
         }
@@ -90,16 +109,9 @@ namespace Adumbration
         //checks to see if the object that is colliding with is a lightbeam
         //if it is a lightbeam it will return as activated 
         //otherwise it will ignore other things and stay off
-        public override bool IsColliding(GameObject obj)
+        public bool IsColliding(LightBeam beam)
         {
-            if (obj.Position.Intersects(activationPoint))
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return activationPoint.Intersects(beam.Position);
         }
     }
 }
