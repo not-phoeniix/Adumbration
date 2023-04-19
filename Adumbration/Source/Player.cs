@@ -272,27 +272,6 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.W))
             {
-                // North Dash
-                // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space)
-                    && currentKbState.IsKeyUp(Keys.A)
-                    && currentKbState.IsKeyUp(Keys.S)                   // Player can only dash in one direction 
-                    && currentKbState.IsKeyUp(Keys.D))
-                {
-                    if (currentDashTime < MaxDashTime)
-                    {
-                        // They're dashing,
-                        // thus change position by dash speed
-                        isDashing = true;
-                        positionRect.Y -= dashSpeed;
-                    }
-                }
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                }
-
                 // If player is not touching a top wall let them move in that direction
                 positionRect.Y -= speed;
                 currentState = PlayerState.MovingUp;
@@ -322,27 +301,6 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.D))
             {
-                // East Dash
-                // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space)
-                    && currentKbState.IsKeyUp(Keys.W)
-                    && currentKbState.IsKeyUp(Keys.S)                   // Player can only dash in one direction 
-                    && currentKbState.IsKeyUp(Keys.A))
-                {
-                    if (currentDashTime < MaxDashTime)
-                    {
-                        // They're dashing,
-                        // thus change position by dash speed;
-                        isDashing = true;
-                        positionRect.X += dashSpeed;
-                    }
-                }
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                }
-
                 // Keeps player in window
                 positionRect.X += speed;
                 currentState = PlayerState.MovingRight;
@@ -378,28 +336,6 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.A))
             {
-                // West Dash
-                // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space)
-                    && currentKbState.IsKeyUp(Keys.W)
-                    && currentKbState.IsKeyUp(Keys.S)                   // Player can only dash in one direction 
-                    && currentKbState.IsKeyUp(Keys.D))
-                {
-                    if (currentDashTime < MaxDashTime)
-                    {
-                        // They're dashing,
-                        // thus change posiition by dash speed
-                        isDashing = true;
-                        positionRect.X -= dashSpeed;
-
-                    }
-                }
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                }
-
                 // Keeps player in window
                 positionRect.X -= speed;
                 currentState = PlayerState.MovingLeft;
@@ -436,27 +372,6 @@ namespace Adumbration
         {
             if (currentKbState.IsKeyDown(Keys.S))
             {
-                // South Dash
-                // If the player initates a dash
-                if (hasDash && currentKbState.IsKeyDown(Keys.Space)
-                    && currentKbState.IsKeyUp(Keys.A)
-                    && currentKbState.IsKeyUp(Keys.W)                   // Player can only dash in one direction 
-                    && currentKbState.IsKeyUp(Keys.D))
-                {
-                    if (currentDashTime < MaxDashTime)
-                    {
-                        // They're dashing,
-                        // thus update posiiton by dash speed
-                        isDashing = true;
-                        positionRect.Y += dashSpeed;
-                    }
-                }
-                // Otherwise they're not
-                else
-                {
-                    isDashing = false;
-                }
-
                 // Move Player Down
                 positionRect.Y += speed;
                 currentState = PlayerState.MovingRight;
