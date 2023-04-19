@@ -39,6 +39,33 @@ namespace Adumbration
 
         // Methods
 
+        #region // Game Loop
+
+        /// <summary>
+        /// Updates Save Station, checking for key presses and the player's hitbox.
+        /// </summary>
+        /// <param name="myPlayer">Reference to the player.</param>
+        public void Update(Player myPlayer)
+        {
+            
+        }
+
+        /// <summary>
+        /// Draws this Save Station.
+        /// </summary>
+        /// <param name="sb">Reference to the SpriteBatch.</param>
+        public override void Draw(SpriteBatch sb)
+        {
+            // Draw Save Station
+            sb.Draw(
+                spriteSheet,
+                positionRect,
+                sourceRect,
+                Color.White);
+        }
+
+        #endregion
+
         /// <summary>
         /// Checks for a collision between an object and the save station's hitbox.
         /// </summary>

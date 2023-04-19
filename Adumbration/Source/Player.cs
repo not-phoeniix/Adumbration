@@ -540,5 +540,10 @@ namespace Adumbration
             }
         }
 
+        public void ResetKeys()
+        {
+            collectedKeys.Clear();
+        }
+
     }
 }

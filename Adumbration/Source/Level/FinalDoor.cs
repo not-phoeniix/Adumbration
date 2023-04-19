@@ -88,6 +88,8 @@ namespace Adumbration
             {
                 sourceRect.X = 80;
                 LevelManager.Instance.LoadLevel(GameLevels.Hub);
+                player.ResetKeys();
+                sourceRect.X = 0;
             }
 
             previousState = currentState;
