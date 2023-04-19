@@ -88,6 +88,11 @@ namespace Adumbration
             }
         }
 
+        public int Speed
+        {
+            get { return speed; }
+        }
+
         // Constructor
         /// <summary>
         /// Player takes everything from parent class
@@ -300,6 +305,15 @@ namespace Adumbration
                         positionRect.X = currentX;
                     }
                 }
+
+                foreach(Mirror mirror in currentLevel.Mirrors)
+                {
+                    if(IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
+                    {
+                        positionRect.Y = mirror.Position.Height + mirror.Position.Y;
+                        positionRect.X = currentX;
+                    }
+                }
             }
         }
 
@@ -353,6 +367,17 @@ namespace Adumbration
                         positionRect.Y = currentY;
 
                         // North Movement
+                        NorthMovement(currentKbState, currentLevel, currentX);
+                    }
+                }
+
+                foreach (Mirror mirror in currentLevel.Mirrors)
+                {
+                    if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
+                    {
+                        positionRect.X = mirror.Position.X - positionRect.Width;
+                        positionRect.Y = currentY;
+
                         NorthMovement(currentKbState, currentLevel, currentX);
                     }
                 }
@@ -414,6 +439,17 @@ namespace Adumbration
 
                     }
                 }
+
+                foreach (Mirror mirror in currentLevel.Mirrors)
+                {
+                    if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
+                    {
+                        positionRect.X = mirror.Position.Width + mirror.Position.X;
+                        positionRect.Y = currentY;
+
+                        NorthMovement(currentKbState, currentLevel, currentX);
+                    }
+                }
             }
         }
 
@@ -462,6 +498,24 @@ namespace Adumbration
                         // Snap player to the top of the wall
                         positionRect.Y = tile.Position.Y - positionRect.Height;
                         positionRect.X = currentX;
+
+                        // Allow player to move west
+                        WestMovement(currentKbState, currentLevel, currentX, currentY);
+
+                        // Allow player to move east
+                        EastMovement(currentKbState, currentLevel, currentX, currentY);
+                    }
+                }
+
+                foreach (Mirror mirror in currentLevel.Mirrors)
+                {
+                    if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
+                    {
+                        positionRect.Y = mirror.Position.Y - positionRect.Height;
+                        positionRect.X = currentX;
+
+                        // Allow player to move North
+                        NorthMovement(currentKbState, currentLevel, currentX);
 
                         // Allow player to move west
                         WestMovement(currentKbState, currentLevel, currentX, currentY);
@@ -579,31 +633,7 @@ namespace Adumbration
 
         #endregion
 
-        public void MoveMirror(Level currentLevel, KeyboardState currentState)
-        {
-            foreach (GameObject tile in currentLevel.TileList)
-            {
-                if(tile is Mirror && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
-                {
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.W))
-                    {
-                        tile.Y -= speed;
-                    }
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.S))
-                    {
-                        tile.Y += speed;
-                    }
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.A))
-                    {
-                        tile.X -= speed;    
-                    }
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.D))
-                    {
-                        tile.X += speed;
-                    }
-                }
-            }
-        }
+        
 
     }
 }

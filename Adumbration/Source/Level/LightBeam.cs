@@ -391,6 +391,16 @@ namespace Adumbration
             prevPosition = positionRect;
         }
 
+        private void UpdateBeam(LightBeam beam, GameTime gameTime)
+        {
+            if(this.ReflectedBeam != null)
+            {
+                UpdateBeam(beam.ReflectedBeam, gameTime);
+            }
+
+            this.Update(gameTime);
+        }
+
         /// <summary>
         /// the main colliding method like all the other gameobject 
         /// children classes
@@ -409,5 +419,6 @@ namespace Adumbration
 
             return false;
         }
+
     }
 }
