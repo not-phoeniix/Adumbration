@@ -63,7 +63,9 @@ namespace Adumbration
                 IsColliding(myPlayer))
             {
                 // Updates the respawn point to the level it is located in.
-
+                LevelManager.Instance.CurrentLevel.SpawnPoint = new Vector2(
+                    positionRect.X,
+                    positionRect.Y);
             }
         }
     }

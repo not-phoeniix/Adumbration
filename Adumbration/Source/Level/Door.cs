@@ -39,8 +39,9 @@ namespace Adumbration
         private Rectangle unlockHitbox;
         private Rectangle hitbox;
         private KeyboardState previousState;
-        private int level;
+        private char level;
         private Dictionary<string, Texture2D> textureDict;
+        private GameLevels currentGameLevel;
 
         #region// Event(s)
 
@@ -77,7 +78,7 @@ namespace Adumbration
         /// <param name="spriteSheet"></param>
         /// <param name="sourceRect"></param>
         /// <param name="position"></param>
-        public Door(bool isOpen, Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position, int level)
+        public Door(bool isOpen, Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position, char level)
              : base(textureDict["doors"], sourceRect, position)
         {
             this.isOpen = isOpen;
@@ -190,19 +191,19 @@ namespace Adumbration
                 ifOpen = true;
                 if (hitbox.Intersects(myPlayer.Position))
                 {
-                    if (level == 1)
+                    if (level == '1')
                     {
                         LevelManager.Instance.LoadLevel(GameLevels.Level1);
                     }
-                    else if (level == 2)
+                    else if (level == '2')
                     {
                         LevelManager.Instance.LoadLevel(GameLevels.Level2);
                     }
-                    else if (level == 3)
+                    else if (level == '3')
                     {
                         LevelManager.Instance.LoadLevel(GameLevels.Level3);
                     }
-                    else if (level == 4)
+                    else if (level == '4')
                     {
                         LevelManager.Instance.LoadLevel(GameLevels.Level4);
                     }

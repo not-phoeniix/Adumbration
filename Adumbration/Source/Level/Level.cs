@@ -79,6 +79,12 @@ namespace Adumbration
             set { wallHulls = value; }
         }
 
+        public Vector2 SpawnPoint
+        {
+            get { return spawnPoint; }
+            set { spawnPoint = value; }
+        }
+
         internal List<LightBeam> Beams
         {
             get { return allBeams; }
