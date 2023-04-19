@@ -146,9 +146,9 @@ namespace Adumbration
         /// <summary>
         /// Updates the logic of currently loaded level
         /// </summary>
-        public void Update(GameTime gameTime, GameObject obj)
+        public void Update(GameTime gameTime, Player player)
         {
-            currentLevel.Update(gameTime, obj);
+            currentLevel.Update(gameTime, player);
         }
 
         /// <summary>
