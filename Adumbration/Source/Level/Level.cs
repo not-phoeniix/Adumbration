@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
+using Adumbration.Source.Level;
 
 namespace Adumbration
 {
@@ -195,6 +196,11 @@ namespace Adumbration
                             }
                         }
                     }
+                }
+
+                if (obj is FinalDoor finalDoor)
+                {
+                    finalDoor.Update(gameTime, player);
                 }
             }
 
@@ -451,6 +457,14 @@ namespace Adumbration
                         // FLOOR
                         case '_':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+                            break;
+
+                        //FINAL DOOR
+                        case 'F':
+                            returnArray[x, y] = new FinalDoor(
+                                textureDict["doors"],
+                                new Rectangle(0, 32, 16, 16),
+                                positionRect);
                             break;
 
                         // EMITTER
