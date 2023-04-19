@@ -118,7 +118,7 @@ namespace Adumbration
         /// </summary>
         /// <param name="gameTime">The game's time</param>
         /// <param name="currentLevel">The level the player is currently on</param>
-        public void Update(GameTime gameTime)   // May have to debug when implementing mirrors
+        public override void Update(GameTime gameTime)   // May have to debug when implementing mirrors
         {
             Level currentLevel = LevelManager.Instance.CurrentLevel;
 
@@ -391,6 +391,16 @@ namespace Adumbration
             prevPosition = positionRect;
         }
 
+        private void UpdateBeam(LightBeam beam, GameTime gameTime)
+        {
+            if(this.ReflectedBeam != null)
+            {
+                UpdateBeam(beam.ReflectedBeam, gameTime);
+            }
+
+            this.Update(gameTime);
+        }
+
         /// <summary>
         /// the main colliding method like all the other gameobject 
         /// children classes
@@ -409,5 +419,6 @@ namespace Adumbration
 
             return false;
         }
+
     }
 }

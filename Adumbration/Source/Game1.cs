@@ -23,8 +23,7 @@ namespace Adumbration
         Game,
         MainMenu,
         PauseMenu,
-        Help,
-        Stats
+        HelpMenu
     }
 
     public class Game1 : Game
@@ -56,8 +55,6 @@ namespace Adumbration
 
         // Game objects
         private Player player;
-        private Door closedDoor;
-        private SaveStation testSaveStation;
 
         #endregion
 
@@ -133,8 +130,8 @@ namespace Adumbration
             textureDict.Add("pauseQuit", Content.Load<Texture2D>("UI/ui_pauseQuit"));
             textureDict.Add("mainStart", Content.Load<Texture2D>("UI/ui_mainStart"));
             textureDict.Add("mainHelp", Content.Load<Texture2D>("UI/ui_mainHelp"));
-            textureDict.Add("mainStats", Content.Load<Texture2D>("UI/ui_mainStats"));
             textureDict.Add("mainQuit", Content.Load<Texture2D>("UI/ui_mainQuit"));
+            textureDict.Add("help", Content.Load<Texture2D>("UI/ui_help"));
 
             #endregion
 
@@ -146,45 +143,21 @@ namespace Adumbration
             // MainMenu singleton init
             MainMenu.Instance.Initialize(textureDict);
 
+            // HelpMenu singleton init
+            HelpMenu.Instance.Initialize(textureDict);
+
             // Player Object
             player = new Player(
                 textureDict["player"],          // spritesheet in dict
                 new Rectangle(0, 0, 6, 8),      // source
                 new Rectangle(50, 50, 6, 8));   // initial pos
 
-            // Door Object
-            closedDoor = new Door(
-                false,
-                textureDict,
-                new Rectangle(      // Source Rectangle
-                    0,              // - X Location
-                    0,              // - Y Location
-                    16,             // - Width
-                    16),            // - Height
-                new Rectangle(      // Position
-                    16 * 11,        // - X Location
-                    0,              // - Y Location
-                    16,             // - Width
-                    16),            // - Height
-                '1');               // Level
-
-            /*testSaveStation = new SaveStation(
-                textureDict,
-                new Rectangle(
-                    16,
-                    5 * 16,
-                    16,
-                    16),
-                new Rectangle(
-                    16,
-                    5 * 16,
-                    16,
-                    16)); */
-
             // LevelManager singleton init
             LevelManager.Instance.Initialize(textureDict, penumbra, player);
 
             LevelManager.Instance.LoadLevel(GameLevels.Hub);
+
+            MainMenu.Instance.Exit += Exit;
 
             #endregion
 
@@ -198,12 +171,6 @@ namespace Adumbration
                 ShadowType = ShadowType.Occluded
             };
 
-            #endregion
-
-            #region // Subscribing methods to events
-            closedDoor.OnKeyPressOnce += IsKeyPressedOnce;
-            closedDoor.OnKeyPress += closedDoor.Interact;
-            MainMenu.Instance.Exit += Exit;
             #endregion
         }
 
@@ -240,11 +207,9 @@ namespace Adumbration
                     }
 
                     // object logic
-                    LevelManager.Instance.CurrentLevel.Update(gameTime, player);
+                    LevelManager.Instance.Update(gameTime, player);
                     player.Update(gameTime, LevelManager.Instance.CurrentLevel);
                     player.IsDead(LevelManager.Instance.CurrentLevel.Beams);
-                    closedDoor.Update(gameTime);
-                    closedDoor.Update(player);
 
                     #region Zoom
 
@@ -342,6 +307,18 @@ namespace Adumbration
 
                     #endregion
                     break;
+
+                case GameState.HelpMenu:
+                    #region // Help menu update logic
+
+                    // turn off penumbra in help menu
+                    penumbra.Visible = false;
+
+                    // update menu logic
+                    HelpMenu.Instance.Update(kbState, prevKbState);
+
+                    #endregion
+                    break;
             }
 
             base.Update(gameTime);
@@ -377,9 +354,6 @@ namespace Adumbration
 
                 // Draw Player
                 player.Draw(_spriteBatch);
-
-                // Draw closed door
-                closedDoor.Draw(_spriteBatch);
             }
             _spriteBatch.End();
 
@@ -410,6 +384,14 @@ namespace Adumbration
                 // draw main menu
                 case GameState.MainMenu:
                     MainMenu.Instance.Draw(
+                        _spriteBatch,
+                        _graphics.GraphicsDevice.Viewport.Bounds);
+
+                    break;
+
+                // draw help menu
+                case GameState.HelpMenu:
+                    HelpMenu.Instance.Draw(
                         _spriteBatch,
                         _graphics.GraphicsDevice.Viewport.Bounds);
 

@@ -41,6 +41,7 @@ namespace Adumbration
         // Player variables
         private int speed;
         private int dashSpeed;
+        private List<bool> collectedKeys;
 
         // Whether player is flipped or not
         private bool playerIsFlipped;
@@ -49,7 +50,6 @@ namespace Adumbration
         private bool hasDash;
         private const float MaxDashTime = 0.5f;
         private float currentDashTime;
-        private bool isDashing;
 
         // Player's previous X and Y positions
         private int prevX;
@@ -68,15 +68,6 @@ namespace Adumbration
         //to turn on god mode in this game
         private PlayerMode currentMode;
 
-        // Properties
-        /// <summary>
-        /// Get property for whether the player has a dash or not
-        /// </summary>
-        public bool HasDash
-        {
-            get { return hasDash; }
-        }
-
         public Vector2 CenterPos
         {
             get
@@ -86,6 +77,17 @@ namespace Adumbration
                     positionRect.Y + positionRect.Height / 2
                     );
             }
+        }
+
+        public List<bool> CollectedKeys
+        {
+            get{ return collectedKeys; }
+            set { collectedKeys = value; }
+        }
+
+        public int Speed
+        {
+            get { return speed; }
         }
 
         // Constructor
@@ -98,12 +100,11 @@ namespace Adumbration
         public Player(Texture2D spritesheet, Rectangle sourceRect, Rectangle position)
             : base(spritesheet, sourceRect, position)
         {
-            hasDash = true;
             currentMode = PlayerMode.NormalMode;
 
-            // Set player speed and dashspeed
+            // Set player speed and the collectedKeys array to null
             speed = 2;
-            dashSpeed = speed * 5;
+            collectedKeys = new List<bool>();
 
             // Animation data
             fps = 2.0;
@@ -137,45 +138,6 @@ namespace Adumbration
             // Player's current X and Y positions
             int currentX = positionRect.X;
             int currentY = positionRect.Y;
-
-            // Reset timer
-            if (!isDashing && currentDashTime != 0)
-            {
-                currentDashTime = 0;
-                //hasDash = false;
-            }
-            // Increase timer
-            else if (isDashing)
-            {
-                currentDashTime += 0.1f;
-            }
-
-            // If they are not or no longer dashing
-            if (!isDashing || currentDashTime > MaxDashTime)
-            {
-                // Draw non-dash textures
-                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-                {
-                    sourceRect.X = 0;
-                }
-                else if (currentState == PlayerState.MovingUp)
-                {
-                    sourceRect.X = 14;
-                }
-            }
-            // if they are in the midst of a dash
-            else if (isDashing)
-            {
-                // Draw dash textures
-                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-                {
-                    sourceRect.X = 28;
-                }
-                else if (currentState == PlayerState.MovingUp)
-                {
-                    sourceRect.X = 42;
-                }
-            }
 
             #region // Movement
             // North Movement
@@ -244,7 +206,7 @@ namespace Adumbration
             {
                 foreach (LightBeam beam in beams)
                 {
-                    if (this.IsColliding(beam) && !isDashing)
+                    if (this.IsColliding(beam))
                     {
                         LevelManager.Instance.ResetLevel();
                         return;
@@ -276,6 +238,15 @@ namespace Adumbration
                     {
                         // Snap the Player to the bottom of the wall
                         positionRect.Y = tile.Position.Height + tile.Position.Y;
+                        positionRect.X = currentX;
+                    }
+                }
+
+                foreach(Mirror mirror in currentLevel.Mirrors)
+                {
+                    if(IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
+                    {
+                        positionRect.Y = mirror.Position.Height + mirror.Position.Y;
                         positionRect.X = currentX;
                     }
                 }
@@ -311,6 +282,17 @@ namespace Adumbration
                         positionRect.Y = currentY;
 
                         // North Movement
+                        NorthMovement(currentKbState, currentLevel, currentX);
+                    }
+                }
+
+                foreach (Mirror mirror in currentLevel.Mirrors)
+                {
+                    if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
+                    {
+                        positionRect.X = mirror.Position.X - positionRect.Width;
+                        positionRect.Y = currentY;
+
                         NorthMovement(currentKbState, currentLevel, currentX);
                     }
                 }
@@ -350,6 +332,17 @@ namespace Adumbration
 
                     }
                 }
+
+                foreach (Mirror mirror in currentLevel.Mirrors)
+                {
+                    if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
+                    {
+                        positionRect.X = mirror.Position.Width + mirror.Position.X;
+                        positionRect.Y = currentY;
+
+                        NorthMovement(currentKbState, currentLevel, currentX);
+                    }
+                }
             }
         }
 
@@ -377,6 +370,24 @@ namespace Adumbration
                         // Snap player to the top of the wall
                         positionRect.Y = tile.Position.Y - positionRect.Height;
                         positionRect.X = currentX;
+
+                        // Allow player to move west
+                        WestMovement(currentKbState, currentLevel, currentX, currentY);
+
+                        // Allow player to move east
+                        EastMovement(currentKbState, currentLevel, currentX, currentY);
+                    }
+                }
+
+                foreach (Mirror mirror in currentLevel.Mirrors)
+                {
+                    if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
+                    {
+                        positionRect.Y = mirror.Position.Y - positionRect.Height;
+                        positionRect.X = currentX;
+
+                        // Allow player to move North
+                        NorthMovement(currentKbState, currentLevel, currentX);
 
                         // Allow player to move west
                         WestMovement(currentKbState, currentLevel, currentX, currentY);
@@ -494,31 +505,7 @@ namespace Adumbration
 
         #endregion
 
-        public void MoveMirror(Level currentLevel, KeyboardState currentState)
-        {
-            foreach (GameObject tile in currentLevel.TileList)
-            {
-                if(tile is Mirror && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
-                {
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.W))
-                    {
-                        tile.Y -= speed;
-                    }
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.S))
-                    {
-                        tile.Y += speed;
-                    }
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.A))
-                    {
-                        tile.X -= speed;    
-                    }
-                    if (currentState.IsKeyDown(Keys.Space) && currentState.IsKeyDown(Keys.D))
-                    {
-                        tile.X += speed;
-                    }
-                }
-            }
-        }
+        
 
     }
 }

@@ -30,6 +30,11 @@ namespace Adumbration
             get { return hitbox; }
         }
 
+        public bool PickedUp
+        {
+            get { return pickedUp; }
+        }
+
         /// <summary>
         /// a basic constructor that will load everything needed for this class
         /// </summary>
@@ -58,18 +63,27 @@ namespace Adumbration
         /// aka you picked it up
         /// </summary>
         /// <param name="gameTime"></param>
-        public void Update(GameTime gameTime, GameObject obj)
+        public void Update(GameTime gameTime, Player player)
         {
             KeyboardState currentState = Keyboard.GetState();
 
             //checks to see if the user clicked on the key
-            if (IsColliding(obj))
+            if (IsColliding(player))
             {
+                //if the key isn't picked up and the user presses e
+                //then it will pick up the key
                 if (!pickedUp && currentState.IsKeyDown(Keys.E) && prevState.IsKeyUp(Keys.E))
                 {
                     positionRect.Width = 0;
                     positionRect.Height = 0;
                     System.Diagnostics.Debug.WriteLine("key taken");
+                    pickedUp = true;
+
+                    //if the key is picked up it will add to the list once
+                    if (pickedUp)
+                    {
+                        player.CollectedKeys.Add(true);
+                    }
                 }
             }
 

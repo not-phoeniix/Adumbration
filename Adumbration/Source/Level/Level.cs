@@ -31,10 +31,12 @@ namespace Adumbration
         // level objects
         private List<LightBeam> allBeams;
         private List<Mirror> allMirrors;
+        private List<Door> allDoors;
         private KeyObject levelKey;
 
         // signal stuff
         private Dictionary<int, List<GameObject>> receiversDict;
+        private bool completed;
 
         // Multiple beam testing
         private LightBeam testBeam;
@@ -53,6 +55,8 @@ namespace Adumbration
             this.spawnPoint = new Vector2(0, 0);
             this.allBeams = new List<LightBeam>();
             this.allMirrors = new List<Mirror>();
+            this.allDoors = new List<Door>();
+            this.completed = false;
 
             // dictionary inits
             receiversDict = new Dictionary<int, List<GameObject>>();
@@ -150,7 +154,7 @@ namespace Adumbration
         /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        public void Update(GameTime gameTime, GameObject player)
+        public void Update(GameTime gameTime, Player player)
         {
             // updates all GameObjects each frame
             foreach(GameObject obj in objectArray)
@@ -194,6 +198,16 @@ namespace Adumbration
                         }
                     }
                 }
+
+                if (obj is FinalDoor finalDoor)
+                {
+                    finalDoor.Update(gameTime, player);
+                }
+
+                if(obj is Door door)
+                {
+                    door.Update(player);
+                }
             }
 
             // updating all mirrors
@@ -209,7 +223,7 @@ namespace Adumbration
             }
 
             // updating level key
-            levelKey?.Update(gameTime);
+            levelKey?.Update(gameTime, player);
         }
 
         /// <summary>
@@ -449,6 +463,63 @@ namespace Adumbration
                         // FLOOR
                         case '_':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+                            break;
+
+                        //FINAL DOOR
+                        case 'F':
+                            returnArray[x, y] = new FinalDoor(
+                                textureDict["doors"],
+                                new Rectangle(0, 32, 16, 16),
+                                positionRect);
+                            break;
+
+                        case 'D':
+                            char levelAssociated;
+                            GameLevels levelToLoad = GameLevels.Hub;
+
+                            if(layout[x, y].Length > 1)
+                            {
+                                levelAssociated = layout[x, y][1];
+                            }
+                            else
+                            {
+                                throw new Exception($"ERROR: Door at layout[{x}, {y}] does not contain a " +
+                                    "level num associated! (\"D#\", where # is an int for level number or " +
+                                    "H/F for hub and final room)");
+                            }
+
+                            // switch case that associates a door w/ a level
+                            switch(levelAssociated)
+                            {
+                                case '1':
+                                    levelToLoad = GameLevels.Level1;
+                                    break;
+                                case '2':
+                                    levelToLoad = GameLevels.Level2;
+                                    break;
+                                case '3':
+                                    levelToLoad = GameLevels.Level3;
+                                    break;
+                                case '4':
+                                    levelToLoad = GameLevels.Level4;
+                                    break;
+                                case 'H':
+                                    levelToLoad = GameLevels.Hub;
+                                    break;
+                                case 'F':
+                                    levelToLoad = GameLevels.End;
+                                    break;
+                            }
+
+                            // creates the door and adds it the list and layout
+                            Door doorToAdd = new Door(
+                                textureDict["doors"],
+                                positionRect,
+                                levelToLoad);
+
+                            returnArray[x, y] = doorToAdd;
+                            allDoors.Add(doorToAdd);
+
                             break;
 
                         // EMITTER

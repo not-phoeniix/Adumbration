@@ -100,7 +100,7 @@ namespace Adumbration
                     break;
 
                 case GameLevels.Level1:
-                    levelDataPath = "BigLevelTest.txt";
+                    levelDataPath = "Level_1.txt";
                     break;
 
                 case GameLevels.Level2:
@@ -130,8 +130,9 @@ namespace Adumbration
                     throw new Exception($"Error: level {level} does not exist!");
             }
 
-            currentLevel.SetupLevel(levelDataPath, player);
 
+
+            currentLevel.SetupLevel(levelDataPath, player);
         }
 
         /// <summary>
@@ -146,9 +147,9 @@ namespace Adumbration
         /// <summary>
         /// Updates the logic of currently loaded level
         /// </summary>
-        public void Update(GameTime gameTime, GameObject obj)
+        public void Update(GameTime gameTime, Player player)
         {
-            currentLevel.Update(gameTime, obj);
+            currentLevel.Update(gameTime, player);
         }
 
         /// <summary>
