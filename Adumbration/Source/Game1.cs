@@ -57,6 +57,7 @@ namespace Adumbration
         // Game objects
         private Player player;
         private Door closedDoor;
+        private SaveStation testSaveStation;
 
         #endregion
 
@@ -166,6 +167,19 @@ namespace Adumbration
                     16,             // - Width
                     16),            // - Height
                 '1');               // Level
+
+            /*testSaveStation = new SaveStation(
+                textureDict,
+                new Rectangle(
+                    16,
+                    5 * 16,
+                    16,
+                    16),
+                new Rectangle(
+                    16,
+                    5 * 16,
+                    16,
+                    16)); */
 
             // LevelManager singleton init
             LevelManager.Instance.Initialize(textureDict, penumbra, player);

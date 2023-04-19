@@ -186,7 +186,7 @@ namespace Adumbration
 
             // If the door is open, set 'ifOpen' to true.
             // Then load the level connected to the door.
-            else if (isOpen)
+            else
             {
                 ifOpen = true;
                 if (hitbox.Intersects(myPlayer.Position))
