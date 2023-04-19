@@ -27,8 +27,8 @@ namespace Adumbration
         // Constructor
 
 
-        public SaveStation(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
-            : base(spriteSheet, sourceRect, position)
+        public SaveStation(Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position)
+            : base(textureDict["walls"], sourceRect, position)
         {
             hitbox = new Rectangle(
                 position.X - 1,

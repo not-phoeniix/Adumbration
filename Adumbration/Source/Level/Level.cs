@@ -168,11 +168,11 @@ namespace Adumbration
                 if(obj is LightEmitter emitter)
                 {
                     emitter.Update(gameTime);
-                    
+
                     // adds main beam if not null
-                    if(emitter.Beam != null)
+                    if (emitter.Beam != null)
                     {
-                        if(!allBeams.Contains(emitter.Beam))
+                        if (!allBeams.Contains(emitter.Beam))
                         {
                             allBeams.Add(emitter.Beam);
                         }
@@ -227,9 +227,12 @@ namespace Adumbration
             }
 
             // updating all beams, they are called outside emitter objects to decouple
-            foreach(LightBeam beam in allBeams)
+            for(int i = 0; i < allBeams.Count; i++)
             {
-                beam.Update(gameTime);
+                if (allBeams[i] != null)
+                {
+                    allBeams[i].Update(gameTime);
+                }
             }
 
             // updating level key

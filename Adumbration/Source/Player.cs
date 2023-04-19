@@ -157,6 +157,8 @@ namespace Adumbration
             prevX = currentX;
             prevY = currentY;
 
+            MoveMirror(currentLevel, currentKbState);
+
             previousKbState = currentKbState;
         }
 
@@ -505,7 +507,38 @@ namespace Adumbration
 
         #endregion
 
-        
+        public void MoveMirror(Level currentLevel, KeyboardState currentKbState)
+        {
+            foreach(Mirror mirror in currentLevel.Mirrors)
+            {
+                if (positionRect.Intersects(mirror.Hitbox) && currentKbState.IsKeyDown(Keys.Space))
+                {
+                    if (currentKbState.IsKeyDown(Keys.W))
+                    {
+                        mirror.Y -= speed;
+                        mirror.HitBoxY -= speed;
+                    }
+
+                    if (currentKbState.IsKeyDown(Keys.A))
+                    {
+                        mirror.X -= speed;
+                        mirror.HitBoxX -= speed;
+                    }
+
+                    if (currentKbState.IsKeyDown(Keys.S))
+                    {
+                        mirror.Y += speed;
+                        mirror.HitBoxY += speed;
+                    }
+
+                    if (currentKbState.IsKeyDown(Keys.D))
+                    {
+                        mirror.X += speed;
+                        mirror.HitBoxX += speed;
+                    }
+                }               
+            }
+        }
 
     }
 }

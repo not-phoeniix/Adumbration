@@ -47,10 +47,10 @@ namespace Adumbration
 
             // Create hitbox rectangle
             hitbox = new Rectangle(
-                position.X - 1,
-                position.Y - 1,
-                position.Width + 2,
-                position.Height + 2);
+                position.X - 2,
+                position.Y - 2,
+                position.Width + 3,
+                position.Height + 3);
         }
 
         public MirrorType Type
@@ -61,9 +61,20 @@ namespace Adumbration
         public Rectangle Hitbox
         {
             get { return hitbox; }
+            set { hitbox = value; }
         }
 
-        // Methods
+        public int HitBoxX
+        {
+            get { return hitbox.X; }
+            set { hitbox.X = value; }
+        }
+
+        public int HitBoxY
+        {
+            get { return hitbox.Y; }
+            set { hitbox.Y = value; }
+        }
 
         /// <summary>
         /// Checks if a mirror and a LightBeam are colliding.
