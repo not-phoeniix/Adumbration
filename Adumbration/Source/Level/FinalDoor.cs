@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace Adumbration.Source.Level
+namespace Adumbration
 {
     /// <summary>
     /// this class will be 

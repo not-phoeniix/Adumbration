@@ -1,31 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SharpDX.XAudio2;
-using Penumbra;
-using System.Collections.Generic;
 
 namespace Adumbration
 {
-    #region// Delegate(s)
-
-    /// <summary>
-    /// Delegate for methods of the bool return type and take the parameters
-    /// Keys, KeyboardState, and KeyboardState.
-    /// </summary>
-    /// <param name="keys">Key that is pressed.</param>
-    /// <param name="current">Current key being pressed.</param>
-    /// <param name="previous">Previous key that was pressed.</param>
-    /// <returns>True or false for all methods tied to this delegate's event(s).</returns>
-    public delegate bool KeyPressOnceDelegate(Keys keys, KeyboardState current, KeyboardState previous);
-
-    /// <summary>
-    /// Delegate for methods of the void return type and take the Player parameter
-    /// </summary>
-    /// <param name="player">Reference to the the player game object</param>
-    public delegate void KeyPressDelegate(Player player, KeyboardState current, KeyboardState previous);
-    #endregion
-
     /// <summary>
     /// Alexander Gough
     /// Door class that inherits from the Wall Class.
@@ -36,36 +14,18 @@ namespace Adumbration
     {
         // Fields
         private bool isOpen;
-        private Rectangle unlockHitbox;
+        private bool isInteracted;
         private Rectangle hitbox;
-        private KeyboardState previousState;
-        private char level;
-        private Dictionary<string, Texture2D> textureDict;
-        private GameLevels currentGameLevel;
+        private GameLevels level;
+        private double doorOffsetTimer;     // keep track of time after interact
 
-        #region// Event(s)
-
-        /// <summary>
-        /// Tie the methods for if a key is pressed once here.
-        /// </summary>
-        public event KeyPressOnceDelegate OnKeyPressOnce;
-
-        /// <summary>
-        /// Tie the methods for if a key is pressed here.
-        /// </summary>
-        public event KeyPressDelegate OnKeyPress;
-        #endregion
+        KeyboardState kbState;
+        KeyboardState kbStatePrev;
 
         // Property
         public Rectangle Hitbox
         {
             get { return hitbox; }
-        }
-
-        public Rectangle UnlockHitbox
-        {
-            get { return unlockHitbox; }
-            set { unlockHitbox = value; }
         }
 
         // Constructor(s)
@@ -78,68 +38,62 @@ namespace Adumbration
         /// <param name="spriteSheet"></param>
         /// <param name="sourceRect"></param>
         /// <param name="position"></param>
-        public Door(bool isOpen, Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position, char level)
-             : base(textureDict["doors"], sourceRect, position)
+        public Door(Texture2D texture, Rectangle position, GameLevels level)
+             : base(texture, new Rectangle(0, 0, 16, 16), position)
         {
-            this.isOpen = isOpen;
             this.level = level;
-            this.textureDict = textureDict;
+            doorOffsetTimer = 20;   // num frames till load level
+
+            isOpen = false;
+            isInteracted = false;
 
             // Create door hitboxes
-            unlockHitbox = new Rectangle(
+            hitbox = new Rectangle(
                 position.X - position.Width / 2,
                 position.Y - position.Height / 2,
                 position.Width * 2,
                 position.Height * 2);
-
-            hitbox = new Rectangle(
-                position.X - 1,
-                position.Y - 1,
-                position.Width + 2,
-                position.Height + 2);
         }
 
         // Methods
 
-        #region// Game Loop
-        /// <summary>
-        /// Updates the game's doors.
-        /// </summary>
-        /// <param name="gameTime">State of the game's time.</param>
-        public override void Update(GameTime gameTime)
-        {
-            if (isOpen)
-            {
-                sourceRect.Y = 16;
-            }
-        }
+        #region // Game Loop
 
         /// <summary>
-        /// Updates the events.
+        /// Updates door state, checking for key presses and the player's hitbox.
         /// </summary>
         /// <param name="myPlayer">Reference to the player.</param>
         public void Update(Player myPlayer)
         {
-            KeyboardState currentState = Keyboard.GetState();
+            kbState = Keyboard.GetState();
 
-            if (currentState.IsKeyUp(Keys.E) &&
-                previousState.IsKeyDown(Keys.E) &&
-                unlockHitbox.Contains(myPlayer.Position))
+            sourceRect.Y = isOpen ? 16 : 0;
+
+            // if player interacts with door:
+            if (hitbox.Intersects(myPlayer.Position) && 
+                Game1.IsKeyPressedOnce(Keys.E, kbState, kbStatePrev) &&
+                !isInteracted)
             {
-                if (OnKeyPressOnce != null)
+                // change texture, start timer
+                isOpen = true;
+                isInteracted = true;
+            }
+
+            if(isInteracted)
+            {
+                doorOffsetTimer--;
+
+                if(doorOffsetTimer <= 0)
                 {
-                    OnKeyPressOnce(Keys.E, currentState, previousState);
-                }
-                if (OnKeyPress != null)
-                {
-                    OnKeyPress(myPlayer, currentState, previousState);
+                    LevelManager.Instance.LoadLevel(level);
                 }
             }
-            previousState = currentState;
+
+            kbStatePrev = kbState;
         }
 
         /// <summary>
-        /// Draws the game's doors.
+        /// Draws this door.
         /// </summary>
         /// <param name="sb">Reference to the SpriteBatch.</param>
         public override void Draw(SpriteBatch sb)
@@ -151,6 +105,7 @@ namespace Adumbration
                 sourceRect,
                 Color.White);
         }
+
         #endregion
 
         /// <summary>
@@ -160,58 +115,7 @@ namespace Adumbration
         /// <returns>True if collision occurs, otherwise false.</returns>
         public override bool IsColliding(GameObject obj)
         {
-            return unlockHitbox.Intersects(obj.Position);
-        }
-
-        /// <summary>
-        /// Loads the next level.
-        /// </summary>
-        /// <param name="myPlayer">Reference to Game1's player.</param>
-        /// <param name="currentState">The current state of the keyboard.</param>
-        /// <param name="previousState">The previous state of the keyboard.</param>
-        public void Interact(Player myPlayer, KeyboardState currentState, KeyboardState previousState)
-        {
-            // Set locally declared boolean
-            bool ifOpen = false;
-
-            // If the door is not open set 'ifOpen' to true if the E key is pressed
-            // AND when the door's unlock hitbox is colliding with the player.
-            if (!isOpen &&
-                currentState.IsKeyUp(Keys.E) &&
-                previousState.IsKeyDown(Keys.E) &&
-                IsColliding(myPlayer))
-            {
-                ifOpen = true;
-            }
-
-            // If the door is open, set 'ifOpen' to true.
-            // Then load the level connected to the door.
-            else if (isOpen)
-            {
-                ifOpen = true;
-                if (hitbox.Intersects(myPlayer.Position))
-                {
-                    if (level == '1')
-                    {
-                        LevelManager.Instance.LoadLevel(GameLevels.Level1);
-                    }
-                    else if (level == '2')
-                    {
-                        LevelManager.Instance.LoadLevel(GameLevels.Level2);
-                    }
-                    else if (level == '3')
-                    {
-                        LevelManager.Instance.LoadLevel(GameLevels.Level3);
-                    }
-                    else if (level == '4')
-                    {
-                        LevelManager.Instance.LoadLevel(GameLevels.Level4);
-                    }
-                }
-            }
-
-            // Set the 'isOpen' field equal to the value of 'ifOpen'.
-            isOpen = ifOpen;
+            return hitbox.Intersects(obj.Position);
         }
     }
 }
