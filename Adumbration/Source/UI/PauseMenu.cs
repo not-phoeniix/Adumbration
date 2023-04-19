@@ -97,7 +97,7 @@ namespace Adumbration
         /// <summary>
         /// Draws the pause menu
         /// </summary>
-        /// <param name="sb"></param>
+        /// <param name="sb">SpriteBatch to draw with</param>
         public void Draw(SpriteBatch sb, Rectangle screenRect)
         {
             // FSM for drawing the pause menu options
