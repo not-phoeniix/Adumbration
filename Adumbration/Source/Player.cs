@@ -50,7 +50,6 @@ namespace Adumbration
         private bool hasDash;
         private const float MaxDashTime = 0.5f;
         private float currentDashTime;
-        private bool isDashing;
 
         // Player's previous X and Y positions
         private int prevX;
@@ -68,15 +67,6 @@ namespace Adumbration
 
         //to turn on god mode in this game
         private PlayerMode currentMode;
-
-        // Properties
-        /// <summary>
-        /// Get property for whether the player has a dash or not
-        /// </summary>
-        public bool HasDash
-        {
-            get { return hasDash; }
-        }
 
         public Vector2 CenterPos
         {
@@ -110,12 +100,10 @@ namespace Adumbration
         public Player(Texture2D spritesheet, Rectangle sourceRect, Rectangle position)
             : base(spritesheet, sourceRect, position)
         {
-            hasDash = true;
             currentMode = PlayerMode.NormalMode;
 
-            // Set player speed and dashspeed and the collectedKeys array to null
+            // Set player speed and the collectedKeys array to null
             speed = 2;
-            dashSpeed = speed * 5;
             collectedKeys = new List<bool>();
 
             // Animation data
@@ -150,45 +138,6 @@ namespace Adumbration
             // Player's current X and Y positions
             int currentX = positionRect.X;
             int currentY = positionRect.Y;
-
-            // Reset timer
-            if (!isDashing && currentDashTime != 0)
-            {
-                currentDashTime = 0;
-                //hasDash = false;
-            }
-            // Increase timer
-            else if (isDashing)
-            {
-                currentDashTime += 0.1f;
-            }
-
-            // If they are not or no longer dashing
-            if (!isDashing || currentDashTime > MaxDashTime)
-            {
-                // Draw non-dash textures
-                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-                {
-                    sourceRect.X = 0;
-                }
-                else if (currentState == PlayerState.MovingUp)
-                {
-                    sourceRect.X = 14;
-                }
-            }
-            // if they are in the midst of a dash
-            else if (isDashing)
-            {
-                // Draw dash textures
-                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-                {
-                    sourceRect.X = 28;
-                }
-                else if (currentState == PlayerState.MovingUp)
-                {
-                    sourceRect.X = 42;
-                }
-            }
 
             #region // Movement
             // North Movement
@@ -257,7 +206,7 @@ namespace Adumbration
             {
                 foreach (LightBeam beam in beams)
                 {
-                    if (this.IsColliding(beam) && !isDashing)
+                    if (this.IsColliding(beam))
                     {
                         LevelManager.Instance.ResetLevel();
                         return;
