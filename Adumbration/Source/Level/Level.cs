@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
+using Adumbration.Source.Level;
 
 namespace Adumbration
 {
@@ -27,6 +28,8 @@ namespace Adumbration
         // texture stuff
         private Dictionary<string, Texture2D> textureDict;
         private Texture2D wallTexture;
+        private Texture2D altFloorsTexture;
+        private Texture2D doorsTexture;
 
         // level objects
         private List<LightBeam> allBeams;
@@ -52,6 +55,8 @@ namespace Adumbration
             this.textureDict = textureDict;
             this.penumbra = penumbra;
             this.wallTexture = textureDict["walls"];
+            this.altFloorsTexture = textureDict["floors"];
+            this.doorsTexture = textureDict["doors"];
             this.spawnPoint = new Vector2(0, 0);
             this.allBeams = new List<LightBeam>();
             this.allMirrors = new List<Mirror>();
@@ -129,8 +134,8 @@ namespace Adumbration
             SetPenumbraHulls(penumbra);
 
             // teleports player to spawn point
-            player.X = (int)spawnPoint.X;
-            player.Y = (int)spawnPoint.Y;
+            player.X = (int)spawnPoint.X + player.Position.Width / 2 + 2;
+            player.Y = (int)spawnPoint.Y + player.Position.Height / 2;
         }
 
         /// <summary>
@@ -194,6 +199,11 @@ namespace Adumbration
                             if(rec is LightEmitter e)
                             {
                                 e.Enabled = receptor.IsActivated;
+                            }
+
+                            if(rec is LevelDoor d)
+                            {
+                                d.IsOpen = receptor.IsActivated;
                             }
                         }
                     }
@@ -456,21 +466,107 @@ namespace Adumbration
 
                         // SPAWN POINT
                         case 'S':
-                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+                            returnArray[x, y] = new Floor(altFloorsTexture, new Rectangle(1 * 16, 0, 16, 16), positionRect);
                             spawnPoint = new Vector2(positionRect.X, positionRect.Y);
                             break;
 
                         // FLOOR
                         case '_':
-                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+                            // Alternative floors
+                            if(layout[x, y].Length > 1)
+                            {
+                                Vector2 tileCoord = new Vector2(0, 0);
+
+                                switch(layout[x, y][1])
+                                {
+                                    // level labels:
+                                    case '1':
+                                        tileCoord = new Vector2(0, 2);
+                                        break;
+                                    case '2':
+                                        tileCoord = new Vector2(1, 2);
+                                        break;
+                                    case '3':
+                                        tileCoord = new Vector2(2, 2);
+                                        break;
+                                    case '4':
+                                        tileCoord = new Vector2(3, 2);
+                                        break;
+
+                                    // controls:
+                                    case 'm':   // movement
+                                        tileCoord = new Vector2(0, 0);
+                                        break;
+                                    case 'g':   // grab
+                                        tileCoord = new Vector2(0, 1);
+                                        break;
+                                    case 'e':   // use
+                                        tileCoord = new Vector2(2, 1);
+                                        break;
+                                    case 'z':   // zoom
+                                        tileCoord = new Vector2(3, 1);
+                                        break;
+
+                                    // tutorial (2 parts)
+                                    case 'T':   // left part
+                                        tileCoord = new Vector2(2, 0);
+                                        break;
+                                    case 't':   // right part
+                                        tileCoord = new Vector2(3, 0);
+                                        break;
+
+
+                                }
+
+                                returnArray[x, y] = new Floor(
+                                    altFloorsTexture,
+                                    new Rectangle(
+                                        (int)tileCoord.X * 16, 
+                                        (int)tileCoord.Y * 16, 
+                                        16, 
+                                        16), 
+                                    positionRect);
+                            }
+                            // Default floor
+                            else
+                            {
+                                returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+                            }
                             break;
 
-                        //FINAL DOOR
+                        // FINAL DOOR
                         case 'F':
                             returnArray[x, y] = new FinalDoor(
                                 textureDict["doors"],
                                 new Rectangle(0, 32, 16, 16),
                                 positionRect);
+                            break;
+
+                        case 'd':
+                            if(layout[x, y].Length > 1)
+                            {
+                                signal = int.Parse(layout[x, y][1].ToString());
+                            }
+                            else
+                            {
+                                throw new Exception($"ERROR: LevelDoor at layout[{x}, {y}] does " +
+                                    "not contain a signal associated! (\"E#\", where # is an int 0-9)");
+                            }
+
+                            returnArray[x, y] = new LevelDoor(
+                                doorsTexture,
+                                positionRect,
+                                signal);
+
+                            // creates a new list if it doesn't exist yet
+                            if(!receiversDict.ContainsKey(signal))
+                            {
+                                receiversDict[signal] = new List<GameObject>();
+                            }
+
+                            // adds this object to the receiver list
+                            receiversDict[signal].Add(returnArray[x, y]);
+
                             break;
 
                         case 'D':
@@ -513,7 +609,7 @@ namespace Adumbration
 
                             // creates the door and adds it the list and layout
                             Door doorToAdd = new Door(
-                                textureDict["doors"],
+                                doorsTexture,
                                 positionRect,
                                 levelToLoad);
 
@@ -696,7 +792,8 @@ namespace Adumbration
                             bool correctChar =
                                 levelLayout[arrayX, arrayY][0] == '_' ||
                                 levelLayout[arrayX, arrayY][0] == 'S' ||
-                                levelLayout[arrayX, arrayY][0] == 'K';
+                                levelLayout[arrayX, arrayY][0] == 'K' ||
+                                levelLayout[arrayX, arrayY][0] == 'd';
 
                             // true if iterated coordinate is a floor ('_')
                             if(correctChar)

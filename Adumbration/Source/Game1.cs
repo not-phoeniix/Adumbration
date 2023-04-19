@@ -331,7 +331,7 @@ namespace Adumbration
         {
             penumbra.BeginDraw();
 
-            GraphicsDevice.Clear(Color.FromNonPremultiplied(24, 20, 37, 255));
+            GraphicsDevice.Clear(Color.Black);
 
             #region // Game drawing
 
