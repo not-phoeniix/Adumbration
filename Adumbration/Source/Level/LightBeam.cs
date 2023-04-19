@@ -97,7 +97,7 @@ namespace Adumbration
             reflectedBeam = null;
             associatedMirror = null;
             
-            expandSpeed = 1;
+            expandSpeed = 3;
         }
 
         public LightBeam(Texture2D texture, Rectangle position, Direction dir, Mirror associatedMirror)
@@ -110,7 +110,7 @@ namespace Adumbration
             reflectedBeam = null;
             this.associatedMirror = associatedMirror;
 
-            expandSpeed = 1;
+            expandSpeed = 3;
         }
 
         /// <summary>
