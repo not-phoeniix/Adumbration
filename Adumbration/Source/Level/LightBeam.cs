@@ -2,7 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Penumbra;
 using SharpDX.Direct2D1.Effects;
+using SharpDX.WIC;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Runtime.InteropServices;
 
 namespace Adumbration
@@ -34,6 +36,9 @@ namespace Adumbration
         private Mirror associatedMirror;
         private int expandSpeed;
         private Rectangle prevPosition;
+        private int originalX;
+        private int originalY;
+        private Mirror collidedMirror;
 
         #region // Properties
 
@@ -96,8 +101,12 @@ namespace Adumbration
             isReflected = false;
             reflectedBeam = null;
             associatedMirror = null;
+            collidedMirror = null;
             
             expandSpeed = 3;
+
+            originalX = position.X;
+            originalY = position.Y;
         }
 
         public LightBeam(Texture2D texture, Rectangle position, Direction dir, Mirror associatedMirror)
@@ -109,8 +118,12 @@ namespace Adumbration
             isReflected = false;
             reflectedBeam = null;
             this.associatedMirror = associatedMirror;
+            collidedMirror = null;
 
             expandSpeed = 3;
+
+            originalX = position.X;
+            originalY = position.Y;
         }
 
         /// <summary>
@@ -155,6 +168,9 @@ namespace Adumbration
                             // It is now reflecting
                             isReflected = true;
 
+                            // It is now colliding with a specific mirror
+                            collidedMirror = mirror;
+
                             // Make new beam dependent on mirror
                             if (mirror.Type == MirrorType.Backward)
                             {
@@ -170,12 +186,27 @@ namespace Adumbration
                             }
                         }
 
+                        if (!IsColliding(mirror) && mirror == collidedMirror)
+                        {
+                            isReflected = false;
+                            if (currentLevel.Beams.Contains(reflectedBeam))
+                            {
+                                currentLevel.Beams.Remove(reflectedBeam);
+                            }
+                            reflectedBeam = null;
+                        }
+
                         // If it is colliding with a mirror and is reflecting
                         if (IsColliding(mirror) && isReflected)
                         {
                             // Stop expansion
-                            positionRect.X = mirror.Position.X + mirror.Position.Width;
-                            positionRect.Width -= expandSpeed;
+                            positionRect.Width = originalX - (mirror.X + mirror.Position.Width);
+                            positionRect.X = mirror.X + mirror.Position.Width;
+                        }
+
+                        if (reflectedBeam != null && HasChanged)
+                        {
+                            reflectedBeam.X = positionRect.X;
                         }
                     }
 
@@ -204,6 +235,9 @@ namespace Adumbration
                             // It is now reflecting
                             isReflected = true;
 
+                            // It is now colliding with a specific mirror
+                            collidedMirror = mirror;
+
                             // Make new beam dependent on mirror
                             if (mirror.Type == MirrorType.Backward)
                             {
@@ -219,11 +253,26 @@ namespace Adumbration
                             }
                         }
 
+                        if (!IsColliding(mirror) && mirror == collidedMirror)
+                        {
+                            isReflected = false;
+                            if (currentLevel.Beams.Contains(reflectedBeam))
+                            {
+                                currentLevel.Beams.Remove(reflectedBeam);
+                            }
+                            reflectedBeam = null;
+                        }
+
                         // If it is colliding with a mirror and is reflecting
                         if (IsColliding(mirror) && isReflected)
                         {
                             // Stop Expansion
-                            positionRect.Width -= expandSpeed;
+                            positionRect.Width = mirror.X - positionRect.X;
+                        }
+
+                        if (reflectedBeam != null && HasChanged)
+                        {
+                            reflectedBeam.X = positionRect.X + positionRect.Width;
                         }
                     }
                     break;
@@ -253,6 +302,9 @@ namespace Adumbration
                             // It is now reflecting
                             isReflected = true;
 
+                            // It is now colliding with a specific mirror
+                            collidedMirror = mirror;
+
                             // Make new beam dependent on mirror
                             if (mirror.Type == MirrorType.Backward)
                             {
@@ -268,12 +320,27 @@ namespace Adumbration
                             }
                         }
 
+                        if (!IsColliding(mirror) && mirror == collidedMirror)
+                        {
+                            isReflected = false;
+                            if (currentLevel.Beams.Contains(reflectedBeam))
+                            {
+                                currentLevel.Beams.Remove(reflectedBeam);
+                            }
+                            reflectedBeam = null;
+                        }
+
                         // If it is colliding with a mirror and is reflecting
                         if (IsColliding(mirror) && isReflected)
                         {
                             // Stop expansion
-                            positionRect.Y = mirror.Position.Y + mirror.Position.Height;
-                            positionRect.Height -= expandSpeed;
+                            positionRect.Height = originalY - (mirror.Y + mirror.Position.Height);
+                            positionRect.Y = mirror.Y + mirror.Position.Height;
+                        }
+
+                        if (reflectedBeam != null && HasChanged)
+                        {
+                            reflectedBeam.Y = positionRect.Y;
                         }
                     }
                     break;
@@ -301,6 +368,9 @@ namespace Adumbration
                             // It is now reflecting
                             isReflected = true;
 
+                            // It is now colliding with a specific mirror
+                            collidedMirror = mirror;
+
                             // Make new beam dependent on mirror
                             if (mirror.Type == MirrorType.Backward)
                             {
@@ -316,12 +386,27 @@ namespace Adumbration
                             }
                         }
 
+                        if (!IsColliding(mirror) && mirror == collidedMirror)
+                        {
+                            isReflected = false;
+                            if (currentLevel.Beams.Contains(reflectedBeam))
+                            {
+                                currentLevel.Beams.Remove(reflectedBeam);
+                            }
+                            reflectedBeam = null;
+                        }
+
                         // If it is colliding with a mirror and is reflecting
                         if (IsColliding(mirror) && isReflected)
                         {
                             // Stop expansion
-                            positionRect.Height -= expandSpeed;
+                            positionRect.Height = mirror.Y - positionRect.Y;
                         }
+
+                        if (reflectedBeam != null && HasChanged)
+                        {
+                            reflectedBeam.Y = positionRect.Y + positionRect.Height;
+                        }                        
                     }
                     break;
             }
