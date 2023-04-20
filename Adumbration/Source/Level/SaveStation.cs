@@ -68,9 +68,7 @@ namespace Adumbration
 
             if (isInteracted)
             {
-                LevelManager.Instance.CurrentLevel.SpawnPoint = new Vector2(
-                    myPlayer.Position.X,
-                    myPlayer.Position.Y);
+                
             }
         }
 
