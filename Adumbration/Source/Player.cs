@@ -513,7 +513,8 @@ namespace Adumbration
         {
             foreach(Mirror mirror in currentLevel.Mirrors)
             {
-                if (positionRect.Intersects(mirror.Hitbox) && currentKbState.IsKeyDown(Keys.Space))
+                if (positionRect.Intersects(mirror.Hitbox) && currentKbState.IsKeyDown(Keys.Space)
+                    && mirror is not StationaryMirror)
                 {
                     if (currentKbState.IsKeyDown(Keys.W))
                     {

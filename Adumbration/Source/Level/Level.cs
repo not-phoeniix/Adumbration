@@ -464,6 +464,15 @@ namespace Adumbration
                                 MirrorType.Backward));
                             break;
 
+                        // STATIONARY MIRROR
+                        case 'M':
+                            returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+                            allMirrors.Add(new StationaryMirror(
+                                textureDict["walls"],
+                                positionRect, Direction.Right,
+                                MirrorType.Backward));
+                            break;
+
                         // KEY
                         case 'K':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
@@ -764,7 +773,8 @@ namespace Adumbration
                 tileValue == 'S' ||
                 tileValue == 'K' ||
                 tileValue == '/' ||
-                tileValue == '\\')
+                tileValue == '\\' ||
+                tileValue == 'M')
             {
                 returnRectCoord.X = 1;
                 returnRectCoord.Y = 1;

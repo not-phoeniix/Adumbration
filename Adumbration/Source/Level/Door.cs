@@ -34,10 +34,9 @@ namespace Adumbration
         /// Parameterized Constructor of Door.
         /// Requires the base constructor parameters.
         /// </summary>
-        /// <param name="isOpen"></param>
-        /// <param name="spriteSheet"></param>
-        /// <param name="sourceRect"></param>
+        /// <param name="texture"></param>
         /// <param name="position"></param>
+        /// <param name="level"></param>
         public Door(Texture2D texture, Rectangle position, GameLevels level)
              : base(texture, new Rectangle(0, 0, 16, 16), position)
         {
