@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Adumbration
 {
@@ -41,7 +42,7 @@ namespace Adumbration
 
         // Player variables
         private int speed;
-        private List<bool> collectedKeys;
+        private bool[] collectedKeys;
 
         // Whether player is flipped or not
         private bool playerIsFlipped;
@@ -70,7 +71,7 @@ namespace Adumbration
             }
         }
 
-        public List<bool> CollectedKeys
+        public bool[] CollectedKeys
         {
             get{ return collectedKeys; }
             set { collectedKeys = value; }
@@ -95,7 +96,7 @@ namespace Adumbration
 
             // Set player speed and the collectedKeys array to null
             speed = 2;
-            collectedKeys = new List<bool>();
+            collectedKeys = new bool[4];
 
             // Animation data
             fps = 2.0;
@@ -152,7 +153,7 @@ namespace Adumbration
 
             //MoveMirror(currentLevel, currentKbState);
 
-            IsDead(currentLevel.Beams);
+            IsDead(currentLevel.Beams, LevelManager.Instance);
 
             previousKbState = currentKbState;
         }
@@ -195,7 +196,7 @@ namespace Adumbration
         /// If the player is killed, it will respawn at the start of the room.
         /// </summary>
         /// <param name="beam">The light beam.</param>
-        private void IsDead(List<LightBeam> beams)
+        private void IsDead(List<LightBeam> beams, LevelManager manager)
         {
             // When the player collides with a light beam, respawn at starting point
             // This is just for the test room
@@ -205,6 +206,27 @@ namespace Adumbration
                 {
                     if (this.IsColliding(beam))
                     {
+                        if (manager.CurrentLevelEnum == GameLevels.Level1)
+                        {
+                            Debug.WriteLine("CollectedKeys[0] resetted");
+                            collectedKeys[0] = false;
+                        }
+
+                        if (manager.CurrentLevelEnum == GameLevels.Level2)
+                        {
+                            collectedKeys[1] = false;
+                        }
+
+                        if (manager.CurrentLevelEnum == GameLevels.Level3)
+                        {
+                            collectedKeys[2] = false;
+                        }
+
+                        if (manager.CurrentLevelEnum == GameLevels.Level4)
+                        {
+                            collectedKeys[3] = false;
+                        }
+
                         LevelManager.Instance.ResetLevel();
                         return;
                     }
@@ -551,7 +573,10 @@ namespace Adumbration
 
         public void ResetKeys()
         {
-            collectedKeys.Clear();
+            collectedKeys[0] = false;
+            collectedKeys[1] = false;
+            collectedKeys[2] = false;
+            collectedKeys[3] = false;
         }
 
     }

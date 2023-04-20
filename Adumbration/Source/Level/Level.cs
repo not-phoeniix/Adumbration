@@ -255,7 +255,7 @@ namespace Adumbration
             }
 
             // updating level key
-            levelKey?.Update(gameTime, player);
+            levelKey?.Update(gameTime, player, LevelManager.Instance);
         }
 
         /// <summary>

@@ -63,7 +63,7 @@ namespace Adumbration
         /// aka you picked it up
         /// </summary>
         /// <param name="gameTime"></param>
-        public void Update(GameTime gameTime, Player player)
+        public void Update(GameTime gameTime, Player player, LevelManager manager)
         {
             KeyboardState currentState = Keyboard.GetState();
 
@@ -80,9 +80,25 @@ namespace Adumbration
                     pickedUp = true;
 
                     //if the key is picked up it will add to the list once
-                    if (pickedUp)
+                    if (pickedUp && manager.CurrentLevelEnum == GameLevels.Level1)
                     {
-                        player.CollectedKeys.Add(true);
+                        player.CollectedKeys[0] = true;
+
+                    }
+
+                    if (pickedUp && manager.CurrentLevelEnum == GameLevels.Level2)
+                    {
+                        player.CollectedKeys[1] = true;
+                    }
+
+                    if (pickedUp && manager.CurrentLevelEnum == GameLevels.Level3)
+                    {
+                        player.CollectedKeys[2] = true;
+                    }
+                    
+                    if (pickedUp && manager.CurrentLevelEnum == GameLevels.Level4)
+                    {
+                        player.CollectedKeys[3] = true;
                     }
                 }
             }
