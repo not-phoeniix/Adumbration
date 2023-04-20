@@ -468,11 +468,45 @@ namespace Adumbration
                         case 'M':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
 
-                            if()
+                            #region // Direction logic
+
+                            // determines orientation of mirror to draw
+                            //   depending on surrounding floors
+                            if(floorAbove && floorRight)
+                            {
+                                dir = Direction.Right;
+                            } 
+                            else if(floorRight && floorBelow)
+                            {
+                                dir = Direction.Down;
+                            }
+                            else if(floorBelow && floorLeft)
+                            {
+                                dir = Direction.Left;
+                            }
+                            else if(floorLeft && floorAbove)
+                            {
+                                dir = Direction.Up;
+                            }
+
+                            // determines type of mirror to draw
+                            MirrorType type;
+                            if(dir == Direction.Down || dir == Direction.Up)
+                            {
+                                type = MirrorType.Forward;
+                            }
+                            else
+                            {
+                                type = MirrorType.Backward;
+                            }
+
+                            #endregion
+
                             allMirrors.Add(new StationaryMirror(
                                 textureDict["walls"],
-                                positionRect, Direction.Right,
-                                MirrorType.Backward));
+                                positionRect, 
+                                dir,
+                                type));
                             break;
 
                         // KEY
