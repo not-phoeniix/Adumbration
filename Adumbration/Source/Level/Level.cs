@@ -467,6 +467,8 @@ namespace Adumbration
                         // STATIONARY MIRROR
                         case 'M':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
+
+                            if()
                             allMirrors.Add(new StationaryMirror(
                                 textureDict["walls"],
                                 positionRect, Direction.Right,
