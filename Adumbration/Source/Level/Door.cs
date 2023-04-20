@@ -13,7 +13,8 @@ namespace Adumbration
     public class Door : Wall, IHitbox
     {
         // Fields
-        private bool isOpen;
+        protected bool isOpen;
+        private bool isFlipped;
         private bool isInteracted;
         private Rectangle hitbox;
         private GameLevels level;
@@ -37,7 +38,7 @@ namespace Adumbration
         /// <param name="texture"></param>
         /// <param name="position"></param>
         /// <param name="level"></param>
-        public Door(Texture2D texture, Rectangle position, GameLevels level)
+        public Door(Texture2D texture, Rectangle position, GameLevels level, Direction dir)
              : base(texture, new Rectangle(0, 0, 16, 16), position)
         {
             this.level = level;
@@ -52,6 +53,28 @@ namespace Adumbration
                 position.Y - position.Height / 2,
                 position.Width * 2,
                 position.Height * 2);
+
+            isFlipped = false;
+
+            sourceRect = new Rectangle(0, 0, 16, 16);
+
+            // determines source rect depending on direction
+            switch(dir)
+            {
+                case Direction.Down:
+                    sourceRect.X = 0;
+                    break;
+                case Direction.Up:
+                    sourceRect.X = 2 * 16;
+                    break;
+                case Direction.Left:
+                    sourceRect.X = 1 * 16;
+                    break;
+                case Direction.Right:
+                    sourceRect.X = 1 * 16;
+                    isFlipped = true;
+                    break;
+            }
         }
 
         // Methods
@@ -65,6 +88,18 @@ namespace Adumbration
         public virtual void Update(Player myPlayer)
         {
             kbState = Keyboard.GetState();
+
+            // updates sprite depending on open/close state
+            if(isOpen)
+            {
+                Hull.Enabled = false;
+                sourceRect.Y = 1 * 16;
+            }
+            else
+            {
+                Hull.Enabled = true;
+                sourceRect.Y = 0 * 16;
+            }
 
             sourceRect.Y = isOpen ? 16 : 0;
 
@@ -97,12 +132,15 @@ namespace Adumbration
         /// <param name="sb">Reference to the SpriteBatch.</param>
         public override void Draw(SpriteBatch sb)
         {
-            // Draw door
             sb.Draw(
                 spriteSheet,
                 positionRect,
                 sourceRect,
-                Color.White);
+                Color.White,
+                0,
+                Vector2.Zero,
+                isFlipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None,
+                0);
         }
 
         #endregion

@@ -201,11 +201,24 @@ namespace Adumbration
                     int objSignal = receptor.SignalNum;
                     if(objSignal > 0 && receiversDict.ContainsKey(objSignal))
                     {
+                        // checks logic for each reciever in the current signal
                         foreach(GameObject rec in receiversDict[objSignal])
                         {
                             if(rec is LightEmitter e)
                             {
-                                e.Enabled = receptor.IsActivated;
+                                if(receptor.IsActivated && e.StartingEnabled)
+                                {
+                                    e.Enabled = false;
+                                }
+                                else if(receptor.IsActivated && !e.StartingEnabled)
+                                {
+                                    e.Enabled = true;
+                                }
+                                
+                                if(!receptor.IsActivated)
+                                {
+                                    e.Enabled = e.StartingEnabled;
+                                }
                             }
 
                             if(rec is LevelDoor d)
@@ -404,10 +417,14 @@ namespace Adumbration
                     bool floorLeft = false;
                     bool floorRight = false;
 
-                    if(y > 0 && layout[x, y - 1][0] == '_') { floorAbove = true; }
-                    if(y < levelHeight - 1 && layout[x, y + 1][0] == '_') { floorBelow = true; }
-                    if(x > 0 && layout[x - 1, y][0] == '_') { floorLeft = true; }
-                    if(x < levelWidth - 1 && layout[x + 1, y][0] == '_') { floorRight = true; }
+                    if(y > 0 && (layout[x, y - 1][0] == '_' || layout[x, y - 1][0] == 'S')) 
+                    { floorAbove = true; }
+                    if(y < levelHeight - 1 && (layout[x, y + 1][0] == '_' || layout[x, y + 1][0] == 'S')) 
+                    { floorBelow = true; }
+                    if(x > 0 && (layout[x - 1, y][0] == '_' || layout[x - 1, y][0] == 'S')) 
+                    { floorLeft = true; }
+                    if(x < levelWidth - 1 && (layout[x + 1, y][0] == '_' || layout[x + 1, y][0] == 'S')) 
+                    { floorRight = true; }
 
                     Direction dir = Direction.Down;
 
@@ -468,11 +485,45 @@ namespace Adumbration
                         case 'M':
                             returnArray[x, y] = new Floor(wallTexture, sourceRect, positionRect);
 
-                            if()
+                            #region // Direction logic
+
+                            // determines orientation of mirror to draw
+                            //   depending on surrounding floors
+                            if(floorAbove && floorRight)
+                            {
+                                dir = Direction.Right;
+                            } 
+                            else if(floorRight && floorBelow)
+                            {
+                                dir = Direction.Down;
+                            }
+                            else if(floorBelow && floorLeft)
+                            {
+                                dir = Direction.Left;
+                            }
+                            else if(floorLeft && floorAbove)
+                            {
+                                dir = Direction.Up;
+                            }
+
+                            // determines type of mirror to draw
+                            MirrorType type;
+                            if(dir == Direction.Down || dir == Direction.Up)
+                            {
+                                type = MirrorType.Forward;
+                            }
+                            else
+                            {
+                                type = MirrorType.Backward;
+                            }
+
+                            #endregion
+
                             allMirrors.Add(new StationaryMirror(
                                 textureDict["walls"],
-                                positionRect, Direction.Right,
-                                MirrorType.Backward));
+                                positionRect, 
+                                dir,
+                                type));
                             break;
 
                         // KEY
@@ -577,6 +628,7 @@ namespace Adumbration
                             returnArray[x, y] = new LevelDoor(
                                 doorsTexture,
                                 positionRect,
+                                dir,
                                 signal);
 
                             // creates a new list if it doesn't exist yet
@@ -632,7 +684,8 @@ namespace Adumbration
                             Door doorToAdd = new Door(
                                 doorsTexture,
                                 positionRect,
-                                levelToLoad);
+                                levelToLoad,
+                                dir);
 
                             returnArray[x, y] = doorToAdd;
                             allDoors.Add(doorToAdd);
@@ -815,6 +868,8 @@ namespace Adumbration
                                 levelLayout[arrayX, arrayY][0] == '_' ||
                                 levelLayout[arrayX, arrayY][0] == 'S' ||
                                 levelLayout[arrayX, arrayY][0] == 'K' ||
+                                levelLayout[arrayX, arrayY][0] == '/' ||
+                                levelLayout[arrayX, arrayY][0] == '\\' ||
                                 levelLayout[arrayX, arrayY][0] == 'd';
 
                             // true if iterated coordinate is a floor ('_')

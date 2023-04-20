@@ -1,10 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Adumbration
 {
@@ -22,6 +17,22 @@ namespace Adumbration
 
         public override void Draw(SpriteBatch sb)
         {
+            switch(dir)
+            {
+                case Direction.Right:
+                    sourceRect.X = 0 * 16;
+                    break;
+                case Direction.Down:
+                    sourceRect.X = 1 * 16;
+                    break;
+                case Direction.Left:
+                    sourceRect.X = 2 * 16;
+                    break;
+                case Direction.Up:
+                    sourceRect.X = 3 * 16;
+                    break;
+            }
+
             sb.Draw(spriteSheet, positionRect, sourceRect, Color.White);
         }
     }
