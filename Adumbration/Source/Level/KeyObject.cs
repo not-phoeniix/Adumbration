@@ -16,20 +16,24 @@ namespace Adumbration
     /// </summary>
     internal class KeyObject : GameObject, IHitbox
     {
-        //field
+        // Fields
         private Rectangle hitbox;
         private bool pickedUp;
         KeyboardState prevState;
         private bool colliding;
-        private int originY;
 
-        //property
-
+        // Properties
+        /// <summary>
+        /// Interact Hitbox of Key object
+        /// </summary>
         public Rectangle Hitbox
         {
             get { return hitbox; }
         }
 
+        /// <summary>
+        /// Whether the Key was picked up or not
+        /// </summary>
         public bool PickedUp
         {
             get { return pickedUp; }
@@ -52,7 +56,6 @@ namespace Adumbration
 
             pickedUp = false;
             colliding = false;
-            originY = position.Y;
         }
 
 

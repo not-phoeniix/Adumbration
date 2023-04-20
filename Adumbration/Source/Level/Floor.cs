@@ -24,15 +24,5 @@ namespace Adumbration
         {
 
         }
-
-        public override void Update(GameTime gameTime)
-        {
-            //it's a floor, what is there to update yet smh
-        }
-
-        public override bool IsColliding(GameObject obj)
-        {
-            return Position.Intersects(obj.Position);
-        }
     }
 }
