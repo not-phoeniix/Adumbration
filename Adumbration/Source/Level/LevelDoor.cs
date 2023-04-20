@@ -45,5 +45,11 @@ namespace Adumbration.Source.Level
                 sb.Draw(spriteSheet, positionRect, new Rectangle(0, 3 * 16, 16, 16), Color.White);
             }
         }
+
+        /// <summary>
+        /// Updating LevelDoors does nothing, meaning they won't load levels
+        /// </summary>
+        /// <param name="myPlayer"></param>
+        public override void Update(Player myPlayer) {}
     }
 }

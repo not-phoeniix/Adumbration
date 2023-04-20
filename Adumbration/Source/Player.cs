@@ -159,6 +159,8 @@ namespace Adumbration
 
             MoveMirror(currentLevel, currentKbState);
 
+            IsDead(currentLevel.Beams);
+
             previousKbState = currentKbState;
         }
 
@@ -200,7 +202,7 @@ namespace Adumbration
         /// If the player is killed, it will respawn at the start of the room.
         /// </summary>
         /// <param name="beam">The light beam.</param>
-        internal void IsDead(List<LightBeam> beams)
+        private void IsDead(List<LightBeam> beams)
         {
             // When the player collides with a light beam, respawn at starting point
             // This is just for the test room

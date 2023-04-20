@@ -130,8 +130,6 @@ namespace Adumbration
                     throw new Exception($"Error: level {level} does not exist!");
             }
 
-
-
             currentLevel.SetupLevel(levelDataPath, player);
         }
 

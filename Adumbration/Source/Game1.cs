@@ -209,7 +209,6 @@ namespace Adumbration
                     // object logic
                     LevelManager.Instance.Update(gameTime, player);
                     player.Update(gameTime, LevelManager.Instance.CurrentLevel);
-                    player.IsDead(LevelManager.Instance.CurrentLevel.Beams);
 
                     #region Zoom
 

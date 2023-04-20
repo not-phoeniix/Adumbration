@@ -63,7 +63,7 @@ namespace Adumbration
         /// Updates door state, checking for key presses and the player's hitbox.
         /// </summary>
         /// <param name="myPlayer">Reference to the player.</param>
-        public void Update(Player myPlayer)
+        public virtual void Update(Player myPlayer)
         {
             kbState = Keyboard.GetState();
 
