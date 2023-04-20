@@ -69,6 +69,11 @@ namespace Adumbration
             get { return currentLevel; }
         }
 
+        public GameLevels CurrentLevelEnum
+        {
+            get { return currentLevelEnum; }
+        }
+
         /// <summary>
         /// Initializes LevelManager singleton, must be run first for levels to work properly. LOADS HUB BY DEFAULT
         /// </summary>

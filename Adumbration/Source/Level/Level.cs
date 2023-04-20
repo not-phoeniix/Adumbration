@@ -20,6 +20,7 @@ namespace Adumbration
         private string[,] levelLayout;            // copy of level text file, just char's
         private GameObject[,] objectArray;      // full array of GameObject's
         private Hull[,] wallHulls;              // for shadow casting
+        private bool firstFrame;
         
         // misc
         private PenumbraComponent penumbra;
@@ -125,6 +126,12 @@ namespace Adumbration
             get { return levelKey; }
         }
 
+        public bool FirstFrame
+        {
+            get { return firstFrame; }
+            set { firstFrame = value; }
+        }
+
         #endregion
 
         /// <summary>
@@ -140,6 +147,9 @@ namespace Adumbration
             levelKey = null;
             receiversDict.Clear();
             penumbra.Lights.Clear();
+
+            // resets first frame to true again
+            firstFrame = true;
 
             // loads and creates level from file path
             levelLayout = LoadLayoutFromFile(currentLevel);
@@ -276,7 +286,7 @@ namespace Adumbration
             }
 
             // updating level key
-            levelKey?.Update(gameTime, player);
+            levelKey?.Update(gameTime, player, LevelManager.Instance);
         }
 
         /// <summary>
