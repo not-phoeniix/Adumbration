@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Adumbration.Source.Level;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -139,6 +140,16 @@ namespace Adumbration
             int currentX = positionRect.X;
             int currentY = positionRect.Y;
 
+            // makes player look backward when walking backward
+            if(currentState == PlayerState.FacingUp || currentState == PlayerState.MovingUp)
+            {
+                sourceRect.X = 14;
+            }
+            else
+            {
+                sourceRect.X = 0;
+            }
+
             #region // Movement
             // North Movement
             NorthMovement(currentKbState, currentLevel, currentX);
@@ -238,11 +249,23 @@ namespace Adumbration
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // If it is colliding with a wall
-                    if (tile is Wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
+                    if (tile is Wall wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
                     {
-                        // Snap the Player to the bottom of the wall
-                        positionRect.Y = tile.Position.Height + tile.Position.Y;
-                        positionRect.X = currentX;
+                        if(wall is LevelDoor door)
+                        {
+                            if(!door.IsOpen)
+                            {
+                                // Snap the Player to the bottom of the wall
+                                positionRect.Y = tile.Position.Height + tile.Position.Y;
+                                positionRect.X = currentX;
+                            }
+                        }
+                        else
+                        {
+                            // Snap the Player to the bottom of the wall
+                            positionRect.Y = tile.Position.Height + tile.Position.Y;
+                            positionRect.X = currentX;
+                        }
                     }
                 }
 
@@ -279,14 +302,29 @@ namespace Adumbration
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // if the player is colliding with a wall
-                    if (tile is Wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
+                    if (tile is Wall wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
                     {
-                        // Snap Player to the left side of the wall
-                        positionRect.X = tile.Position.X - positionRect.Width;
-                        positionRect.Y = currentY;
+                        if(wall is LevelDoor door)
+                        {
+                            if(!door.IsOpen)
+                            {
+                                // Snap Player to the left side of the wall
+                                positionRect.X = tile.Position.X - positionRect.Width;
+                                positionRect.Y = currentY;
 
-                        // North Movement
-                        NorthMovement(currentKbState, currentLevel, currentX);
+                                // North Movement
+                                NorthMovement(currentKbState, currentLevel, currentX);
+                            }
+                        }
+                        else
+                        {
+                            // Snap Player to the left side of the wall
+                            positionRect.X = tile.Position.X - positionRect.Width;
+                            positionRect.Y = currentY;
+
+                            // North Movement
+                            NorthMovement(currentKbState, currentLevel, currentX);
+                        }
                     }
                 }
 
@@ -325,15 +363,29 @@ namespace Adumbration
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // If the player collides with a wall
-                    if (tile is Wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
+                    if (tile is Wall wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
                     {
-                        // Snap the player to the right side of the wall
-                        positionRect.X = tile.Position.Width + tile.Position.X;
-                        positionRect.Y = currentY;
+                        if(wall is LevelDoor door)
+                        {
+                            if(!door.IsOpen)
+                            {
+                                // Snap the player to the right side of the wall
+                                positionRect.X = tile.Position.Width + tile.Position.X;
+                                positionRect.Y = currentY;
 
-                        // North Movement
-                        NorthMovement(currentKbState, currentLevel, currentX);
+                                // North Movement
+                                NorthMovement(currentKbState, currentLevel, currentX);
+                            }
+                        }
+                        else
+                        {
+                            // Snap the player to the right side of the wall
+                            positionRect.X = tile.Position.Width + tile.Position.X;
+                            positionRect.Y = currentY;
 
+                            // North Movement
+                            NorthMovement(currentKbState, currentLevel, currentX);
+                        }
                     }
                 }
 
@@ -369,17 +421,35 @@ namespace Adumbration
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // If the player collides with a wall
-                    if (tile is Wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
+                    if (tile is Wall wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
                     {
-                        // Snap player to the top of the wall
-                        positionRect.Y = tile.Position.Y - positionRect.Height;
-                        positionRect.X = currentX;
+                        if(wall is LevelDoor door)
+                        {
+                            if(!door.IsOpen)
+                            {
+                                // Snap player to the top of the wall
+                                positionRect.Y = tile.Position.Y - positionRect.Height;
+                                positionRect.X = currentX;
 
-                        // Allow player to move west
-                        WestMovement(currentKbState, currentLevel, currentX, currentY);
+                                // Allow player to move west
+                                WestMovement(currentKbState, currentLevel, currentX, currentY);
 
-                        // Allow player to move east
-                        EastMovement(currentKbState, currentLevel, currentX, currentY);
+                                // Allow player to move east
+                                EastMovement(currentKbState, currentLevel, currentX, currentY);
+                            }
+                        }
+                        else
+                        {
+                            // Snap player to the top of the wall
+                            positionRect.Y = tile.Position.Y - positionRect.Height;
+                            positionRect.X = currentX;
+
+                            // Allow player to move west
+                            WestMovement(currentKbState, currentLevel, currentX, currentY);
+
+                            // Allow player to move east
+                            EastMovement(currentKbState, currentLevel, currentX, currentY);
+                        }
                     }
                 }
 

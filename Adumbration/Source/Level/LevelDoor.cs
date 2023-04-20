@@ -5,7 +5,6 @@ namespace Adumbration.Source.Level
 {
     internal class LevelDoor : Door, ISignal
     {
-        private bool isOpen;
         public int SignalNum { get; set; }
 
         public bool IsOpen
@@ -20,30 +19,28 @@ namespace Adumbration.Source.Level
         /// <param name="texture">Door spritesheet</param>
         /// <param name="position">Position to draw</param>
         /// <param name="signal">Integer signal associated with it</param>
-        public LevelDoor(Texture2D texture, Rectangle position, int signal)
+        public LevelDoor(Texture2D texture, Rectangle position, Direction dir, int signal)
             // hub level is irrelevant, just there to fill base
-            : base(texture, position, GameLevels.Hub)   
+            : base(texture, position, GameLevels.Hub, dir)
         {
-            isOpen = false;
             SignalNum = signal;
+            sourceRect.Y = 3 * 16;
         }
 
-        /// <summary>
-        /// Draws this LevelDoor depending on its open state
-        /// </summary>
-        /// <param name="sb"></param>
         public override void Draw(SpriteBatch sb)
         {
             if(isOpen)
             {
                 Hull.Enabled = false;
-                sb.Draw(spriteSheet, positionRect, new Rectangle(1 * 16, 3 * 16, 16, 16), Color.White);
+                sourceRect.Y = 4 * 16;
             }
             else
             {
                 Hull.Enabled = true;
-                sb.Draw(spriteSheet, positionRect, new Rectangle(0, 3 * 16, 16, 16), Color.White);
+                sourceRect.Y = 3 * 16;
             }
+
+            base.Draw(sb);
         }
 
         /// <summary>

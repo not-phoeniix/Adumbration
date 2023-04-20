@@ -8,6 +8,7 @@ namespace Adumbration
     {
         // Fields 
         private bool enabledState;
+        private bool startingEnabled;
         private bool prevEnabledState;
         private bool textureFlipped;
         private LightBeam beam;
@@ -35,6 +36,14 @@ namespace Adumbration
         }
 
         /// <summary>
+        /// Returns whether the emitter started enabled or not
+        /// </summary>
+        public bool StartingEnabled
+        {
+            get { return startingEnabled; }
+        }
+
+        /// <summary>
         /// Beam that comes from the emitter
         /// </summary>
         public LightBeam Beam
@@ -53,7 +62,7 @@ namespace Adumbration
             : base(textureDict["walls"], new Rectangle(0, 0, 0, 0), position)
         {
             this.dir = dir;
-            this.enabledState = enabled;
+            this.enabledState = startingEnabled = enabled;
             this.textureFlipped = false;
             this.signalNum = signalNum;
 
@@ -110,6 +119,7 @@ namespace Adumbration
             if(enabledState == false && prevEnabledState == true)
             {
                 beam = null;
+                LevelManager.Instance.CurrentLevel.Beams.Clear();
             }
 
             #endregion

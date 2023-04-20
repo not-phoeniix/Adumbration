@@ -222,7 +222,7 @@ namespace Adumbration
                         if (tile is Wall && tile is not LightEmitter && IsColliding(tile))
                         {
                             // Stop expansion
-                            positionRect.Width -= expandSpeed;
+                            positionRect.Width = tile.X - positionRect.X;
                         }
                     }
 
@@ -355,7 +355,7 @@ namespace Adumbration
                         if (tile is Wall && tile is not LightEmitter && IsColliding(tile))
                         {
                             // Stop expansion
-                            positionRect.Height -= expandSpeed;
+                            positionRect.Height = tile.Y - positionRect.Y;
                         }
                     }
 
