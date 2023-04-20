@@ -240,14 +240,13 @@ namespace Adumbration
                 }
             }
 
-            // updating all mirrors
-            foreach(Mirror mirror in allMirrors)
+            foreach (Mirror mirror in Mirrors)
             {
-                mirror.Update(gameTime);
+                mirror.Update(player, this, gameTime);
             }
 
             // updating all beams, they are called outside emitter objects to decouple
-            for(int i = 0; i < allBeams.Count; i++)
+            for (int i = 0; i < allBeams.Count; i++)
             {
                 if (allBeams[i] != null)
                 {

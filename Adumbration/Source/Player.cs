@@ -41,20 +41,10 @@ namespace Adumbration
 
         // Player variables
         private int speed;
-        private int dashSpeed;
         private List<bool> collectedKeys;
 
         // Whether player is flipped or not
         private bool playerIsFlipped;
-
-        // Dashing variables
-        private bool hasDash;
-        private const float MaxDashTime = 0.5f;
-        private float currentDashTime;
-
-        // Player's previous X and Y positions
-        private int prevX;
-        private int prevY;
 
         // Animation fields
         private int widthOfSingleSprite;
@@ -136,10 +126,6 @@ namespace Adumbration
                 System.Diagnostics.Debug.WriteLine("normal mode");
             }
 
-            // Player's current X and Y positions
-            int currentX = positionRect.X;
-            int currentY = positionRect.Y;
-
             // makes player look backward when walking backward
             if(currentState == PlayerState.FacingUp || currentState == PlayerState.MovingUp)
             {
@@ -152,23 +138,19 @@ namespace Adumbration
 
             #region // Movement
             // North Movement
-            NorthMovement(currentKbState, currentLevel, currentX);
+            NorthMovement(currentKbState, currentLevel);
 
             // East Movement
-            EastMovement(currentKbState, currentLevel, currentX, currentY);
+            EastMovement(currentKbState, currentLevel);
 
             // West Movement
-            WestMovement(currentKbState, currentLevel, currentX, currentY);
+            WestMovement(currentKbState, currentLevel);
 
             // South Movement
-            SouthMovement(currentKbState, currentLevel, currentX, currentY);
+            SouthMovement(currentKbState, currentLevel);
             #endregion
 
-            // In case we need to use them keep them here
-            prevX = currentX;
-            prevY = currentY;
-
-            MoveMirror(currentLevel, currentKbState);
+            //MoveMirror(currentLevel, currentKbState);
 
             IsDead(currentLevel.Beams);
 
@@ -237,7 +219,7 @@ namespace Adumbration
         /// <param name="currentKbState">Current state of the keyboard</param>
         /// <param name="currentLevel">Current level the player is on</param>
         /// <param name="currentX">Current X position of player</param>
-        private void NorthMovement(KeyboardState currentKbState, Level currentLevel, int currentX)
+        private void NorthMovement(KeyboardState currentKbState, Level currentLevel)
         {
             if (currentKbState.IsKeyDown(Keys.W))
             {
@@ -257,14 +239,12 @@ namespace Adumbration
                             {
                                 // Snap the Player to the bottom of the wall
                                 positionRect.Y = tile.Position.Height + tile.Position.Y;
-                                positionRect.X = currentX;
                             }
                         }
                         else
                         {
                             // Snap the Player to the bottom of the wall
                             positionRect.Y = tile.Position.Height + tile.Position.Y;
-                            positionRect.X = currentX;
                         }
                     }
                 }
@@ -274,7 +254,6 @@ namespace Adumbration
                     if(IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
                     {
                         positionRect.Y = mirror.Position.Height + mirror.Position.Y;
-                        positionRect.X = currentX;
                     }
                 }
             }
@@ -287,7 +266,7 @@ namespace Adumbration
         /// <param name="currentLevel">Current level the player is on</param>
         /// <param name="currentX">Current X position of player</param>
         /// <param name="currentY">Current Y position of player</param>
-        private void EastMovement(KeyboardState currentKbState, Level currentLevel, int currentX, int currentY)
+        private void EastMovement(KeyboardState currentKbState, Level currentLevel)
         {
             if (currentKbState.IsKeyDown(Keys.D))
             {
@@ -310,20 +289,18 @@ namespace Adumbration
                             {
                                 // Snap Player to the left side of the wall
                                 positionRect.X = tile.Position.X - positionRect.Width;
-                                positionRect.Y = currentY;
 
                                 // North Movement
-                                NorthMovement(currentKbState, currentLevel, currentX);
+                                NorthMovement(currentKbState, currentLevel);
                             }
                         }
                         else
                         {
                             // Snap Player to the left side of the wall
                             positionRect.X = tile.Position.X - positionRect.Width;
-                            positionRect.Y = currentY;
 
                             // North Movement
-                            NorthMovement(currentKbState, currentLevel, currentX);
+                            NorthMovement(currentKbState, currentLevel);
                         }
                     }
                 }
@@ -333,9 +310,8 @@ namespace Adumbration
                     if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
                     {
                         positionRect.X = mirror.Position.X - positionRect.Width;
-                        positionRect.Y = currentY;
 
-                        NorthMovement(currentKbState, currentLevel, currentX);
+                        NorthMovement(currentKbState, currentLevel);
                     }
                 }
             }
@@ -348,7 +324,7 @@ namespace Adumbration
         /// <param name="currentLevel">Current level the player is on</param>
         /// <param name="currentX">Current X position of player</param>
         /// <param name="currentY">Current Y position of player</param>
-        private void WestMovement(KeyboardState currentKbState, Level currentLevel, int currentX, int currentY)
+        private void WestMovement(KeyboardState currentKbState, Level currentLevel)
         {
             if (currentKbState.IsKeyDown(Keys.A))
             {
@@ -371,20 +347,18 @@ namespace Adumbration
                             {
                                 // Snap the player to the right side of the wall
                                 positionRect.X = tile.Position.Width + tile.Position.X;
-                                positionRect.Y = currentY;
 
                                 // North Movement
-                                NorthMovement(currentKbState, currentLevel, currentX);
+                                NorthMovement(currentKbState, currentLevel);
                             }
                         }
                         else
                         {
                             // Snap the player to the right side of the wall
                             positionRect.X = tile.Position.Width + tile.Position.X;
-                            positionRect.Y = currentY;
 
                             // North Movement
-                            NorthMovement(currentKbState, currentLevel, currentX);
+                            NorthMovement(currentKbState, currentLevel);
                         }
                     }
                 }
@@ -394,9 +368,8 @@ namespace Adumbration
                     if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
                     {
                         positionRect.X = mirror.Position.Width + mirror.Position.X;
-                        positionRect.Y = currentY;
 
-                        NorthMovement(currentKbState, currentLevel, currentX);
+                        NorthMovement(currentKbState, currentLevel);
                     }
                 }
             }
@@ -409,7 +382,7 @@ namespace Adumbration
         /// <param name="currentLevel">Current level the player is on</param>
         /// <param name="currentX">Current X position of player</param>
         /// <param name="currentY">Current Y position of player</param>
-        private void SouthMovement(KeyboardState currentKbState, Level currentLevel, int currentX, int currentY)
+        private void SouthMovement(KeyboardState currentKbState, Level currentLevel)
         {
             if (currentKbState.IsKeyDown(Keys.S))
             {
@@ -429,26 +402,24 @@ namespace Adumbration
                             {
                                 // Snap player to the top of the wall
                                 positionRect.Y = tile.Position.Y - positionRect.Height;
-                                positionRect.X = currentX;
 
                                 // Allow player to move west
-                                WestMovement(currentKbState, currentLevel, currentX, currentY);
+                                WestMovement(currentKbState, currentLevel);
 
                                 // Allow player to move east
-                                EastMovement(currentKbState, currentLevel, currentX, currentY);
+                                EastMovement(currentKbState, currentLevel);
                             }
                         }
                         else
                         {
                             // Snap player to the top of the wall
                             positionRect.Y = tile.Position.Y - positionRect.Height;
-                            positionRect.X = currentX;
 
                             // Allow player to move west
-                            WestMovement(currentKbState, currentLevel, currentX, currentY);
+                            WestMovement(currentKbState, currentLevel);
 
                             // Allow player to move east
-                            EastMovement(currentKbState, currentLevel, currentX, currentY);
+                            EastMovement(currentKbState, currentLevel);
                         }
                     }
                 }
@@ -458,16 +429,15 @@ namespace Adumbration
                     if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
                     {
                         positionRect.Y = mirror.Position.Y - positionRect.Height;
-                        positionRect.X = currentX;
 
                         // Allow player to move North
-                        NorthMovement(currentKbState, currentLevel, currentX);
+                        NorthMovement(currentKbState, currentLevel);
 
                         // Allow player to move west
-                        WestMovement(currentKbState, currentLevel, currentX, currentY);
+                        WestMovement(currentKbState, currentLevel);
 
                         // Allow player to move east
-                        EastMovement(currentKbState, currentLevel, currentX, currentY);
+                        EastMovement(currentKbState, currentLevel);
                     }
                 }
             }
@@ -578,40 +548,6 @@ namespace Adumbration
         }
 
         #endregion
-
-        public void MoveMirror(Level currentLevel, KeyboardState currentKbState)
-        {
-            foreach(Mirror mirror in currentLevel.Mirrors)
-            {
-                if (positionRect.Intersects(mirror.Hitbox) && currentKbState.IsKeyDown(Keys.Space)
-                    && mirror is not StationaryMirror)
-                {
-                    if (currentKbState.IsKeyDown(Keys.W))
-                    {
-                        mirror.Y -= speed;
-                        mirror.HitBoxY -= speed;
-                    }
-
-                    if (currentKbState.IsKeyDown(Keys.A))
-                    {
-                        mirror.X -= speed;
-                        mirror.HitBoxX -= speed;
-                    }
-
-                    if (currentKbState.IsKeyDown(Keys.S))
-                    {
-                        mirror.Y += speed;
-                        mirror.HitBoxY += speed;
-                    }
-
-                    if (currentKbState.IsKeyDown(Keys.D))
-                    {
-                        mirror.X += speed;
-                        mirror.HitBoxX += speed;
-                    }
-                }               
-            }
-        }
 
         public void ResetKeys()
         {

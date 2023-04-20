@@ -25,7 +25,6 @@ namespace Adumbration
         private Rectangle hitbox;
 
         // Constructor
-
         /// <summary>
         /// Parameterized constructor for the mirror class.
         /// </summary>
@@ -53,37 +52,107 @@ namespace Adumbration
                 position.Height + 3);
         }
 
+        /// <summary>
+        /// The Orientation type of mirror it is
+        /// </summary>
         public MirrorType Type
         {
             get { return type; }
         }
 
+        /// <summary>
+        /// Hit box where player can interact
+        /// </summary>
         public Rectangle Hitbox
         {
             get { return hitbox; }
             set { hitbox = value; }
         }
 
-        public int HitBoxX
-        {
-            get { return hitbox.X; }
-            set { hitbox.X = value; }
-        }
-
-        public int HitBoxY
-        {
-            get { return hitbox.Y; }
-            set { hitbox.Y = value; }
-        }
-
         /// <summary>
-        /// Checks if a mirror and a LightBeam are colliding.
+        /// Updates position dependent on Player's input
         /// </summary>
-        /// <param name="obj">Reference to a game object.</param>
-        /// <returns>True if the collision occurs AND the object is a LightBeam, otherwise false.</returns>
-        private bool BeamIsColliding(GameObject obj)
+        /// <param name="myPlayer">The Player interacting with the mirror</param>
+        /// <param name="currentLevel">The level the player and mirror are in</param>
+        /// <param name="gameTime">Time passed in game</param>
+        public virtual void Update(Player myPlayer, Level currentLevel, GameTime gameTime)
         {
-            return Position.Intersects(obj.Position) && obj is LightBeam;
+            KeyboardState currentKbState = Keyboard.GetState();
+
+            // If the player is within the interaction hit box
+            // And is holding space while moving
+            if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space) 
+                && currentKbState.IsKeyDown(Keys.W))
+            {
+                // Change both postitions of mirror and it's hit box
+                positionRect.Y -= myPlayer.Speed;
+                hitbox.Y -= myPlayer.Speed;
+
+                // While moving in the North direction
+                foreach (GameObject tile in currentLevel.TileList)
+                {
+                    // If it is colliding with a wall
+                    if (tile is Wall && IsColliding(tile))
+                    {
+                        // Snap both positions of mirror and hitbox
+                        positionRect.Y = tile.Position.Height + tile.Position.Y;
+                        hitbox.Y = tile.Position.Height + tile.Position.Y;
+                    }
+                }
+            }
+
+            if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space)
+                && currentKbState.IsKeyDown(Keys.A))
+            {
+                positionRect.X -= myPlayer.Speed;
+                hitbox.X -= myPlayer.Speed;
+
+                // While moving in the North direction
+                foreach (GameObject tile in currentLevel.TileList)
+                {
+                    // If it is colliding with a wall
+                    if (tile is Wall && IsColliding(tile))
+                    {
+                        positionRect.X = tile.Position.Width + tile.Position.X;
+                        hitbox.X = tile.Position.Width + tile.Position.X;
+                    }
+                }
+            }
+
+            if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space)
+                && currentKbState.IsKeyDown(Keys.S))
+            {
+                positionRect.Y += myPlayer.Speed;
+                hitbox.Y += myPlayer.Speed;
+
+                // While moving in the North direction
+                foreach (GameObject tile in currentLevel.TileList)
+                {
+                    // If it is colliding with a wall
+                    if (tile is Wall && IsColliding(tile))
+                    {
+                        positionRect.Y = tile.Position.Y - positionRect.Height;
+                        hitbox.Y = tile.Position.Y - positionRect.Height;
+                    }
+                }
+            }
+
+            if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space)
+                && currentKbState.IsKeyDown(Keys.D))
+            {
+                positionRect.X += myPlayer.Speed;
+                hitbox.X += myPlayer.Speed;
+
+                // While moving in the North direction
+                foreach (GameObject tile in currentLevel.TileList)
+                {
+                    // If it is colliding with a wall
+                    if (tile is Wall && IsColliding(tile))
+                    {
+                        positionRect.X = tile.Position.X - positionRect.Width;
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -100,10 +169,8 @@ namespace Adumbration
             {
                 return hitbox.Intersects(obj.Position);
             }
-            else
-            {
-                return BeamIsColliding(obj);
-            }
+
+            return false;
         }
 
         /// <summary>
@@ -113,45 +180,12 @@ namespace Adumbration
         public override void Draw(SpriteBatch sb)
         {
             // shorthand if/else that flips mirror sprite horizontally depending on type
-            SpriteEffects fx = (type == MirrorType.Forward) ? 
-                SpriteEffects.FlipHorizontally : 
+            SpriteEffects fx = (type == MirrorType.Forward) ?
+                SpriteEffects.FlipHorizontally :
                 SpriteEffects.None;
 
             sb.Draw(spriteSheet, positionRect, null, Color.White, 0, Vector2.Zero, fx, 0);
         }
-
-        /// <summary>
-        /// When the player and a mirror are colliding and the E key is pressed,
-        /// the player holds the mirror until the E key is pressed again.
-        /// </summary>
-        /// <param name="myPlayer">Reference to Game1's player.</param>
-        /// <param name="currentState">Current state of the keyboard.</param>
-        /// <param name="previousState">Previous state of the keyboard.</param>
-        public void Interact(Player myPlayer, KeyboardState currentState)
-        {
-             if(IsColliding(myPlayer) && currentState.IsKeyDown(Keys.Space) 
-                && currentState.IsKeyDown(Keys.W))
-            {
-                positionRect.Y -= myPlayer.Speed; 
-            }
-
-            if (IsColliding(myPlayer) && currentState.IsKeyDown(Keys.Space)
-               && currentState.IsKeyDown(Keys.A))
-            {
-                positionRect.X -= myPlayer.Speed;
-            }
-
-            if (IsColliding(myPlayer) && currentState.IsKeyDown(Keys.Space)
-                && currentState.IsKeyDown(Keys.S))
-            {
-                positionRect.Y += myPlayer.Speed;
-            }
-
-            if (IsColliding(myPlayer) && currentState.IsKeyDown(Keys.Space)
-                && currentState.IsKeyDown(Keys.D))
-            {
-                positionRect.X += myPlayer.Speed;
-            }
-        }
+  
     }
 }

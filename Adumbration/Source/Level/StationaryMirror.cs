@@ -15,6 +15,10 @@ namespace Adumbration
             this.dir = dir;
         }
 
+        public override void Update(Player myplayer, Level currentLevel, GameTime gameTime)
+        {
+            // Do nothing stationary mirrors don't update position
+        }
         public override void Draw(SpriteBatch sb)
         {
             switch(dir)
