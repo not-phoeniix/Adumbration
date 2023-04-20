@@ -210,6 +210,13 @@ namespace Adumbration
                     LevelManager.Instance.Update(gameTime, player);
                     player.Update(gameTime, LevelManager.Instance.CurrentLevel);
 
+                    // clears beams only on the first frame of a level being loaded
+                    if(LevelManager.Instance.CurrentLevel.FirstFrame)
+                    {
+                        LevelManager.Instance.CurrentLevel.FirstFrame = false;
+                        LevelManager.Instance.CurrentLevel.Beams.Clear();
+                    }
+
                     #region Zoom
 
                     // zoom in (one press)
