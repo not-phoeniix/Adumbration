@@ -478,12 +478,17 @@ namespace Adumbration
 
         private void UpdateBeam(LightBeam beam, GameTime gameTime)
         {
-            if(this.ReflectedBeam != null)
+            if( reflectedBeam != null)
             {
-                UpdateBeam(beam.ReflectedBeam, gameTime);
+                UpdateBeam(reflectedBeam, gameTime);
             }
 
             this.Update(gameTime);
+        }
+
+        public void UpdateBeam(GameTime gameTime)
+        {
+            UpdateBeam(this, gameTime);
         }
 
         /// <summary>
@@ -504,6 +509,20 @@ namespace Adumbration
 
             return false;
         }
+
+        //private void Draw(SpriteBatch sb, LightBeam beam)
+        //{
+        //    if(reflectedBeam != null)
+        //    {
+        //        Draw(sb, reflectedBeam);
+        //    } 
+        //    base.Draw(sb);
+        //}
+
+        //public override void Draw(SpriteBatch sb)
+        //{
+        //    Draw(sb, this);
+        //}
 
     }
 }
