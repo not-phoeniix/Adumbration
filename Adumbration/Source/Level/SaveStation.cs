@@ -17,6 +17,9 @@ namespace Adumbration
     {
         // Fields
         private Rectangle hitbox;
+        private bool isInteracted;
+        private KeyboardState kbState;
+        private KeyboardState kbStatePrev;
 
         // Properties
         public Rectangle Hitbox
@@ -26,9 +29,14 @@ namespace Adumbration
 
         // Constructor
 
-
-        public SaveStation(Dictionary<string, Texture2D> textureDict, Rectangle sourceRect, Rectangle position)
-            : base(textureDict["walls"], sourceRect, position)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="texture">Reference to </param>
+        /// <param name="sourceRect"></param>
+        /// <param name="position"></param>
+        public SaveStation(Texture2D texture, Rectangle sourceRect, Rectangle position)
+            : base(texture, sourceRect, position)
         {
             hitbox = new Rectangle(
                 position.X - 1,
@@ -47,7 +55,21 @@ namespace Adumbration
         /// <param name="myPlayer">Reference to the player.</param>
         public void Update(Player myPlayer)
         {
-            
+            kbState = Keyboard.GetState();
+
+            // If player interacts with save station
+            if (hitbox.Intersects(myPlayer.Position) &&
+                kbState.IsKeyUp(Keys.E) &&
+                kbStatePrev.IsKeyDown(Keys.E) &&
+                !isInteracted)
+            {
+                isInteracted = true;
+            }
+
+            if (isInteracted)
+            {
+                
+            }
         }
 
         /// <summary>
