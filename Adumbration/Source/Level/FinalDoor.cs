@@ -55,6 +55,24 @@ namespace Adumbration
         public void Update(GameTime gametime, Player player)
         {
             KeyboardState currentState = Keyboard.GetState();
+            int keyCount = 0;
+
+            //checks to see if the list of key collected are all false
+            for (int i = 0; i < player.CollectedKeys.Length; i++)
+            {
+                if (player.CollectedKeys[i] == false)
+                {
+                    keyCount++;
+                }
+            }
+            
+            //mainly for when the player restarts the game in the main
+            //menu and it resets this door back to its original
+            //closed state with no keys unlocked
+            if (keyCount == 4)
+            {
+                sourceRect.X = 0;
+            }
 
             //these if statements changes the sprite
             //of the final door depending on how many 
@@ -79,7 +97,7 @@ namespace Adumbration
 
             if (player.CollectedKeys[3] == true)
             {
-                sourceRect.X = 64;
+                sourceRect.X = 80;
                 unlocked = true;
             }
 

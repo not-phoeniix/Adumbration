@@ -64,7 +64,7 @@ namespace Adumbration
         /// </summary>
         /// <param name="kbState">Current keyboard state</param>
         /// <param name="kbStatePrev">Previous keyboard state</param>
-        public void Update(KeyboardState kbState, KeyboardState kbStatePrev)
+        public void Update(KeyboardState kbState, KeyboardState kbStatePrev, Player player)
         {
             // FSM for currently selected menu items and moving between menu options
             switch(selectedButton)
@@ -79,6 +79,7 @@ namespace Adumbration
                     if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
                         Game1.GameState = GameState.Game;
+                        player.ResetKeys();
                         LevelManager.Instance.LoadLevel(GameLevels.Hub);
                     }
 
