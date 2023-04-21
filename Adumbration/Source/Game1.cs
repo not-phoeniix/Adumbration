@@ -309,7 +309,7 @@ namespace Adumbration
                     penumbra.Visible = false;
 
                     // update menu logic
-                    MainMenu.Instance.Update(kbState, prevKbState);
+                    MainMenu.Instance.Update(kbState, prevKbState, player);
 
                     #endregion
                     break;
