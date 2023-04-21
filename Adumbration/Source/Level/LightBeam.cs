@@ -28,28 +28,41 @@ namespace Adumbration
     internal class LightBeam : GameObject
     {
         // Fields
+
+        // Beam specific Fields
         private Direction dir;
         private List<Light> lights;
         private Texture2D texture;
-        private LightBeam reflectedBeam;
         private bool isReflected;
-        private Mirror associatedMirror;
         private int expandSpeed;
+
+        // Previous Position of Rectangle each frame
         private Rectangle prevPosition;
+
+        // Original X and Y of Beam rectangle
         private int originalX;
         private int originalY;
+
+        // Mirrors that the light beam interacts with
+        private Mirror associatedMirror;
         private Mirror collidedMirror;
+
+        // The beam's own reflected beam
+        private LightBeam reflectedBeam;
 
         #region // Properties
 
         /// <summary>
-        /// Direction the beam is facing
+        /// Direction the beam is shooting
         /// </summary>
         public Direction Direction
         {
             get { return dir; }
         }
 
+        /// <summary>
+        ///  List of all Lights on the light beam
+        /// </summary>
         public List<Light> Lights
         {
             get { return lights; }
@@ -73,55 +86,89 @@ namespace Adumbration
             set { positionRect.Height = value; }
         }
 
+        /// <summary>
+        /// The mirror the light beam is reflecting
+        /// off of
+        /// </summary>
         public Mirror AssociatedMirror
         {
             get { return associatedMirror; }
             set { associatedMirror = value; }
         }
 
+        /// <summary>
+        /// The Beam's own reflected beam
+        /// </summary>
         public LightBeam ReflectedBeam
         {
             get { return reflectedBeam; }
         }
 
+        /// <summary>
+        /// Whether or not the beam has changed from the last frame
+        /// </summary>
         public bool HasChanged
         {
             get { return prevPosition != positionRect; }
         }
 
         #endregion
-
-        //constructor for this class
+        // Constructor
+        /// <summary>
+        /// Constructor for the Light Beam
+        /// </summary>
+        /// <param name="texture">White Pixel texture used for beam</param>
+        /// <param name="position">Position of the Light Beam</param>
+        /// <param name="dir">Direction Light Beam is shooting</param>
         public LightBeam(Texture2D texture, Rectangle position, Direction dir)
              : base(texture, new Rectangle(0, 0, 1, 1), position)
         {
             this.dir = dir;
             lights = new List<Light>();
             this.texture = texture;
-            isReflected = false;
+
+            // Each non reflected Beam starts off 
+            // with none of these fields
             reflectedBeam = null;
             associatedMirror = null;
             collidedMirror = null;
-            
+            isReflected = false;
+
+            // How fast the beam expands
             expandSpeed = 3;
 
+            // Original X and Y of beam rectangle
             originalX = position.X;
             originalY = position.Y;
         }
 
+        /// <summary>
+        /// Secondary Constructor for a new reflected beam
+        /// </summary>
+        /// <param name="texture">White Pixel texture used for beam</param>
+        /// <param name="position">Position of the Light Beam</param>
+        /// <param name="dir">Direction Light Beam is shooting</param>
+        /// <param name="associatedMirror">The mirror this beam is reflecting off of</param>
         public LightBeam(Texture2D texture, Rectangle position, Direction dir, Mirror associatedMirror)
              : base(texture, new Rectangle(0, 0, 1, 1), position)
         {
             this.dir = dir;
             lights = new List<Light>();
             this.texture = texture;
+
+            // Each non reflected Beam starts off 
+            // with none of these fields
             isReflected = false;
             reflectedBeam = null;
+
+            // The only filled in Mirror field is it's associated mirror
             this.associatedMirror = associatedMirror;
             collidedMirror = null;
 
+            // Expansion speed of beam
             expandSpeed = 3;
 
+            // Original X and Y of beam rectangle
             originalX = position.X;
             originalY = position.Y;
         }
@@ -130,17 +177,13 @@ namespace Adumbration
         /// Updates beams rectangle per frame
         /// </summary>
         /// <param name="gameTime">The game's time</param>
-        /// <param name="currentLevel">The level the player is currently on</param>
         public override void Update(GameTime gameTime)   // May have to debug when implementing mirrors
         {
+            // Level the player is currently on
             Level currentLevel = LevelManager.Instance.CurrentLevel;
 
-            // Clears all previous spotlights every frame
-            //lights.Clear();
-
-            // Check the direction of the light beam first
             #region // Light size extending
-
+            // Check the direction of the light beam first
             switch (dir)
             {
                 case Direction.Left:
@@ -186,13 +229,21 @@ namespace Adumbration
                             }
                         }
 
+                        // If it is no longer colliding with a mirror
+                        // and the mirror was the mirror it collided with
                         if (!IsColliding(mirror) && mirror == collidedMirror)
                         {
+                            // It's no longer reflecting
                             isReflected = false;
+
+                            // Removes the reflected beam from the Level's
+                            // List of beams
                             if (currentLevel.Beams.Contains(reflectedBeam))
                             {
                                 currentLevel.Beams.Remove(reflectedBeam);
                             }
+
+                            // Then removed reflected beam
                             reflectedBeam = null;
                         }
 
@@ -204,8 +255,10 @@ namespace Adumbration
                             positionRect.X = mirror.X + mirror.Position.Width;
                         }
 
+                        // If the reflected beam exists and it's position has changed
                         if (reflectedBeam != null && HasChanged)
                         {
+                            // Change the reflected Beam's position
                             reflectedBeam.X = positionRect.X;
                         }
                     }
@@ -253,13 +306,21 @@ namespace Adumbration
                             }
                         }
 
+                        // If it is no longer colliding with a mirror
+                        // and the mirror was the mirror it collided with
                         if (!IsColliding(mirror) && mirror == collidedMirror)
                         {
+                            // It's no longer reflecting
                             isReflected = false;
+
+                            // Removes the reflected beam from the Level's
+                            // List of beams
                             if (currentLevel.Beams.Contains(reflectedBeam))
                             {
                                 currentLevel.Beams.Remove(reflectedBeam);
                             }
+
+                            // Then removed reflected beam
                             reflectedBeam = null;
                         }
 
@@ -270,8 +331,10 @@ namespace Adumbration
                             positionRect.Width = mirror.X - positionRect.X;
                         }
 
+                        // If the reflected beam exists and it's position has changed
                         if (reflectedBeam != null && HasChanged)
                         {
+                            // Change the reflected Beam's position
                             reflectedBeam.X = positionRect.X + positionRect.Width;
                         }
                     }
@@ -320,13 +383,21 @@ namespace Adumbration
                             }
                         }
 
+                        // If it is no longer colliding with a mirror
+                        // and the mirror was the mirror it collided with
                         if (!IsColliding(mirror) && mirror == collidedMirror)
                         {
+                            // It's no longer reflecting
                             isReflected = false;
+
+                            // Removes the reflected beam from the Level's
+                            // List of beams
                             if (currentLevel.Beams.Contains(reflectedBeam))
                             {
                                 currentLevel.Beams.Remove(reflectedBeam);
                             }
+
+                            // Then removed reflected beam
                             reflectedBeam = null;
                         }
 
@@ -338,8 +409,10 @@ namespace Adumbration
                             positionRect.Y = mirror.Y + mirror.Position.Height;
                         }
 
+                        // If the reflected beam exists and it's position has changed
                         if (reflectedBeam != null && HasChanged)
                         {
+                            // Change the reflected Beam's position
                             reflectedBeam.Y = positionRect.Y;
                         }
                     }
@@ -386,13 +459,21 @@ namespace Adumbration
                             }
                         }
 
+                        // If it is no longer colliding with a mirror
+                        // and the mirror was the mirror it collided with
                         if (!IsColliding(mirror) && mirror == collidedMirror)
                         {
+                            // It's no longer reflecting
                             isReflected = false;
+
+                            // Removes the reflected beam from the Level's
+                            // List of beams
                             if (currentLevel.Beams.Contains(reflectedBeam))
                             {
                                 currentLevel.Beams.Remove(reflectedBeam);
                             }
+
+                            // Then removed reflected beam
                             reflectedBeam = null;
                         }
 
@@ -403,8 +484,10 @@ namespace Adumbration
                             positionRect.Height = mirror.Y - positionRect.Y;
                         }
 
+                        // If the reflected beam exists and it's position has changed
                         if (reflectedBeam != null && HasChanged)
                         {
+                            // Change the reflected Beam's position
                             reflectedBeam.Y = positionRect.Y + positionRect.Height;
                         }                        
                     }
@@ -476,6 +559,7 @@ namespace Adumbration
             prevPosition = positionRect;
         }
 
+        #region// ================ EXPERIMENTAL RECURSIVE REFLECTION METHODS ================
         private void UpdateBeam(LightBeam beam, GameTime gameTime)
         {
             if( reflectedBeam != null)
@@ -490,6 +574,21 @@ namespace Adumbration
         {
             UpdateBeam(this, gameTime);
         }
+
+        //private void Draw(SpriteBatch sb, LightBeam beam)
+        //{
+        //    if(reflectedBeam != null)
+        //    {
+        //        Draw(sb, reflectedBeam);
+        //    } 
+        //    base.Draw(sb);
+        //}
+
+        //public override void Draw(SpriteBatch sb)
+        //{
+        //    Draw(sb, this);
+        //}
+        #endregion
 
         /// <summary>
         /// the main colliding method like all the other gameobject 
@@ -509,20 +608,5 @@ namespace Adumbration
 
             return false;
         }
-
-        //private void Draw(SpriteBatch sb, LightBeam beam)
-        //{
-        //    if(reflectedBeam != null)
-        //    {
-        //        Draw(sb, reflectedBeam);
-        //    } 
-        //    base.Draw(sb);
-        //}
-
-        //public override void Draw(SpriteBatch sb)
-        //{
-        //    Draw(sb, this);
-        //}
-
     }
 }

@@ -81,6 +81,8 @@ namespace Adumbration
 
             // If the player is within the interaction hit box
             // And is holding space while moving
+
+            // NORTH DIRECTION
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space) 
                 && currentKbState.IsKeyDown(Keys.W))
             {
@@ -101,55 +103,62 @@ namespace Adumbration
                 }
             }
 
+            // WEST DIRECTION
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space)
                 && currentKbState.IsKeyDown(Keys.A))
             {
                 positionRect.X -= myPlayer.Speed;
                 hitbox.X -= myPlayer.Speed;
 
-                // While moving in the North direction
+                // While moving in the West direction
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // If it is colliding with a wall
                     if (tile is Wall && IsColliding(tile))
                     {
+                        // Snap both positions of mirror and hitbox
                         positionRect.X = tile.Position.Width + tile.Position.X;
                         hitbox.X = tile.Position.Width + tile.Position.X;
                     }
                 }
             }
 
+            // SOUTH DIRECTION
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space)
                 && currentKbState.IsKeyDown(Keys.S))
             {
                 positionRect.Y += myPlayer.Speed;
                 hitbox.Y += myPlayer.Speed;
 
-                // While moving in the North direction
+                // While moving in the South direction
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // If it is colliding with a wall
                     if (tile is Wall && IsColliding(tile))
                     {
+                        // Snap both positions of mirror and hitbox
                         positionRect.Y = tile.Position.Y - positionRect.Height;
                         hitbox.Y = tile.Position.Y - positionRect.Height;
                     }
                 }
             }
 
+            // EAST DIRECTION
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space)
                 && currentKbState.IsKeyDown(Keys.D))
             {
                 positionRect.X += myPlayer.Speed;
                 hitbox.X += myPlayer.Speed;
 
-                // While moving in the North direction
+                // While moving in the East direction
                 foreach (GameObject tile in currentLevel.TileList)
                 {
                     // If it is colliding with a wall
                     if (tile is Wall && IsColliding(tile))
                     {
+                        // Snap both positions of mirror and hitbox
                         positionRect.X = tile.Position.X - positionRect.Width;
+                        hitbox.X = tile.Position.X - positionRect.Width;
                     }
                 }
             }
