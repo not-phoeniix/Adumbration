@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Adumbration
 {
     /// <summary>
-    /// this class will be 
+    /// This class will be 
     /// the final door that the 
     /// player needs to unlock
     /// </summary>

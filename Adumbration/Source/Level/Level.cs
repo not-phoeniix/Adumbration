@@ -83,28 +83,44 @@ namespace Adumbration
             set { objectArray = value; }
         }
 
+        /// <summary>
+        /// 2D Array of Penumbra hulls tha
+        /// correspond with walls
+        /// </summary>
         public Hull[,] WallHulls
         {
             get { return wallHulls; }
             set { wallHulls = value; }
         }
 
+        /// <summary>
+        /// Spawn point of the player in any given level
+        /// </summary>
         public Vector2 SpawnPoint
         {
             get { return spawnPoint; }
             set { spawnPoint = value; }
         }
 
+        /// <summary>
+        /// A list of all beams in the current level
+        /// </summary>
         internal List<LightBeam> Beams
         {
             get { return allBeams; }
         }
 
+        /// <summary>
+        /// List of all Mirrors in the current level
+        /// </summary>
         internal List<Mirror> Mirrors
         {
             get { return allMirrors; }
         }
 
+        /// <summary>
+        /// The Key Object in any given level
+        /// </summary>
         internal KeyObject KeyObject
         {
             get { return levelKey; }
@@ -194,15 +210,16 @@ namespace Adumbration
                             allBeams.Add(emitter.Beam.ReflectedBeam);
                         }
 
-                        if(emitter.Beam.ReflectedBeam != null && 
-                            emitter.Beam.ReflectedBeam.ReflectedBeam != null &&
-                            !allBeams.Contains(emitter.Beam.ReflectedBeam.ReflectedBeam))
-                        {
-                            allBeams.Add(emitter.Beam.ReflectedBeam.ReflectedBeam);
-                        }
+                        //if(emitter.Beam.ReflectedBeam != null && 
+                        //    emitter.Beam.ReflectedBeam.ReflectedBeam != null &&
+                        //    !allBeams.Contains(emitter.Beam.ReflectedBeam.ReflectedBeam))
+                        //{
+                        //    allBeams.Add(emitter.Beam.ReflectedBeam.ReflectedBeam);
+                        //}
                     }
                 }
 
+                // updating all Light Receptors
                 if(obj is LightReceptor receptor)
                 {
                     receptor.Update(allBeams);
@@ -231,6 +248,8 @@ namespace Adumbration
                                 }
                             }
 
+                            // If the receptor receives a signal
+                            // Open the level door
                             if(rec is LevelDoor d)
                             {
                                 d.IsOpen = receptor.IsActivated;
@@ -239,11 +258,13 @@ namespace Adumbration
                     }
                 }
 
+                // Update the Final Door
                 if (obj is FinalDoor finalDoor)
                 {
                     finalDoor.Update(gameTime, player);
                 }
 
+                // Update 
                 if(obj is Door door)
                 {
                     door.Update(player);
