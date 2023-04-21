@@ -185,7 +185,7 @@ namespace Adumbration
         /// Updates the level's state of the game.
         /// </summary>
         /// <param name="gameTime">State of the game's time.</param>
-        public void Update(GameTime gameTime, Player player)
+        public virtual void Update(GameTime gameTime, Player player)
         {
             // updates all GameObjects each frame
             foreach(GameObject obj in objectArray)
@@ -292,7 +292,7 @@ namespace Adumbration
         /// <summary>
         /// Draws entire level.
         /// </summary>
-        public void Draw(SpriteBatch sb)
+        public virtual void Draw(SpriteBatch sb)
         {
             // this loop draws all objects in the tileList array
             for(int y = 0; y < objectArray.GetLength(1); y++)

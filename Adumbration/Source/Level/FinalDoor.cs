@@ -110,7 +110,7 @@ namespace Adumbration
                 && unlocked && hitbox.Intersects(player.Position))
             {
                 sourceRect.X = 80;
-                LevelManager.Instance.LoadLevel(GameLevels.Hub);
+                LevelManager.Instance.LoadLevel(GameLevels.End);
                 player.ResetKeys();
                 sourceRect.X = 0;
             }
