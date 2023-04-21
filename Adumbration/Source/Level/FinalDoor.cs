@@ -66,7 +66,7 @@ namespace Adumbration
 
             if (player.CollectedKeys[1] == true)
             {
-                sourceRect.X = 32;
+                sourceRect.X = 80;
                 unlocked = true;
             }
 
