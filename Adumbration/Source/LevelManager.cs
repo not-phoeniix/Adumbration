@@ -69,7 +69,7 @@ namespace Adumbration
             get { return currentLevel; }
         }
 
-        public GameLevels CurrentEnum
+        public GameLevels CurrentLevelEnum
         {
             get { return currentLevelEnum; }
         }

@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Adumbration
 {
     /// <summary>
-    /// this class will be 
+    /// This class will be 
     /// the final door that the 
     /// player needs to unlock
     /// </summary>
@@ -59,22 +59,23 @@ namespace Adumbration
             //these if statements changes the sprite
             //of the final door depending on how many 
             //keys are collected so far
-            if (player.CollectedKeys.Count == 1)
+            if (player.CollectedKeys[0] == true)
             {
                 sourceRect.X = 16;
             }
 
-            if (player.CollectedKeys.Count == 2)
+            if (player.CollectedKeys[1] == true)
             {
                 sourceRect.X = 32;
+                unlocked = true;
             }
 
-            if (player.CollectedKeys.Count == 3)
+            if (player.CollectedKeys[2] == true)
             {
                 sourceRect.X = 48;
             }
 
-            if (player.CollectedKeys.Count == 4)
+            if (player.CollectedKeys[3] == true)
             {
                 sourceRect.X = 64;
                 unlocked = true;
@@ -84,7 +85,7 @@ namespace Adumbration
             //door is unlocked it will open and teleport the user to
             //the final room(the hub is a placeholder)
             if (previousState.IsKeyUp(Keys.E) && currentState.IsKeyDown(Keys.E)
-                && unlocked)
+                && unlocked && hitbox.Intersects(player.Position))
             {
                 sourceRect.X = 80;
                 LevelManager.Instance.LoadLevel(GameLevels.End);
