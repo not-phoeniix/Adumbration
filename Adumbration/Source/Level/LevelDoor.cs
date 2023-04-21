@@ -5,8 +5,14 @@ namespace Adumbration.Source.Level
 {
     internal class LevelDoor : Door, ISignal
     {
+        /// <summary>
+        /// The number that corresponds to a signal
+        /// </summary>
         public int SignalNum { get; set; }
 
+        /// <summary>
+        /// Determine whether the level door is open
+        /// </summary>
         public bool IsOpen
         {
             get { return isOpen; }
@@ -27,6 +33,10 @@ namespace Adumbration.Source.Level
             sourceRect.Y = 3 * 16;
         }
 
+        /// <summary>
+        /// Draws the correct Level Door texture
+        /// </summary>
+        /// <param name="sb"></param>
         public override void Draw(SpriteBatch sb)
         {
             if(isOpen)

@@ -12,11 +12,14 @@ namespace Adumbration
     internal class LightReceptor : Wall, ISignal
     {
         // Fields
-        private Rectangle activationPoint;
+        private Rectangle activationPoint;  // Where the receptor gets activated
         private bool textureFlipped;
         private int signalNum;
         private bool isActivated;
 
+        /// <summary>
+        /// Number that identifies the signal
+        /// </summary>
         public int SignalNum
         {
             get { return signalNum; }
@@ -66,10 +69,6 @@ namespace Adumbration
             }
         }
 
-        //for all beams inside the allbeams list,
-        //it will check if the receptor is colliding with it
-        //then it will 
-
         /// <summary>
         /// For all beams inside the list, it'll check for collision 
         /// and change the property for IsActivated if colliding
@@ -92,6 +91,10 @@ namespace Adumbration
             }
         }
 
+        /// <summary>
+        /// Draws the Receptor
+        /// </summary>
+        /// <param name="sb">spritebatch</param>
         public override void Draw(SpriteBatch sb)
         {
             // same as base.draw except flips texture sometimes

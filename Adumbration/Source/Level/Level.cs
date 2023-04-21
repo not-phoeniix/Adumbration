@@ -264,13 +264,14 @@ namespace Adumbration
                     finalDoor.Update(gameTime, player);
                 }
 
-                // Update 
+                // Update the Door
                 if(obj is Door door)
                 {
                     door.Update(player);
                 }
             }
 
+            // For each mirror in the level update it
             foreach (Mirror mirror in Mirrors)
             {
                 mirror.Update(player, this, gameTime);
