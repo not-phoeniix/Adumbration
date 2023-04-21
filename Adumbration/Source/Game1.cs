@@ -170,7 +170,7 @@ namespace Adumbration
             // setting up player light
             playerLight = new PointLight()
             {
-                Scale = new Vector2(300),
+                Scale = new Vector2(450),
                 Color = Color.White,
                 ShadowType = ShadowType.Occluded
             };
