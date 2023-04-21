@@ -124,6 +124,7 @@ namespace Adumbration
             textureDict.Add("key", Content.Load<Texture2D>("Sprites/sprite_key"));
             textureDict.Add("floors", Content.Load<Texture2D>("Sprites/sprite_altFloors"));
             textureDict.Add("whitePixel", Content.Load<Texture2D>("Sprites/sprite_whitePixel"));
+            textureDict.Add("endLevel", Content.Load<Texture2D>("Sprites/sprite_endBg"));
 
             // ui textures
             textureDict.Add("pauseResume", Content.Load<Texture2D>("UI/ui_pauseResume"));
@@ -155,7 +156,7 @@ namespace Adumbration
             // LevelManager singleton init
             LevelManager.Instance.Initialize(textureDict, penumbra, player);
 
-            LevelManager.Instance.LoadLevel(GameLevels.Hub);
+            LevelManager.Instance.LoadLevel(GameLevels.End);
 
             MainMenu.Instance.Exit += Exit;
 
@@ -358,9 +359,16 @@ namespace Adumbration
                 // Draw level
                 LevelManager.Instance.Draw(_spriteBatch);
 
+                // draws the final level on top of the other level when that state is set
+                if(LevelManager.Instance.CurrentEnum == GameLevels.End)
+                {
+                    _spriteBatch.Draw(textureDict["endLevel"], new Vector2(0, 0), Color.White);
+                }
+
                 // Draw Player
                 player.Draw(_spriteBatch);
             }
+
             _spriteBatch.End();
 
             #endregion

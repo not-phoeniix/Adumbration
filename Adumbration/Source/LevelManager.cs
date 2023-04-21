@@ -69,6 +69,11 @@ namespace Adumbration
             get { return currentLevel; }
         }
 
+        public GameLevels CurrentEnum
+        {
+            get { return currentLevelEnum; }
+        }
+
         /// <summary>
         /// Initializes LevelManager singleton, must be run first for levels to work properly. LOADS HUB BY DEFAULT
         /// </summary>
@@ -113,6 +118,10 @@ namespace Adumbration
 
                 case GameLevels.Level4:
                     levelDataPath = "Level_4.txt";
+                    break;
+
+                case GameLevels.End:
+                    levelDataPath = "End.txt";
                     break;
 
                 // TEST LEVELS:
