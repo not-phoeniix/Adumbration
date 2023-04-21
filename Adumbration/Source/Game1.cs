@@ -105,6 +105,9 @@ namespace Adumbration
 
             #endregion
 
+            // fullscreen by default
+            SetFullscreen(true, fullscreenRes);
+
             base.Initialize();
         }
 
