@@ -7,18 +7,27 @@ namespace Adumbration
     internal class LightEmitter : Wall, ISignal
     {
         // Fields 
+
+        // States of Emitter
         private bool enabledState;
         private bool startingEnabled;
         private bool prevEnabledState;
         private bool textureFlipped;
-        private LightBeam beam;
-        private Direction dir;
-        private Texture2D whitePixelTexture;
+
+        // Emitter specific fields
         private Rectangle enabledSource;
         private Rectangle disabledSource;
         private Vector2 beamStartPos;
         private int signalNum;
 
+        // Emitter's Beam
+        private LightBeam beam;
+        private Direction dir;
+        private Texture2D whitePixelTexture;
+
+        /// <summary>
+        /// Number that identifies the signal
+        /// </summary>
         public int SignalNum
         {
             get { return signalNum; }
