@@ -85,11 +85,11 @@ namespace Adumbration
             if (player.CollectedKeys[1] == true)
             {
                 //actual sprite
-                sourceRect.X = 32;
+                //sourceRect.X = 32;
 
                 //for testing
-                //sourceRect.X = 80;
-                //unlocked = true;
+                sourceRect.X = 80;
+                unlocked = true;
             }
 
             if (player.CollectedKeys[2] == true)

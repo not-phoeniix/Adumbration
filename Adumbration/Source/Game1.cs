@@ -360,7 +360,7 @@ namespace Adumbration
                 LevelManager.Instance.Draw(_spriteBatch);
 
                 // draws the final level on top of the other level when that state is set
-                if(LevelManager.Instance.CurrentEnum == GameLevels.End)
+                if(LevelManager.Instance.CurrentLevelEnum == GameLevels.End)
                 {
                     _spriteBatch.Draw(textureDict["endLevel"], new Vector2(0, 0), Color.White);
                 }
