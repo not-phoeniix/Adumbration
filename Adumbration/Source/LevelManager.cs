@@ -120,6 +120,10 @@ namespace Adumbration
                     levelDataPath = "Level_4.txt";
                     break;
 
+                case GameLevels.End:
+                    levelDataPath = "End.txt";
+                    break;
+
                 // TEST LEVELS:
 
                 case GameLevels.TestLevel:
