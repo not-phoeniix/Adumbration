@@ -18,7 +18,7 @@ public enum MirrorType
 
 namespace Adumbration
 {
-    internal class Mirror : GameObject, IHitbox
+    public class Mirror : GameObject, IHitbox
     {
         // Fields
         private MirrorType type;
@@ -86,7 +86,7 @@ namespace Adumbration
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space) 
                 && currentKbState.IsKeyDown(Keys.W))
             {
-                // Change both postitions of mirror and it's hit box
+                // Change both postitions of mirror, hitbox and sprite
                 positionRect.Y -= myPlayer.Speed;
                 hitbox.Y -= myPlayer.Speed;
 
