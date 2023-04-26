@@ -80,14 +80,25 @@ namespace Adumbration
             if (player.CollectedKeys[0] == true)
             {
                 sourceRect.X = 16;
+
+                if (player.CollectedKeys[1] == true)
+                {
+                    sourceRect.X = 80;
+                    unlocked = true;
+                }
             }
 
             if (player.CollectedKeys[1] == true)
             {
                 // This was 32 
                 // change it back once we add the rest of the levels
-                sourceRect.X = 80;
-                unlocked = true;
+                sourceRect.X = 16;
+
+                if (player.CollectedKeys[0] == true)
+                {
+                    sourceRect.X = 80;
+                    unlocked = true;
+                }
             }
 
             if (player.CollectedKeys[2] == true)
