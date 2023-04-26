@@ -81,12 +81,11 @@ namespace Adumbration
         {
             KeyboardState currentKbState = Keyboard.GetState();
 
-            // If the player is within the interaction hit box
-            // And is holding space while moving
-
             // If not grabbing anything
             myPlayer.IsGrabbing = false;
 
+            // If the player is within the interaction hit box
+            // And is holding space while moving:
 
             // NORTH DIRECTION
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space) 
@@ -166,7 +165,7 @@ namespace Adumbration
                     // If it is colliding with a wall
                     if (tile is Wall && IsColliding(tile))
                     {
-                        // Snap both positions of mirror and hitbox
+                        // Snap both positions of mirror and hitboxsss
                         positionRect.X = tile.Position.X - positionRect.Width - 2;
                         hitbox.X = tile.Position.X - positionRect.Width - 2;
                     }
