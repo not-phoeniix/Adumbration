@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing.Text;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
@@ -18,7 +19,7 @@ public enum MirrorType
 
 namespace Adumbration
 {
-    internal class Mirror : GameObject, IHitbox
+    public class Mirror : GameObject, IHitbox
     {
         // Fields
         private MirrorType type;
@@ -50,6 +51,7 @@ namespace Adumbration
                 position.Y - 2,
                 position.Width + 3,
                 position.Height + 3);
+
         }
 
         /// <summary>
@@ -79,16 +81,26 @@ namespace Adumbration
         {
             KeyboardState currentKbState = Keyboard.GetState();
 
+            // If not grabbing anything
+            myPlayer.IsGrabbing = false;
+
             // If the player is within the interaction hit box
-            // And is holding space while moving
+            // And is holding space while moving:
+
+            //if the user grabs the mirror it will turn the sprite white
+            if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space))
+            {
+                myPlayer.IsGrabbing = true;
+            }
 
             // NORTH DIRECTION
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space) 
                 && currentKbState.IsKeyDown(Keys.W))
             {
                 // Change both postitions of mirror and it's hit box
-                positionRect.Y -= myPlayer.Speed;
-                hitbox.Y -= myPlayer.Speed;
+                positionRect.Y -= 1;
+                hitbox.Y -= 1;
+                myPlayer.IsGrabbing = true;
 
                 // While moving in the North direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -97,8 +109,8 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap both positions of mirror and hitbox
-                        positionRect.Y = tile.Position.Height + tile.Position.Y;
-                        hitbox.Y = tile.Position.Height + tile.Position.Y;
+                        positionRect.Y = tile.Position.Height + tile.Position.Y + 2;
+                        hitbox.Y = tile.Position.Height + tile.Position.Y + 2;
                     }
                 }
             }
@@ -107,8 +119,9 @@ namespace Adumbration
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space)
                 && currentKbState.IsKeyDown(Keys.A))
             {
-                positionRect.X -= myPlayer.Speed;
-                hitbox.X -= myPlayer.Speed;
+                positionRect.X -= 1;
+                hitbox.X -= 1;
+                myPlayer.IsGrabbing = true;
 
                 // While moving in the West direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -117,8 +130,8 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap both positions of mirror and hitbox
-                        positionRect.X = tile.Position.Width + tile.Position.X;
-                        hitbox.X = tile.Position.Width + tile.Position.X;
+                        positionRect.X = tile.Position.Width + tile.Position.X + 2;
+                        hitbox.X = tile.Position.Width + tile.Position.X + 2;
                     }
                 }
             }
@@ -127,8 +140,9 @@ namespace Adumbration
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space)
                 && currentKbState.IsKeyDown(Keys.S))
             {
-                positionRect.Y += myPlayer.Speed;
-                hitbox.Y += myPlayer.Speed;
+                positionRect.Y += 1;
+                hitbox.Y += 1;
+                myPlayer.IsGrabbing = true;
 
                 // While moving in the South direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -137,8 +151,8 @@ namespace Adumbration
                     if (tile is Wall && IsColliding(tile))
                     {
                         // Snap both positions of mirror and hitbox
-                        positionRect.Y = tile.Position.Y - positionRect.Height;
-                        hitbox.Y = tile.Position.Y - positionRect.Height;
+                        positionRect.Y = tile.Position.Y - positionRect.Height - 2;
+                        hitbox.Y = tile.Position.Y - positionRect.Height - 2;
                     }
                 }
             }
@@ -147,8 +161,9 @@ namespace Adumbration
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space)
                 && currentKbState.IsKeyDown(Keys.D))
             {
-                positionRect.X += myPlayer.Speed;
-                hitbox.X += myPlayer.Speed;
+                positionRect.X += 1;
+                hitbox.X += 1;
+                myPlayer.IsGrabbing = true;
 
                 // While moving in the East direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -156,9 +171,9 @@ namespace Adumbration
                     // If it is colliding with a wall
                     if (tile is Wall && IsColliding(tile))
                     {
-                        // Snap both positions of mirror and hitbox
-                        positionRect.X = tile.Position.X - positionRect.Width;
-                        hitbox.X = tile.Position.X - positionRect.Width;
+                        // Snap both positions of mirror and hitboxsss
+                        positionRect.X = tile.Position.X - positionRect.Width - 2;
+                        hitbox.X = tile.Position.X - positionRect.Width - 2;
                     }
                 }
             }

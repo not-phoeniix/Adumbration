@@ -13,12 +13,10 @@ namespace Adumbration
     /// </summary>
     public enum PlayerState
     {
-        FacingRight,
-        MovingRight,
-        FacingLeft,
-        MovingLeft,
         FacingUp,
-        MovingUp
+        FacingDown,
+        WalkingLeft,
+        WalkingRight
     }
 
     /// <summary>
@@ -38,18 +36,18 @@ namespace Adumbration
         // Fields
         // Player's input and state
         private KeyboardState previousKbState;
-        private PlayerState currentState;
+        private PlayerState upDownState;
+        private PlayerState directionState;
 
         // Player variables
         private int speed;
         private bool[] collectedKeys;
+        private bool isGrabbing;
 
         // Whether player is flipped or not
         private bool playerIsFlipped;
 
         // Animation fields
-        private int widthOfSingleSprite;
-        private int currentFrame;
         private double fps;
         private double secondsPerFrame;
         private double timeCounter;
@@ -82,6 +80,12 @@ namespace Adumbration
             get { return speed; }
         }
 
+        public bool IsGrabbing
+        {
+            get { return isGrabbing; }
+            set { isGrabbing = value; }
+        }
+
         // Constructor
         /// <summary>
         /// Player takes everything from parent class
@@ -93,6 +97,7 @@ namespace Adumbration
             : base(spritesheet, sourceRect, position)
         {
             currentMode = PlayerMode.NormalMode;
+            upDownState = PlayerState.FacingDown;
 
             // Set player speed and the collectedKeys array to null
             speed = 2;
@@ -102,8 +107,6 @@ namespace Adumbration
             fps = 2.0;
             secondsPerFrame = 1.0 / fps;
             timeCounter = 0;
-            currentFrame = 1;
-            widthOfSingleSprite = 7;
         }
 
         // Methods
@@ -115,6 +118,16 @@ namespace Adumbration
         {
             // Player input
             KeyboardState currentKbState = Keyboard.GetState();
+
+            // Every Frame check if the player is grabbing the mirror
+            if (isGrabbing)
+            {
+                speed = 1;
+            }
+            else
+            {
+                speed = 2;
+            }
 
             if (currentKbState.IsKeyDown(Keys.F12) && previousKbState.IsKeyUp(Keys.F12))
             {
@@ -128,13 +141,27 @@ namespace Adumbration
             }
 
             // makes player look backward when walking backward
-            if(currentState == PlayerState.FacingUp || currentState == PlayerState.MovingUp)
+            if(upDownState == PlayerState.FacingUp)
             {
-                sourceRect.X = 14;
+                if (isGrabbing)
+                {
+                    sourceRect.X = 42;
+                }
+                else
+                {
+                    sourceRect.X = 14;
+                }   
             }
             else
             {
-                sourceRect.X = 0;
+                if (speed == 1)
+                {
+                    sourceRect.X = 28;
+                }
+                else
+                {
+                    sourceRect.X = 0;
+                }
             }
 
             #region // Movement
@@ -247,7 +274,7 @@ namespace Adumbration
             {
                 // If player is not touching a top wall let them move in that direction
                 positionRect.Y -= speed;
-                currentState = PlayerState.MovingUp;
+                upDownState = PlayerState.FacingUp;
 
                 // While moving in the North direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -294,7 +321,7 @@ namespace Adumbration
             {
                 // Keeps player in window
                 positionRect.X += speed;
-                currentState = PlayerState.MovingRight;
+                directionState = PlayerState.WalkingRight;
 
                 // makes player face RIGHT
                 playerIsFlipped = false;
@@ -352,7 +379,7 @@ namespace Adumbration
             {
                 // Keeps player in window
                 positionRect.X -= speed;
-                currentState = PlayerState.MovingLeft;
+                directionState = PlayerState.WalkingLeft;
 
                 // makes player face LEFT
                 playerIsFlipped = true;
@@ -410,7 +437,7 @@ namespace Adumbration
             {
                 // Move Player Down
                 positionRect.Y += speed;
-                currentState = PlayerState.MovingRight;
+                upDownState = PlayerState.FacingDown;
 
                 // While moving in the South direction
                 foreach (GameObject tile in currentLevel.TileList)
@@ -466,111 +493,9 @@ namespace Adumbration
         }
         #endregion
 
-        #region// Animations
         /// <summary>
-        /// Helper for updating player's animation based on time.
+        /// resets all keys
         /// </summary>
-        /// <param name="gameTime">Info about time from MonoGame.</param>
-        private void UpdateAnimation(GameTime gameTime)
-        {
-            // Increment the time
-            timeCounter += gameTime.ElapsedGameTime.TotalSeconds;
-
-            // 
-            if (timeCounter >= secondsPerFrame)
-            {
-                // Change which frame is active, ensuring the frame is reset back to the first frame in the animation
-                currentFrame++;
-                if (currentState == PlayerState.MovingLeft || currentState == PlayerState.MovingRight)
-                {
-                    if (currentFrame >= 3 || currentFrame == 1)
-                    {
-                        currentFrame = 1;
-                        sourceRect.X = 0;
-                    }
-                    else
-                    {
-                        currentFrame = currentFrame * widthOfSingleSprite;
-                    }
-                }
-                else if (currentState == PlayerState.MovingUp)
-                {
-                    if (currentFrame >= 5 || currentFrame == 3)
-                    {
-                        currentFrame = 3;
-                    }
-                    else
-                    {
-                    currentFrame = currentFrame * widthOfSingleSprite;
-                    }
-                }
-
-                // Reset time counter
-                timeCounter -= secondsPerFrame;
-                }
-        }
-
-        /// <summary>
-        /// Helper method to animate the player's motion.
-        /// </summary>
-        /// <param name="sb"></param>
-        /// <param name="flip">Should he be flipped horizontally.</param>
-        private void DrawMotion(SpriteBatch sb, SpriteEffects flip)
-        {
-            sb.Draw(
-                spriteSheet,
-                positionRect,
-                new Rectangle(
-                currentFrame * widthOfSingleSprite,
-                0,
-                widthOfSingleSprite,
-                spriteSheet.Height),
-                Color.White,
-                0.0f,
-                Vector2.Zero,
-                flip,
-                0.0f);
-        }
-
-        /// <summary>
-        /// Helper method to draw player in standing position. Player is not animated.
-        /// </summary>
-        /// <param name="sb"></param>
-        /// <param name="flip">Should be able to flip horizontally.</param>
-        private void DrawStanding(SpriteBatch sb, SpriteEffects flip)
-        {
-            if (currentState == PlayerState.FacingLeft || currentState == PlayerState.FacingRight)
-            {
-                sb.Draw(
-                    spriteSheet,
-                    positionRect,
-                    sourceRect,
-                    Color.White,
-                    0.0f,
-                    Vector2.Zero,
-                    flip,
-                    0.0f);
-            }
-            else if (currentState == PlayerState.FacingUp)
-            {
-                sb.Draw(
-                    spriteSheet,
-                    positionRect,
-                    new Rectangle(
-                    14,
-                    0,
-                    widthOfSingleSprite,
-                    spriteSheet.Height),
-                    Color.White,
-                    0.0f,
-                    Vector2.Zero,
-                    flip,
-                    0.0f);
-            }
-        }
-
-        #endregion
-
         public void ResetKeys()
         {
             collectedKeys[0] = false;
@@ -578,6 +503,5 @@ namespace Adumbration
             collectedKeys[2] = false;
             collectedKeys[3] = false;
         }
-
     }
 }
