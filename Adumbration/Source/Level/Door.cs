@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace Adumbration
 {
@@ -19,6 +21,7 @@ namespace Adumbration
         private double doorOffsetTimer;     // keep track of time after interact
         private Rectangle hitbox;
         private GameLevels level;
+        private SoundEffectInstance openSound;
 
         // Input
         KeyboardState kbState;
@@ -44,6 +47,8 @@ namespace Adumbration
         public Door(Texture2D texture, Rectangle position, GameLevels level, Direction dir)
              : base(texture, new Rectangle(0, 0, 16, 16), position)
         {
+            openSound = Game1.SoundDict["doorOpen"].CreateInstance();
+
             this.level = level;
             doorOffsetTimer = 20;   // num frames till load level
 
@@ -113,9 +118,10 @@ namespace Adumbration
                 Game1.IsKeyPressedOnce(Keys.E, kbState, kbStatePrev) &&
                 !isInteracted)
             {
-                // change texture, start timer
+                // change texture, start timer, play sound
                 isOpen = true;
                 isInteracted = true;
+                openSound.Play();
             }
 
             // Once interacted with count down timer 

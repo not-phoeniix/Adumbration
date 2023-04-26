@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 using Penumbra;
 using System.Collections.Generic;
 
@@ -47,8 +49,9 @@ namespace Adumbration
         private float globalScale;
         private Matrix tMatrix;
 
-        // textures
+        // content
         private Dictionary<string, Texture2D> textureDict;
+        private static Dictionary<string, SoundEffect> soundDict;
 
         // lighting stuff
         private PenumbraComponent penumbra;
@@ -69,6 +72,11 @@ namespace Adumbration
         {
             get { return prevState; }
             set { prevState = value; }
+        }
+
+        public static Dictionary<string, SoundEffect> SoundDict
+        {
+            get { return soundDict; }
         }
 
         public Game1()
@@ -122,9 +130,10 @@ namespace Adumbration
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            #region // Texture loading
+            #region // Content loading
 
             textureDict = new Dictionary<string, Texture2D>();
+            soundDict = new Dictionary<string, SoundEffect>();
 
             // game sprites
             textureDict.Add("player", Content.Load<Texture2D>("Sprites/sprite_player"));
@@ -144,6 +153,12 @@ namespace Adumbration
             textureDict.Add("mainHelp", Content.Load<Texture2D>("UI/ui_mainHelp"));
             textureDict.Add("mainQuit", Content.Load<Texture2D>("UI/ui_mainQuit"));
             textureDict.Add("help", Content.Load<Texture2D>("UI/ui_help"));
+
+            // sound effects
+            soundDict.Add("beamIdle", Content.Load<SoundEffect>("Sounds/sound_beamIdle"));
+            soundDict.Add("beamReflect", Content.Load<SoundEffect>("Sounds/sound_beamReflect"));
+            soundDict.Add("doorOpen", Content.Load<SoundEffect>("Sounds/sound_doorOpen"));
+            soundDict.Add("finalDoorOpen", Content.Load<SoundEffect>("Sounds/sound_finalDoorOpen"));
 
             #endregion
 
