@@ -39,6 +39,7 @@ namespace Adumbration
         private enum MenuButtons
         {
             Resume,
+            Help,
             Quit
         }
         
@@ -66,25 +67,48 @@ namespace Adumbration
             switch(selectedButton)
             {
                 case MenuButtons.Resume:
-                    // transition to quit state
+                    // transition to help state
                     if(Game1.IsKeyPressedOnce(Keys.Right, kbState, kbStatePrev))
                     {
-                        selectedButton = MenuButtons.Quit;
+                        selectedButton = MenuButtons.Help;
                     }
 
+                    // when "enter" is pressed
                     if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
                         Game1.GameState = GameState.Game;
                     }
                     break;
 
-                case MenuButtons.Quit:
-                    // transition to resume state
+                case MenuButtons.Help:
+                    // transitions to quit state
+                    if(Game1.IsKeyPressedOnce(Keys.Right, kbState, kbStatePrev)) {
+                        selectedButton = MenuButtons.Quit;
+                    }
+
+                    // transitions to resume state
                     if(Game1.IsKeyPressedOnce(Keys.Left, kbState, kbStatePrev))
                     {
                         selectedButton = MenuButtons.Resume;
                     }
 
+                    // when "enter" is pressed
+                    if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
+                    {
+                        Game1.GameState = GameState.HelpMenu;
+                        Game1.PrevState = GameState.PauseMenu;
+                    }
+
+                    break;
+
+                case MenuButtons.Quit:
+                    // transition to help state
+                    if(Game1.IsKeyPressedOnce(Keys.Left, kbState, kbStatePrev))
+                    {
+                        selectedButton = MenuButtons.Help;
+                    }
+
+                    // when "enter" is pressed
                     if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
                         Game1.GameState = GameState.MainMenu;
@@ -110,6 +134,14 @@ namespace Adumbration
                         screenRect,
                         Color.White);
 
+                    break;
+
+                // draw button "Help" hovered
+                case MenuButtons.Help:
+                    sb.Draw(
+                        textureDict["pauseHelp"],
+                        screenRect,
+                        Color.White);
                     break;
 
                 // draw button "Quit" hovered

@@ -38,6 +38,7 @@ namespace Adumbration
         private KeyboardState kbState;
         private KeyboardState prevKbState;
         private static GameState gameState;
+        private static GameState prevState;
 
         // general game settings/fields
         private Vector2 fullscreenRes;
@@ -62,6 +63,12 @@ namespace Adumbration
         {
             get { return gameState; }
             set { gameState = value; }
+        }
+
+        public static GameState PrevState
+        {
+            get { return prevState; }
+            set { prevState = value; }
         }
 
         public Game1()
@@ -131,6 +138,7 @@ namespace Adumbration
 
             // ui textures
             textureDict.Add("pauseResume", Content.Load<Texture2D>("UI/ui_pauseResume"));
+            textureDict.Add("pauseHelp", Content.Load<Texture2D>("UI/ui_pauseHelp"));
             textureDict.Add("pauseQuit", Content.Load<Texture2D>("UI/ui_pauseQuit"));
             textureDict.Add("mainStart", Content.Load<Texture2D>("UI/ui_mainStart"));
             textureDict.Add("mainHelp", Content.Load<Texture2D>("UI/ui_mainHelp"));

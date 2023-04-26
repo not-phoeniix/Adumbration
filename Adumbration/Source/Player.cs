@@ -42,6 +42,7 @@ namespace Adumbration
         // Player variables
         private int speed;
         private bool[] collectedKeys;
+        private bool isGrabbing;
 
         // Whether player is flipped or not
         private bool playerIsFlipped;
@@ -79,6 +80,12 @@ namespace Adumbration
             get { return speed; }
         }
 
+        public bool IsGrabbing
+        {
+            get { return isGrabbing; }
+            set { isGrabbing = value; }
+        }
+
         // Constructor
         /// <summary>
         /// Player takes everything from parent class
@@ -111,6 +118,16 @@ namespace Adumbration
         {
             // Player input
             KeyboardState currentKbState = Keyboard.GetState();
+
+            // Every Frame check if the player is grabbing the mirror
+            if (isGrabbing)
+            {
+                speed = 1;
+            }
+            else
+            {
+                speed = 2;
+            }
 
             if (currentKbState.IsKeyDown(Keys.F12) && previousKbState.IsKeyUp(Keys.F12))
             {
