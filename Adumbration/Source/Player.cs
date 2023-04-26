@@ -143,7 +143,7 @@ namespace Adumbration
             // makes player look backward when walking backward
             if(upDownState == PlayerState.FacingUp)
             {
-                if (speed == 1)
+                if (isGrabbing)
                 {
                     sourceRect.X = 42;
                 }

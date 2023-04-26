@@ -87,6 +87,11 @@ namespace Adumbration
             // If the player is within the interaction hit box
             // And is holding space while moving:
 
+            if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space))
+            {
+                myPlayer.IsGrabbing = true;
+            }
+
             // NORTH DIRECTION
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space) 
                 && currentKbState.IsKeyDown(Keys.W))
