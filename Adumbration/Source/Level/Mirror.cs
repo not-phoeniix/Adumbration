@@ -87,6 +87,7 @@ namespace Adumbration
             // If the player is within the interaction hit box
             // And is holding space while moving:
 
+            //if the user grabs the mirror it will turn the sprite white
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space))
             {
                 myPlayer.IsGrabbing = true;
