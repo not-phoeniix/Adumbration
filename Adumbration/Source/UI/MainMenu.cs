@@ -100,6 +100,7 @@ namespace Adumbration
                     if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
                         Game1.GameState = GameState.HelpMenu;
+                        Game1.PrevState = GameState.MainMenu;
                     }
 
                     break;

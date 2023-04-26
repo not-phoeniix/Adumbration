@@ -67,7 +67,11 @@ namespace Adumbration
         {
             if(Game1.IsKeyPressedOnce(Keys.Escape, kbState, kbStatePrev))
             {
-                Game1.GameState = GameState.MainMenu;
+                // goes to previous state of menu (which is set in
+                //   the menu transitions in each respective class
+                //   before transitioning to this help menu), either
+                //   main or pause menu
+                Game1.GameState = Game1.PrevState;
             }
         }
 
