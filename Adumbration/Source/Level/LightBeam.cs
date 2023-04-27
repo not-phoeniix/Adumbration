@@ -310,7 +310,7 @@ namespace Adumbration
                             else
                             {
                                 reflectedBeam = new LightBeam(texture,
-                                 new Rectangle(this.X + this.Width, this.Y, 2, 2),
+                                 new Rectangle(this.X + this.Width - 2, this.Y, 2, 2),
                                  Direction.Up, mirror);
                             }
                         }
@@ -344,7 +344,7 @@ namespace Adumbration
                         if (reflectedBeam != null && HasChanged)
                         {
                             // Change the reflected Beam's position
-                            reflectedBeam.X = positionRect.X + positionRect.Width - 4;
+                            reflectedBeam.X = positionRect.X + positionRect.Width;
                         }
                     }
                     break;
