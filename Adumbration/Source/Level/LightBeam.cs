@@ -50,6 +50,9 @@ namespace Adumbration
         // The beam's own reflected beam
         private LightBeam reflectedBeam;
 
+        // extended rectangle
+        private Rectangle extendedTexture;
+
         #region // Properties
 
         /// <summary>
@@ -140,6 +143,9 @@ namespace Adumbration
             // Original X and Y of beam rectangle
             originalX = position.X;
             originalY = position.Y;
+
+            // Extended rectangle is empty
+            extendedTexture = new Rectangle(0, 0, 0, 0);
         }
 
         /// <summary>
@@ -171,6 +177,9 @@ namespace Adumbration
             // Original X and Y of beam rectangle
             originalX = position.X;
             originalY = position.Y;
+
+            // Extended rectangle is empty
+            extendedTexture = new Rectangle(0, 0, 0, 0);
         }
 
         /// <summary>
@@ -335,7 +344,7 @@ namespace Adumbration
                         if (reflectedBeam != null && HasChanged)
                         {
                             // Change the reflected Beam's position
-                            reflectedBeam.X = positionRect.X + positionRect.Width;
+                            reflectedBeam.X = positionRect.X + positionRect.Width - 4;
                         }
                     }
                     break;
@@ -448,7 +457,7 @@ namespace Adumbration
                             if (mirror.Type == MirrorType.Backward)
                             {
                                 reflectedBeam = new LightBeam(texture,
-                                 new Rectangle(this.X, this.Y + this.Height, 2, 2),
+                                 new Rectangle(this.X, this.Y + this.Height + (positionRect.X - mirror.X), 2, 2),
                                  Direction.Right, mirror);
                             }
                             else
@@ -488,7 +497,7 @@ namespace Adumbration
                         if (reflectedBeam != null && HasChanged)
                         {
                             // Change the reflected Beam's position
-                            reflectedBeam.Y = positionRect.Y + positionRect.Height;
+                            reflectedBeam.Y = positionRect.Y + positionRect.Height - 2;
                         }                        
                     }
                     break;
@@ -586,7 +595,8 @@ namespace Adumbration
 
         //public override void Draw(SpriteBatch sb)
         //{
-        //    Draw(sb, this);
+        //    sb.Draw(texture, extendedTexture, Color.White);
+        //    base.Draw(sb);
         //}
         #endregion
 
