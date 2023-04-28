@@ -159,6 +159,7 @@ namespace Adumbration
             // clears previous lists and objects
             allBeams.Clear();
             allMirrors.Clear();
+            allLights.Clear();
             levelKey = null;
             receiversDict.Clear();
             penumbra.Lights.Clear();

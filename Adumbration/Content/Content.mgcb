@@ -67,6 +67,18 @@
 /processorParam:Quality=Best
 /build:Sounds/sound_menuBack.wav
 
+#begin Sounds/sound_menuBack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_menuBack.wav
+
+#begin Sounds/sound_menuChange.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_menuChange.wav
+
 #begin Sounds/sound_menuChange.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -78,6 +90,24 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/sound_menuSelect.wav
+
+#begin Sounds/sound_menuSelect.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_menuSelect.wav
+
+#begin Sounds/sound_song.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_song.wav
+
+#begin Sounds/sound_songLopass.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_songLopass.wav
 
 #begin Sprites/sprite_altFloors.png
 /importer:TextureImporter

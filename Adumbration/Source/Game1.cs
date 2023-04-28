@@ -53,6 +53,8 @@ namespace Adumbration
         private Dictionary<string, Texture2D> textureDict;
         private Dictionary<string, SoundEffect> soundDict;
         private SoundEffectInstance backSound;
+        private SoundEffectInstance bgMusic;
+        private SoundEffectInstance bgMusicLoPass;
 
         // lighting stuff
         private PenumbraComponent penumbra;
@@ -161,6 +163,9 @@ namespace Adumbration
             backSound = soundDict["menuBack"].CreateInstance();
             backSound.Volume = 0.6f;
 
+            bgMusic = Content.Load<SoundEffect>("Sounds/sound_song").CreateInstance();
+            bgMusicLoPass = Content.Load<SoundEffect>("Sounds/sound_songLopass").CreateInstance();
+
             #endregion
 
             #region // Object creation
@@ -197,10 +202,18 @@ namespace Adumbration
                 Scale = new Vector2(450),
                 Color = Color.White,
                 ShadowType = ShadowType.Occluded,
-                Intensity = 0.7f
+                Intensity = 0.6f
             };
 
             #endregion
+
+            bgMusic.IsLooped = true;
+            bgMusicLoPass.IsLooped = true;
+            bgMusic.Volume = 0.3f;
+            bgMusicLoPass.Volume = 0;
+
+            bgMusic.Play();
+            bgMusicLoPass.Play();
         }
 
         protected override void Update(GameTime gameTime)
@@ -225,6 +238,9 @@ namespace Adumbration
             {
                 case GameState.Game:
                     #region // Game update logic
+
+                    bgMusic.Volume = 0.3f;
+                    bgMusicLoPass.Volume = 0;
 
                     // Penumbra enabled while in-game
                     penumbra.Visible = true;
@@ -326,6 +342,9 @@ namespace Adumbration
                 case GameState.PauseMenu:
                     #region // Pause menu update logic
 
+                    bgMusic.Volume = 0;
+                    bgMusicLoPass.Volume = 0.3f;
+
                     // turn off penumbra in pause menu
                     penumbra.Visible = false;
 
@@ -345,6 +364,9 @@ namespace Adumbration
                 case GameState.MainMenu:
                     #region // Main menu update logic
 
+                    bgMusic.Volume = 0;
+                    bgMusicLoPass.Volume = 0.3f;
+
                     // turn off penumbra in main menu
                     penumbra.Visible = false;
 
@@ -356,6 +378,9 @@ namespace Adumbration
 
                 case GameState.HelpMenu:
                     #region // Help menu update logic
+
+                    bgMusic.Volume = 0;
+                    bgMusicLoPass.Volume = 0.3f;
 
                     // turn off penumbra in help menu
                     penumbra.Visible = false;

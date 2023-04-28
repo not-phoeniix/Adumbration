@@ -520,6 +520,7 @@ namespace Adumbration
             float radius = 1;
             float intensity = 0.1f;
             int skipNum = 10;
+            float scale = 80;
             
             // only deletes and recreates lights along beam if the position changes
             if(HasChanged)
@@ -536,6 +537,7 @@ namespace Adumbration
                         {
                             Radius = radius,
                             Intensity = intensity,
+                            Scale = new Vector2(scale),
                             Position = new Vector2(positionRect.X + positionRect.Width / 2, positionRect.Y + h)
                         };
 

@@ -86,8 +86,8 @@ namespace Adumbration
             PenumbraComponent penumbra,
             Player player)
         {
-            currentLevel = new Level(textureDict, soundDict, "Hub.txt", penumbra, player);
             this.player = player;
+            currentLevel = new Level(textureDict, soundDict, "Hub.txt", penumbra, player);
         }
 
         /// <summary>
