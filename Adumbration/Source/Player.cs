@@ -178,8 +178,6 @@ namespace Adumbration
             SouthMovement(currentKbState, currentLevel);
             #endregion
 
-            //MoveMirror(currentLevel, currentKbState);
-
             IsDead(currentLevel.Beams, LevelManager.Instance);
 
             previousKbState = currentKbState;

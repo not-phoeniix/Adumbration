@@ -81,9 +81,6 @@ namespace Adumbration
         {
             KeyboardState currentKbState = Keyboard.GetState();
 
-            // If not grabbing anything
-            myPlayer.IsGrabbing = false;
-
             // If the player is within the interaction hit box
             // And is holding space while moving:
 
@@ -91,6 +88,11 @@ namespace Adumbration
             if (hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyDown(Keys.Space))
             {
                 myPlayer.IsGrabbing = true;
+            }
+            else if(!hitbox.Intersects(myPlayer.Position) && currentKbState.IsKeyUp(Keys.Space))
+            {
+                // If not grabbing anything
+                myPlayer.IsGrabbing = false;
             }
 
             // NORTH DIRECTION

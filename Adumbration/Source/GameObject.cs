@@ -37,6 +37,17 @@ namespace Adumbration
             set { positionRect.Y = value; }
         }
 
+        public int Width
+        {
+            get { return positionRect.Width; }
+            set { positionRect.Width = value; }
+        }
+
+        public int Height
+        {
+            get { return positionRect.Height; }
+            set { positionRect.Height = value; }
+        }
         /// <summary>
         /// Abstract constructor, takes in
         /// </summary>
