@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Adumbration
 {
@@ -23,8 +24,9 @@ namespace Adumbration
         private Rectangle hitbox;
         private KeyboardState previousState;
         private Dictionary<string, Texture2D> textureDict;
+        private SoundEffectInstance openSound;
 
-        public FinalDoor(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
+        public FinalDoor(Texture2D spriteSheet, SoundEffect openSound, Rectangle sourceRect, Rectangle position)
              : base(spriteSheet, sourceRect, position)
         {
             // Create door hitboxes
@@ -44,6 +46,8 @@ namespace Adumbration
 
             //door is locked until all keys are collected
             unlocked = false;
+
+            this.openSound = openSound.CreateInstance();
         }
 
         /// <summary>
@@ -118,6 +122,8 @@ namespace Adumbration
             if (previousState.IsKeyUp(Keys.E) && currentState.IsKeyDown(Keys.E)
                 && unlocked && hitbox.Intersects(player.Position))
             {
+                openSound.Play();
+
                 sourceRect.X = 80;
                 LevelManager.Instance.LoadLevel(GameLevels.End);
                 player.ResetKeys();

@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Adumbration
 {
@@ -48,14 +49,17 @@ namespace Adumbration
         private MenuButtons selectedButton;
         private Dictionary<string, Texture2D> textureDict;
         public ExitGameDelegate Exit;
+        private SoundEffectInstance backSound;
 
         /// <summary>
         /// Initializes the pause menu, must be run before using the menu
         /// </summary>
         /// <param name="textureDict">Texture dictionary</param>
-        public void Initialize(Dictionary<string, Texture2D> textureDict)
+        public void Initialize(Dictionary<string, Texture2D> textureDict, Dictionary<string, SoundEffect> soundDict)
         {
             this.textureDict = textureDict;
+            backSound = soundDict["menuBack"].CreateInstance();
+            backSound.Volume = 0.6f;
         }
 
         /// <summary>
@@ -67,6 +71,8 @@ namespace Adumbration
         {
             if(Game1.IsKeyPressedOnce(Keys.Escape, kbState, kbStatePrev))
             {
+                backSound.Play();
+
                 // goes to previous state of menu (which is set in
                 //   the menu transitions in each respective class
                 //   before transitioning to this help menu), either

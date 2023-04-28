@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Penumbra;
 using System.Collections.Generic;
 
 namespace Adumbration
@@ -16,6 +17,7 @@ namespace Adumbration
         private bool textureFlipped;
         private int signalNum;
         private bool isActivated;
+        private PointLight light;
 
         /// <summary>
         /// Number that identifies the signal
@@ -33,12 +35,27 @@ namespace Adumbration
             get { return isActivated; }
         }
 
+        public PointLight Light
+        {
+            get { return light; }
+        }
+
         //the constructor for this class
         public LightReceptor(Texture2D spriteSheet, Rectangle position, Direction dir, int signalNum)
             : base(spriteSheet, new Rectangle(0, 0, 0, 0), position)
         {
             this.signalNum = signalNum;
             textureFlipped = false;
+
+            light = new PointLight()
+            {
+                Color = Color.Red,
+                Intensity = 1,
+                Position = new Vector2(
+                    positionRect.X + positionRect.Width / 2,
+                    positionRect.Y + 17),
+                Scale = new Vector2(100)
+            };
 
             // activation point is 1 pixel expanded from position rectangle
             activationPoint = new Rectangle(
@@ -87,8 +104,11 @@ namespace Adumbration
                     //System.Diagnostics.Debug.WriteLine("Activated");
                     //  writeline's every frame KILL the framerate ^ 
                     //  be careful w/ them...
+
                 }
             }
+
+            light.Enabled = isActivated;
         }
 
         /// <summary>

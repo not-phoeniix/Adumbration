@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Penumbra;
 using SharpDX.Direct2D1.Effects;
@@ -49,6 +50,10 @@ namespace Adumbration
 
         // The beam's own reflected beam
         private LightBeam reflectedBeam;
+
+        // sounds of beams
+        private SoundEffectInstance idleSound;
+        private SoundEffectInstance reflectSound;
 
         #region // Properties
 
@@ -120,7 +125,7 @@ namespace Adumbration
         /// <param name="texture">White Pixel texture used for beam</param>
         /// <param name="position">Position of the Light Beam</param>
         /// <param name="dir">Direction Light Beam is shooting</param>
-        public LightBeam(Texture2D texture, Rectangle position, Direction dir)
+        public LightBeam(Texture2D texture, Dictionary<string, SoundEffect> soundDict, Rectangle position, Direction dir)
              : base(texture, new Rectangle(0, 0, 1, 1), position)
         {
             this.dir = dir;
@@ -140,6 +145,10 @@ namespace Adumbration
             // Original X and Y of beam rectangle
             originalX = position.X;
             originalY = position.Y;
+
+            // set sound fields
+            idleSound = soundDict["beamIdle"].CreateInstance();
+            reflectSound = soundDict["beamReflect"].CreateInstance();
         }
 
         /// <summary>

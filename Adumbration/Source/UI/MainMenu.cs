@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
@@ -49,14 +50,21 @@ namespace Adumbration
         private MenuButtons selectedButton;
         private Dictionary<string, Texture2D> textureDict;
         public ExitGameDelegate Exit;
+        private SoundEffectInstance selectSound;
+        private SoundEffectInstance changeSound;
 
         /// <summary>
         /// Initializes the pause menu, must be run before using the menu
         /// </summary>
         /// <param name="textureDict">Texture dictionary</param>
-        public void Initialize(Dictionary<string, Texture2D> textureDict)
+        public void Initialize(Dictionary<string, Texture2D> textureDict, Dictionary<string, SoundEffect> soundDict)
         {
             this.textureDict = textureDict;
+            selectSound = soundDict["menuSelect"].CreateInstance();
+            changeSound = soundDict["menuChange"].CreateInstance();
+
+            selectSound.Volume = 0.6f;
+            changeSound.Volume = 0.4f;
         }
 
         /// <summary>
@@ -73,11 +81,13 @@ namespace Adumbration
                 case MenuButtons.Start:
                     if(Game1.IsKeyPressedOnce(Keys.Down, kbState, kbStatePrev))
                     {
+                        changeSound.Play();
                         selectedButton = MenuButtons.Help;
                     }
 
                     if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
+                        selectSound.Play();
                         Game1.GameState = GameState.Game;
                         player.ResetKeys();
                         LevelManager.Instance.LoadLevel(GameLevels.Hub);
@@ -89,16 +99,19 @@ namespace Adumbration
                 case MenuButtons.Help:
                     if(Game1.IsKeyPressedOnce(Keys.Down, kbState, kbStatePrev))
                     {
+                        changeSound.Play();
                         selectedButton = MenuButtons.Quit;
                     }
 
                     if(Game1.IsKeyPressedOnce(Keys.Up, kbState, kbStatePrev))
                     {
+                        changeSound.Play();
                         selectedButton = MenuButtons.Start;
                     }
 
                     if(Game1.IsKeyPressedOnce(Keys.Enter, kbState, kbStatePrev) && kbState.IsKeyUp(Keys.LeftAlt))
                     {
+                        selectSound.Play();
                         Game1.GameState = GameState.HelpMenu;
                         Game1.PrevState = GameState.MainMenu;
                     }
@@ -109,6 +122,7 @@ namespace Adumbration
                 case MenuButtons.Quit:
                     if(Game1.IsKeyPressedOnce(Keys.Up, kbState, kbStatePrev))
                     {
+                        changeSound.Play();
                         selectedButton = MenuButtons.Help;
                     }
 

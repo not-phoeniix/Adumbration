@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Penumbra;
 using System;
@@ -79,9 +80,13 @@ namespace Adumbration
         /// </summary>
         /// <param name="levelSpritesheet"></param>
         /// <param name="startingLevel"></param>
-        public void Initialize(Dictionary<string, Texture2D> textureDict, PenumbraComponent penumbra, Player player)
+        public void Initialize(
+            Dictionary<string, Texture2D> textureDict, 
+            Dictionary<string, SoundEffect> soundDict,
+            PenumbraComponent penumbra,
+            Player player)
         {
-            currentLevel = new Level(textureDict, "Hub.txt", penumbra, player);
+            currentLevel = new Level(textureDict, soundDict, "Hub.txt", penumbra, player);
             this.player = player;
         }
 

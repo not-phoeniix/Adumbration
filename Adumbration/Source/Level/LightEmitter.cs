@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 
@@ -24,6 +25,9 @@ namespace Adumbration
         private LightBeam beam;
         private Direction dir;
         private Texture2D whitePixelTexture;
+
+        // sound dictionary
+        Dictionary<string, SoundEffect> soundDict;
 
         /// <summary>
         /// Number that identifies the signal
@@ -67,7 +71,13 @@ namespace Adumbration
         /// <param name="position">Position to draw emitter</param>
         /// <param name="dir">Direction of the emitter</param>
         /// <param name="enabled">Whether to start the emitter enabled or not</param>
-        public LightEmitter(Dictionary<string, Texture2D> textureDict, Rectangle position, Direction dir, bool enabled, int signalNum)
+        public LightEmitter(
+            Dictionary<string, Texture2D> textureDict, 
+            Dictionary<string, SoundEffect> soundDict, 
+            Rectangle position,
+            Direction dir, 
+            bool enabled, 
+            int signalNum)
             : base(textureDict["walls"], new Rectangle(0, 0, 0, 0), position)
         {
             this.dir = dir;
@@ -105,6 +115,8 @@ namespace Adumbration
                     textureFlipped = true;
                     break;
             }
+
+            this.soundDict = soundDict;
         }
 
         public override void Update(GameTime gameTime)
@@ -116,6 +128,7 @@ namespace Adumbration
             {
                 beam = new LightBeam(
                     whitePixelTexture,
+                    soundDict,
                     new Rectangle(
                         (int)beamStartPos.X + positionRect.X,
                         (int)beamStartPos.Y + positionRect.Y,

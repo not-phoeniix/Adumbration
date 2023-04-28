@@ -51,7 +51,8 @@ namespace Adumbration
 
         // content
         private Dictionary<string, Texture2D> textureDict;
-        private static Dictionary<string, SoundEffect> soundDict;
+        private Dictionary<string, SoundEffect> soundDict;
+        private SoundEffectInstance backSound;
 
         // lighting stuff
         private PenumbraComponent penumbra;
@@ -72,11 +73,6 @@ namespace Adumbration
         {
             get { return prevState; }
             set { prevState = value; }
-        }
-
-        public static Dictionary<string, SoundEffect> SoundDict
-        {
-            get { return soundDict; }
         }
 
         public Game1()
@@ -159,19 +155,24 @@ namespace Adumbration
             soundDict.Add("beamReflect", Content.Load<SoundEffect>("Sounds/sound_beamReflect"));
             soundDict.Add("doorOpen", Content.Load<SoundEffect>("Sounds/sound_doorOpen"));
             soundDict.Add("finalDoorOpen", Content.Load<SoundEffect>("Sounds/sound_finalDoorOpen"));
+            soundDict.Add("menuBack", Content.Load<SoundEffect>("Sounds/sound_menuBack"));
+            soundDict.Add("menuChange", Content.Load<SoundEffect>("Sounds/sound_menuChange"));
+            soundDict.Add("menuSelect", Content.Load<SoundEffect>("Sounds/sound_menuSelect"));
+            backSound = soundDict["menuBack"].CreateInstance();
+            backSound.Volume = 0.6f;
 
             #endregion
 
             #region // Object creation
 
             // PauseMenu singleton init
-            PauseMenu.Instance.Initialize(textureDict);
+            PauseMenu.Instance.Initialize(textureDict, soundDict);
 
             // MainMenu singleton init
-            MainMenu.Instance.Initialize(textureDict);
+            MainMenu.Instance.Initialize(textureDict, soundDict);
 
             // HelpMenu singleton init
-            HelpMenu.Instance.Initialize(textureDict);
+            HelpMenu.Instance.Initialize(textureDict, soundDict);
 
             // Player Object
             player = new Player(
@@ -180,7 +181,7 @@ namespace Adumbration
                 new Rectangle(50, 50, 6, 8));   // initial pos
 
             // LevelManager singleton init
-            LevelManager.Instance.Initialize(textureDict, penumbra, player);
+            LevelManager.Instance.Initialize(textureDict, soundDict, penumbra, player);
 
             LevelManager.Instance.LoadLevel(GameLevels.End);
 
@@ -195,7 +196,8 @@ namespace Adumbration
             {
                 Scale = new Vector2(450),
                 Color = Color.White,
-                ShadowType = ShadowType.Occluded
+                ShadowType = ShadowType.Occluded,
+                Intensity = 0.7f
             };
 
             #endregion
@@ -230,6 +232,7 @@ namespace Adumbration
                     // transition to pause menu
                     if(IsKeyPressedOnce(Keys.Escape, kbState, prevKbState))
                     {
+                        backSound.Play();
                         gameState = GameState.PauseMenu;
                     }
 
@@ -303,6 +306,15 @@ namespace Adumbration
                         }
                     }
 
+                    // add receptor and other block's lights to list if it's not there
+                    foreach(Light light in LevelManager.Instance.CurrentLevel.AllLights)
+                    {
+                        if(!penumbra.Lights.Contains(light))
+                        {
+                            penumbra.Lights.Add(light);
+                        }
+                    }
+
                     // update t matrix w/ penumbra
                     penumbra.Transform = tMatrix;
 
@@ -320,6 +332,7 @@ namespace Adumbration
                     // transition back to game from pause menu
                     if(IsKeyPressedOnce(Keys.Escape, kbState, prevKbState))
                     {
+                        backSound.Play();
                         gameState = GameState.Game;
                     }
 

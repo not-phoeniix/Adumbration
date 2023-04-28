@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Collections.Generic;
 using Adumbration.Source.Level;
+using Microsoft.Xna.Framework.Audio;
 
 namespace Adumbration
 {
@@ -20,14 +21,16 @@ namespace Adumbration
         private string[,] levelLayout;            // copy of level text file, just char's
         private GameObject[,] objectArray;      // full array of GameObject's
         private Hull[,] wallHulls;              // for shadow casting
+        private List<Light> allLights;
         private bool firstFrame;
         
         // misc
         private PenumbraComponent penumbra;
         private Vector2 spawnPoint;
 
-        // texture stuff
+        // content stuff
         private Dictionary<string, Texture2D> textureDict;
+        private Dictionary<string, SoundEffect> soundDict;
         private Texture2D wallTexture;
         private Texture2D altFloorsTexture;
         private Texture2D doorsTexture;
@@ -50,10 +53,16 @@ namespace Adumbration
         /// </summary>
         /// <param name="wallSpritesheet">Texture2D wall spritesheet</param>
         /// <param name="dataFilePath">File path of layout data file (Already in LevelData folder, only file name needed)</param>
-        public Level(Dictionary<string, Texture2D> textureDict, string dataFilePath, PenumbraComponent penumbra, Player player)
+        public Level(
+            Dictionary<string, Texture2D> textureDict,
+            Dictionary<string, SoundEffect> soundDict,
+            string dataFilePath, 
+            PenumbraComponent penumbra,
+            Player player)
         {
             // setting fields
             this.textureDict = textureDict;
+            this.soundDict = soundDict;
             this.penumbra = penumbra;
             this.wallTexture = textureDict["walls"];
             this.altFloorsTexture = textureDict["floors"];
@@ -62,6 +71,7 @@ namespace Adumbration
             this.allBeams = new List<LightBeam>();
             this.allMirrors = new List<Mirror>();
             this.allDoors = new List<Door>();
+            this.allLights = new List<Light>();
             this.completed = false;
 
             // dictionary inits
@@ -91,6 +101,11 @@ namespace Adumbration
         {
             get { return wallHulls; }
             set { wallHulls = value; }
+        }
+
+        public List<Light> AllLights
+        {
+            get { return allLights; }
         }
 
         /// <summary>
@@ -641,6 +656,7 @@ namespace Adumbration
                         case 'F':
                             returnArray[x, y] = new FinalDoor(
                                 textureDict["doors"],
+                                soundDict["finalDoorOpen"],
                                 new Rectangle(0, 32, 16, 16),
                                 positionRect);
                             break;
@@ -714,6 +730,7 @@ namespace Adumbration
                             // creates the door and adds it the list and layout
                             Door doorToAdd = new Door(
                                 doorsTexture,
+                                soundDict["doorOpen"],
                                 positionRect,
                                 levelToLoad,
                                 dir);
@@ -741,6 +758,7 @@ namespace Adumbration
 
                             returnArray[x, y] = new LightEmitter(
                                 textureDict,
+                                soundDict,
                                 positionRect,
                                 dir,
                                 beamEnabled,           // enabled or not at start
@@ -774,6 +792,9 @@ namespace Adumbration
                                 new Rectangle(positionRect.X, positionRect.Y, 16, 16),
                                 dir,
                                 signal);
+
+                            // adds light of this receptor to the list
+                            allLights.Add(((LightReceptor)returnArray[x, y]).Light);
 
                             break;
 

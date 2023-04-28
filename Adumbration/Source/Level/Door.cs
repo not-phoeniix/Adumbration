@@ -44,10 +44,13 @@ namespace Adumbration
         /// <param name="texture">Texture of the door</param>
         /// <param name="position">Position of the door</param>
         /// <param name="level">What level to load when interacted with the door</param>
-        public Door(Texture2D texture, Rectangle position, GameLevels level, Direction dir)
+        public Door(Texture2D texture, SoundEffect? sound, Rectangle position, GameLevels level, Direction dir)
              : base(texture, new Rectangle(0, 0, 16, 16), position)
         {
-            openSound = Game1.SoundDict["doorOpen"].CreateInstance();
+            if(sound != null) {
+                openSound = sound.CreateInstance();
+                openSound.Volume = 0.8f;
+            }
 
             this.level = level;
             doorOffsetTimer = 20;   // num frames till load level
@@ -121,7 +124,7 @@ namespace Adumbration
                 // change texture, start timer, play sound
                 isOpen = true;
                 isInteracted = true;
-                openSound.Play();
+                openSound?.Play();
             }
 
             // Once interacted with count down timer 

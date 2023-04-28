@@ -27,7 +27,7 @@ namespace Adumbration.Source.Level
         /// <param name="signal">Integer signal associated with it</param>
         public LevelDoor(Texture2D texture, Rectangle position, Direction dir, int signal)
             // hub level is irrelevant, just there to fill base
-            : base(texture, position, GameLevels.Hub, dir)
+            : base(texture, null, position, GameLevels.Hub, dir)
         {
             SignalNum = signal;
             sourceRect.Y = 3 * 16;

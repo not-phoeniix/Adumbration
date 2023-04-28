@@ -19,6 +19,18 @@
 /processorParam:Quality=Best
 /build:Sounds/sound_beamIdle.wav
 
+#begin Sounds/sound_beamIdle.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_beamIdle.wav
+
+#begin Sounds/sound_beamReflect.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_beamReflect.wav
+
 #begin Sounds/sound_beamReflect.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -31,11 +43,41 @@
 /processorParam:Quality=Best
 /build:Sounds/sound_doorOpen.wav
 
+#begin Sounds/sound_doorOpen.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_doorOpen.wav
+
 #begin Sounds/sound_finalDoorOpen.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/sound_finalDoorOpen.wav
+
+#begin Sounds/sound_finalDoorOpen.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_finalDoorOpen.wav
+
+#begin Sounds/sound_menuBack.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_menuBack.wav
+
+#begin Sounds/sound_menuChange.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_menuChange.wav
+
+#begin Sounds/sound_menuSelect.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_menuSelect.wav
 
 #begin Sprites/sprite_altFloors.png
 /importer:TextureImporter
