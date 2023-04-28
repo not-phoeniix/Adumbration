@@ -75,7 +75,7 @@ namespace Adumbration
             {
                 //if the key isn't picked up and the user presses e
                 //then it will pick up the key
-                if (!pickedUp && currentState.IsKeyDown(Keys.E) && prevState.IsKeyUp(Keys.E))
+                if (!pickedUp && currentState.IsKeyDown(Keys.Space) && prevState.IsKeyUp(Keys.Space))
                 {
                     positionRect.Width = 0;
                     positionRect.Height = 0;
@@ -86,7 +86,6 @@ namespace Adumbration
                     if (pickedUp && manager.CurrentLevelEnum == GameLevels.Level1)
                     {
                         player.CollectedKeys[0] = true;
-
                     }
 
                     if (pickedUp && manager.CurrentLevelEnum == GameLevels.Level2)

@@ -118,7 +118,7 @@ namespace Adumbration
 
             // if player interacts with door:
             if (hitbox.Intersects(myPlayer.Position) && 
-                Game1.IsKeyPressedOnce(Keys.E, kbState, kbStatePrev) &&
+                Game1.IsKeyPressedOnce(Keys.Space, kbState, kbStatePrev) &&
                 !isInteracted)
             {
                 // change texture, start timer, play sound

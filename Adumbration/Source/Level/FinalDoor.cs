@@ -119,7 +119,7 @@ namespace Adumbration
             //if the player presses e on the door and the 
             //door is unlocked it will open and teleport the user to
             //the final room(the hub is a placeholder)
-            if (previousState.IsKeyUp(Keys.E) && currentState.IsKeyDown(Keys.E)
+            if (previousState.IsKeyUp(Keys.Space) && currentState.IsKeyDown(Keys.Space)
                 && unlocked && hitbox.Intersects(player.Position))
             {
                 openSound.Play();
