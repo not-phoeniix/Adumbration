@@ -1,11 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Xna.Framework.Media;
 
 namespace Adumbration
 {
@@ -21,6 +18,7 @@ namespace Adumbration
         private bool pickedUp;
         KeyboardState prevState;
         private bool colliding;
+        private SoundEffectInstance pickupSound;
 
         // Properties
         /// <summary>
@@ -45,7 +43,7 @@ namespace Adumbration
         /// <param name="spriteSheet"> the spritesheet of the things Nikki has drawn </param>
         /// <param name="sourceRect"> the spritesheet's position of the key </param>
         /// <param name="position"> the actual position of the rectangle </param>
-        public KeyObject(Texture2D spriteSheet, Rectangle sourceRect, Rectangle position)
+        public KeyObject(Texture2D spriteSheet, SoundEffect sound, Rectangle sourceRect, Rectangle position)
             : base(spriteSheet, sourceRect, position)
         {
             hitbox = new Rectangle(
@@ -53,6 +51,9 @@ namespace Adumbration
                 position.Y,                     //y pos
                 position.Width + 1,             //width size
                 position.Height + 1);           //height size
+
+            pickupSound = sound.CreateInstance();
+            pickupSound.Volume = 0.8f;
 
             pickedUp = false;
             colliding = false;
@@ -80,6 +81,7 @@ namespace Adumbration
                     positionRect.Width = 0;
                     positionRect.Height = 0;
                     System.Diagnostics.Debug.WriteLine("key taken");
+                    pickupSound.Play();
                     pickedUp = true;
 
                     //if the key is picked up it will add to the list once

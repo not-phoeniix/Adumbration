@@ -579,6 +579,7 @@ namespace Adumbration
 
                             levelKey = new KeyObject(
                                 textureDict["key"],
+                                soundDict["key"],
                                 new Rectangle(0, 0, 12, 12),
                                 new Rectangle(positionRect.X + 3, positionRect.Y + 3, 10, 10));
                             break;

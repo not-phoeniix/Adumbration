@@ -1,5 +1,6 @@
 ﻿using Adumbration.Source.Level;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -43,6 +44,9 @@ namespace Adumbration
         private int speed;
         private bool[] collectedKeys;
         private bool isGrabbing;
+
+        // audio
+        private SoundEffectInstance deathSound;
 
         // Whether player is flipped or not
         private bool playerIsFlipped;
@@ -93,7 +97,7 @@ namespace Adumbration
         /// <param name="spritesheet">spritesheet where player's texture is</param>
         /// <param name="sourceRect">The source rectangle within the spritesheet</param>
         /// <param name="position">position of the player</param>
-        public Player(Texture2D spritesheet, Rectangle sourceRect, Rectangle position)
+        public Player(Texture2D spritesheet, SoundEffect deathSound, Rectangle sourceRect, Rectangle position)
             : base(spritesheet, sourceRect, position)
         {
             currentMode = PlayerMode.NormalMode;
@@ -107,6 +111,10 @@ namespace Adumbration
             fps = 2.0;
             secondsPerFrame = 1.0 / fps;
             timeCounter = 0;
+
+            // set up sound effects
+            this.deathSound = deathSound.CreateInstance();
+            this.deathSound.Volume = 0.8f;
         }
 
         // Methods
@@ -253,6 +261,7 @@ namespace Adumbration
                         }
 
                         LevelManager.Instance.ResetLevel();
+                        deathSound.Play();
                         return;
                     }
                 }

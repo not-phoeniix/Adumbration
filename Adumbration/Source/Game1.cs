@@ -160,6 +160,8 @@ namespace Adumbration
             soundDict.Add("menuBack", Content.Load<SoundEffect>("Sounds/sound_menuBack"));
             soundDict.Add("menuChange", Content.Load<SoundEffect>("Sounds/sound_menuChange"));
             soundDict.Add("menuSelect", Content.Load<SoundEffect>("Sounds/sound_menuSelect"));
+            soundDict.Add("die", Content.Load<SoundEffect>("Sounds/sound_die"));
+            soundDict.Add("key", Content.Load<SoundEffect>("Sounds/sound_key"));
             backSound = soundDict["menuBack"].CreateInstance();
             backSound.Volume = 0.6f;
 
@@ -182,6 +184,7 @@ namespace Adumbration
             // Player Object
             player = new Player(
                 textureDict["player"],          // spritesheet in dict
+                soundDict["die"],               // death sound for player
                 new Rectangle(0, 0, 6, 8),      // source
                 new Rectangle(50, 50, 6, 8));   // initial pos
 

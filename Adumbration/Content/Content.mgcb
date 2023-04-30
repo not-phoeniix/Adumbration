@@ -37,6 +37,12 @@
 /processorParam:Quality=Best
 /build:Sounds/sound_beamReflect.wav
 
+#begin Sounds/sound_die.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_die.wav
+
 #begin Sounds/sound_doorOpen.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
@@ -60,6 +66,12 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/sound_finalDoorOpen.wav
+
+#begin Sounds/sound_key.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_key.wav
 
 #begin Sounds/sound_menuBack.wav
 /importer:WavImporter
@@ -102,6 +114,18 @@
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/sound_song.wav
+
+#begin Sounds/sound_song.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_song.wav
+
+#begin Sounds/sound_songLopass.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds/sound_songLopass.wav
 
 #begin Sounds/sound_songLopass.wav
 /importer:WavImporter
