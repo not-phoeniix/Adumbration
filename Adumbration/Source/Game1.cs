@@ -63,6 +63,9 @@ namespace Adumbration
         // Game objects
         private Player player;
 
+        // fonts for debugging
+        private SpriteFont font;
+
         #endregion
 
         public static GameState GameState
@@ -168,6 +171,7 @@ namespace Adumbration
             bgMusic = Content.Load<SoundEffect>("Sounds/sound_song").CreateInstance();
             bgMusicLoPass = Content.Load<SoundEffect>("Sounds/sound_songLopass").CreateInstance();
 
+            font = Content.Load<SpriteFont>("File");
             #endregion
 
             #region // Object creation
@@ -482,6 +486,12 @@ namespace Adumbration
             _spriteBatch.End();
 
             #endregion
+
+            _spriteBatch.Begin();
+
+            _spriteBatch.DrawString(font, string.Format("X: {0}\n Y: {1}", player.Velocity.X, player.Velocity.Y), new Vector2(0, 0), Color.White);
+
+            _spriteBatch.End();
 
             base.Draw(gameTime);
         }

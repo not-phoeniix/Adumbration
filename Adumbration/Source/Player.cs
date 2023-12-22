@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using SharpDX.Direct2D1.Effects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -41,9 +42,14 @@ namespace Adumbration
         private PlayerState directionState;
 
         // Player variables
-        private int speed;
+        private float speed;
         private bool[] collectedKeys;
         private bool isGrabbing;
+
+        // Vector variables
+        private Vector2 position;
+        private Vector2 direction;
+        private Vector2 velocity;
 
         // audio
         private SoundEffectInstance deathSound;
@@ -73,15 +79,15 @@ namespace Adumbration
             }
         }
 
-        public bool[] CollectedKeys
+        public Vector2 Velocity
         {
-            get{ return collectedKeys; }
-            set { collectedKeys = value; }
+            get { return velocity; }
         }
 
-        public int Speed
+        public bool[] CollectedKeys
         {
-            get { return speed; }
+            get { return collectedKeys; }
+            set { collectedKeys = value; }
         }
 
         public bool IsGrabbing
@@ -96,15 +102,15 @@ namespace Adumbration
         /// </summary>
         /// <param name="spritesheet">spritesheet where player's texture is</param>
         /// <param name="sourceRect">The source rectangle within the spritesheet</param>
-        /// <param name="position">position of the player</param>
-        public Player(Texture2D spritesheet, SoundEffect deathSound, Rectangle sourceRect, Rectangle position)
-            : base(spritesheet, sourceRect, position)
+        /// <param name="rectPosition">position of the player's rectangle</param>
+        public Player(Texture2D spritesheet, SoundEffect deathSound, Rectangle sourceRect, Rectangle rectPosition)
+            : base(spritesheet, sourceRect, rectPosition)
         {
             currentMode = PlayerMode.NormalMode;
             upDownState = PlayerState.FacingDown;
 
             // Set player speed and the collectedKeys array to null
-            speed = 2;
+            speed = 2f;
             collectedKeys = new bool[4];
 
             // Animation data
@@ -115,6 +121,11 @@ namespace Adumbration
             // set up sound effects
             this.deathSound = deathSound.CreateInstance();
             this.deathSound.Volume = 0.8f;
+
+            // Set Player's position to be the same as the rectangle's position
+            position = new Vector2(rectPosition.X, rectPosition.Y);
+            direction = Vector2.Zero;
+            velocity = Vector2.Zero;
         }
 
         // Methods
@@ -127,7 +138,52 @@ namespace Adumbration
             // Player input
             KeyboardState currentKbState = Keyboard.GetState();
 
+            #region === God Mode stuff ===
+            if (currentKbState.IsKeyDown(Keys.F12) && previousKbState.IsKeyUp(Keys.F12))
+            {
+                currentMode = PlayerMode.GodMode;
+            }
+            else if (currentKbState.IsKeyDown(Keys.F11) && previousKbState.IsKeyUp(Keys.F11))
+            {
+                currentMode = PlayerMode.NormalMode;
+            }
+            #endregion
+
+            //If any of the movement keys are not pressed down set direction to zero;
+            direction = Vector2.Zero;
+
+            #region === Player Input ===
+            // If W is pressed Direction points up
+            if (currentKbState.IsKeyDown(Keys.W))
+            {
+                direction -= Vector2.UnitY;
+                upDownState = PlayerState.FacingUp;
+            }
+
+            // If A is pressed Direction points Left
+            if (currentKbState.IsKeyDown(Keys.A))
+            {
+                direction -= Vector2.UnitX;
+                directionState = PlayerState.WalkingLeft;
+            }
+
+            // If S is pressed Direction points down
+            if (currentKbState.IsKeyDown(Keys.S))
+            {
+                direction += Vector2.UnitY;
+                upDownState = PlayerState.FacingDown;
+            }
+
+            // If D is pressed Direction points right
+            if (currentKbState.IsKeyDown(Keys.D))
+            {
+                direction += Vector2.UnitX;
+                directionState = PlayerState.WalkingRight;
+            }
+            #endregion
+
             // Every Frame check if the player is grabbing the mirror
+            // If so halve the speed
             if (isGrabbing)
             {
                 speed = 1;
@@ -137,19 +193,8 @@ namespace Adumbration
                 speed = 2;
             }
 
-            if (currentKbState.IsKeyDown(Keys.F12) && previousKbState.IsKeyUp(Keys.F12))
-            {
-                currentMode = PlayerMode.GodMode;
-                System.Diagnostics.Debug.WriteLine("god mode");
-            }
-            else if (currentKbState.IsKeyDown(Keys.F11) && previousKbState.IsKeyUp(Keys.F11))
-            {
-                currentMode = PlayerMode.NormalMode;
-                System.Diagnostics.Debug.WriteLine("normal mode");
-            }
-
             // makes player look backward when walking backward
-            if(upDownState == PlayerState.FacingUp)
+            if (upDownState == PlayerState.FacingUp)
             {
                 if (isGrabbing)
                 {
@@ -158,7 +203,7 @@ namespace Adumbration
                 else
                 {
                     sourceRect.X = 14;
-                }   
+                }
             }
             else
             {
@@ -172,18 +217,118 @@ namespace Adumbration
                 }
             }
 
-            #region // Movement
-            // North Movement
-            NorthMovement(currentKbState, currentLevel);
+            #region ==== Movement ====
 
-            // East Movement
-            EastMovement(currentKbState, currentLevel);
+            // Normalize the Direction vector to maintain consistency
+            if (direction != Vector2.Zero)
+            {
+                direction.Normalize();
+            }
 
-            // West Movement
-            WestMovement(currentKbState, currentLevel);
+            // Calculate Velocity
+            velocity = direction * speed;
 
-            // South Movement
-            SouthMovement(currentKbState, currentLevel);
+            // Apply velocity to position
+            position += velocity;
+
+            #region === Collision Detection and Response ===
+
+            // For every tile in the level
+            foreach (GameObject tile in currentLevel.TileList)
+            {
+                // If it is colliding with a wall
+                if (tile is Wall wall && currentMode == PlayerMode.NormalMode)
+                {
+                    // for non-opened wall doors
+                    if (wall is LevelDoor door)
+                    {
+                        if (!door.IsOpen)
+                        {
+                            // Depending on which side of a wall you are touching 
+                            // Snap player accordingly
+                            if (IsTouchingLeft(tile))
+                            {
+                                position.X = tile.X - positionRect.Width;
+                            }
+
+                            if (IsTouchingRight(tile))
+                            {
+                                position.X = tile.X + tile.Width;
+                            }
+
+                            if (IsTouchingTop(tile))
+                            {
+                                position.Y = tile.Y - positionRect.Height;
+                            }
+
+                            if (IsTouchingBottom(tile))
+                            {
+                                position.Y = tile.Y + tile.Height;
+                            }
+                        }
+                    }
+                    // Otherwise for regular walls do the same
+                    else
+                    {
+                        // Depending on which side of a wall you are touching 
+                        // Snap player accordingly
+                        if (IsTouchingLeft(tile))
+                        {
+                            position.X = tile.X - positionRect.Width;
+                        }
+
+                        if (IsTouchingRight(tile))
+                        {
+                            position.X = tile.X + tile.Width;
+                        }
+
+                        if (IsTouchingTop(tile))
+                        {
+                            position.Y = tile.Y - positionRect.Height;
+                        }
+
+                        if (IsTouchingBottom(tile))
+                        {
+                            position.Y = tile.Y + tile.Height;
+                        }
+                    }
+                }
+            }
+
+            // Same Collision Detection response for mirrors
+            foreach (Mirror mirror in currentLevel.Mirrors)
+            {
+                if (currentMode == PlayerMode.NormalMode)
+                {
+                    // Depending on which side of a wall you are touching 
+                    // Snap player accordingly
+                    if (IsTouchingLeft(mirror))
+                    {
+                        position.X = mirror.X - positionRect.Width;
+                    }
+
+                    if (IsTouchingRight(mirror))
+                    {
+                        position.X = mirror.X + mirror.Width;
+                    }
+
+                    if (IsTouchingTop(mirror))
+                    {
+                        position.Y = mirror.Y - positionRect.Height;
+                    }
+
+                    if (IsTouchingBottom(mirror))
+                    {
+                        position.Y = mirror.Y + mirror.Height;
+                    }
+                }
+            }
+            #endregion
+
+            // Change position of the rectangle accordingly
+            positionRect.X = (int)position.X;
+            positionRect.Y = (int)position.Y;
+
             #endregion
 
             IsDead(currentLevel.Beams, LevelManager.Instance);
@@ -268,238 +413,6 @@ namespace Adumbration
             }
         }
 
-        #region// Movement methods
-        /// <summary>
-        /// Controls player's movement north
-        /// </summary>
-        /// <param name="currentKbState">Current state of the keyboard</param>
-        /// <param name="currentLevel">Current level the player is on</param>
-        /// <param name="currentX">Current X position of player</param>
-        private void NorthMovement(KeyboardState currentKbState, Level currentLevel)
-        {
-            if (currentKbState.IsKeyDown(Keys.W))
-            {
-                // If player is not touching a top wall let them move in that direction
-                positionRect.Y -= speed;
-                upDownState = PlayerState.FacingUp;
-
-                // While moving in the North direction
-                foreach (GameObject tile in currentLevel.TileList)
-                {
-                    // If it is colliding with a wall
-                    if (tile is Wall wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
-                    {
-                        if(wall is LevelDoor door)
-                        {
-                            if(!door.IsOpen)
-                            {
-                                // Snap the Player to the bottom of the wall
-                                positionRect.Y = tile.Position.Height + tile.Position.Y;
-                            }
-                        }
-                        else
-                        {
-                            // Snap the Player to the bottom of the wall
-                            positionRect.Y = tile.Position.Height + tile.Position.Y;
-                        }
-                    }
-                }
-
-                foreach(Mirror mirror in currentLevel.Mirrors)
-                {
-                    if(IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
-                    {
-                        positionRect.Y = mirror.Position.Height + mirror.Position.Y;
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Controls player's movement east
-        /// </summary>
-        /// <param name="currentKbState">Current state of the keyboard</param>
-        /// <param name="currentLevel">Current level the player is on</param>
-        /// <param name="currentX">Current X position of player</param>
-        /// <param name="currentY">Current Y position of player</param>
-        private void EastMovement(KeyboardState currentKbState, Level currentLevel)
-        {
-            if (currentKbState.IsKeyDown(Keys.D))
-            {
-                // Keeps player in window
-                positionRect.X += speed;
-                directionState = PlayerState.WalkingRight;
-
-                // makes player face RIGHT
-                playerIsFlipped = false;
-
-                // While moving in the East direction
-                foreach (GameObject tile in currentLevel.TileList)
-                {
-                    // if the player is colliding with a wall
-                    if (tile is Wall wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
-                    {
-                        if(wall is LevelDoor door)
-                        {
-                            if(!door.IsOpen)
-                            {
-                                // Snap Player to the left side of the wall
-                                positionRect.X = tile.Position.X - positionRect.Width;
-
-                                // North Movement
-                                NorthMovement(currentKbState, currentLevel);
-                            }
-                        }
-                        else
-                        {
-                            // Snap Player to the left side of the wall
-                            positionRect.X = tile.Position.X - positionRect.Width;
-
-                            // North Movement
-                            NorthMovement(currentKbState, currentLevel);
-                        }
-                    }
-                }
-
-                foreach (Mirror mirror in currentLevel.Mirrors)
-                {
-                    if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
-                    {
-                        positionRect.X = mirror.Position.X - positionRect.Width;
-
-                        NorthMovement(currentKbState, currentLevel);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Controls player's movement west
-        /// </summary>
-        /// <param name="currentKbState">Current state of the keyboard</param>
-        /// <param name="currentLevel">Current level the player is on</param>
-        /// <param name="currentX">Current X position of player</param>
-        /// <param name="currentY">Current Y position of player</param>
-        private void WestMovement(KeyboardState currentKbState, Level currentLevel)
-        {
-            if (currentKbState.IsKeyDown(Keys.A))
-            {
-                // Keeps player in window
-                positionRect.X -= speed;
-                directionState = PlayerState.WalkingLeft;
-
-                // makes player face LEFT
-                playerIsFlipped = true;
-
-                // While the player is moving in the West direction 
-                foreach (GameObject tile in currentLevel.TileList)
-                {
-                    // If the player collides with a wall
-                    if (tile is Wall wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
-                    {
-                        if(wall is LevelDoor door)
-                        {
-                            if(!door.IsOpen)
-                            {
-                                // Snap the player to the right side of the wall
-                                positionRect.X = tile.Position.Width + tile.Position.X;
-
-                                // North Movement
-                                NorthMovement(currentKbState, currentLevel);
-                            }
-                        }
-                        else
-                        {
-                            // Snap the player to the right side of the wall
-                            positionRect.X = tile.Position.Width + tile.Position.X;
-
-                            // North Movement
-                            NorthMovement(currentKbState, currentLevel);
-                        }
-                    }
-                }
-
-                foreach (Mirror mirror in currentLevel.Mirrors)
-                {
-                    if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
-                    {
-                        positionRect.X = mirror.Position.Width + mirror.Position.X;
-
-                        NorthMovement(currentKbState, currentLevel);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Controls player's movement south
-        /// </summary>
-        /// <param name="currentKbState">Current state of the keyboard</param>
-        /// <param name="currentLevel">Current level the player is on</param>
-        /// <param name="currentX">Current X position of player</param>
-        /// <param name="currentY">Current Y position of player</param>
-        private void SouthMovement(KeyboardState currentKbState, Level currentLevel)
-        {
-            if (currentKbState.IsKeyDown(Keys.S))
-            {
-                // Move Player Down
-                positionRect.Y += speed;
-                upDownState = PlayerState.FacingDown;
-
-                // While moving in the South direction
-                foreach (GameObject tile in currentLevel.TileList)
-                {
-                    // If the player collides with a wall
-                    if (tile is Wall wall && IsColliding(tile) && currentMode == PlayerMode.NormalMode)
-                    {
-                        if(wall is LevelDoor door)
-                        {
-                            if(!door.IsOpen)
-                            {
-                                // Snap player to the top of the wall
-                                positionRect.Y = tile.Position.Y - positionRect.Height;
-
-                                // Allow player to move west
-                                WestMovement(currentKbState, currentLevel);
-
-                                // Allow player to move east
-                                EastMovement(currentKbState, currentLevel);
-                            }
-                        }
-                        else
-                        {
-                            // Snap player to the top of the wall
-                            positionRect.Y = tile.Position.Y - positionRect.Height;
-
-                            // Allow player to move west
-                            WestMovement(currentKbState, currentLevel);
-
-                            // Allow player to move east
-                            EastMovement(currentKbState, currentLevel);
-                        }
-                    }
-                }
-
-                foreach (Mirror mirror in currentLevel.Mirrors)
-                {
-                    if (IsColliding(mirror) && currentMode == PlayerMode.NormalMode)
-                    {
-                        positionRect.Y = mirror.Position.Y - positionRect.Height;
-
-                        // Allow player to move North
-                        NorthMovement(currentKbState, currentLevel);
-
-                        // Allow player to move west
-                        WestMovement(currentKbState, currentLevel);
-
-                        // Allow player to move east
-                        EastMovement(currentKbState, currentLevel);
-                    }
-                }
-            }
-        }
-        #endregion
-
         /// <summary>
         /// resets all keys
         /// </summary>
@@ -510,5 +423,59 @@ namespace Adumbration
             collectedKeys[2] = false;
             collectedKeys[3] = false;
         }
+
+        #region === Collision Methods ===
+        /// <summary>
+        /// Determine whether player is touch the left side of an obstacle
+        /// </summary>
+        /// <param name="obst">The obstacle that is being checked</param>
+        /// <returns>Whether or not the player is touching the left side</returns>
+        private bool IsTouchingLeft(GameObject obst)
+        {
+            return positionRect.X + positionRect.Width + velocity.X > obst.X &&
+                positionRect.X < obst.Position.X &&
+                positionRect.Y + positionRect.Height > obst.Y &&
+                positionRect.Y < obst.Y + obst.Height;
+        }
+
+        /// <summary>
+        /// Determine whether player is touch the right side of an obstacle
+        /// </summary>
+        /// <param name="obst">The obstacle that is being checked</param>
+        /// <returns>Whether or not the player is touching the right side</returns>
+        private bool IsTouchingRight(GameObject obst)
+        {
+            return positionRect.X + velocity.X < obst.X + obst.Width &&
+                positionRect.X + positionRect.Width > obst.X + obst.Width &&
+                positionRect.Y + positionRect.Height > obst.Y &&
+                positionRect.Y < obst.Y + obst.Height;
+        }
+
+        /// <summary>
+        /// Determine whether player is touch the top side of an obstacle
+        /// </summary>
+        /// <param name="obst">The obstacle that is being checked</param>
+        /// <returns>Whether or not the player is touching the top side</returns>
+        private bool IsTouchingTop(GameObject obst)
+        {
+            return positionRect.Y + positionRect.Height + velocity.Y > obst.Y &&
+                positionRect.Y < obst.Position.Y &&
+                positionRect.X + positionRect.Width > obst.X &&
+                positionRect.X < obst.X + obst.Width;
+        }
+
+        /// <summary>
+        /// Determine whether player is touch the bottom side of an obstacle
+        /// </summary>
+        /// <param name="obst">The obstacle that is being checked</param>
+        /// <returns>Whether or not the player is touching the bottom side</returns>
+        private bool IsTouchingBottom(GameObject obst)
+        {
+            return positionRect.Y + velocity.Y < obst.Y + obst.Height &&
+                positionRect.Y + positionRect.Height > obst.Y + obst.Height &&
+                positionRect.X + positionRect.Width > obst.X &&
+                positionRect.X < obst.X + obst.Width;
+        }
+        #endregion
     }
 }
