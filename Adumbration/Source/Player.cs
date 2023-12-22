@@ -152,6 +152,10 @@ namespace Adumbration
             //If any of the movement keys are not pressed down set direction to zero;
             direction = Vector2.Zero;
 
+            // set the player's position Vector as it's rect position
+            position.X = this.X;
+            position.Y = this.Y;
+
             #region === Player Input ===
             // If W is pressed Direction points up
             if (currentKbState.IsKeyDown(Keys.W))

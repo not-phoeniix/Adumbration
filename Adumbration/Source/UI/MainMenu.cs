@@ -90,7 +90,7 @@ namespace Adumbration
                         selectSound.Play();
                         Game1.GameState = GameState.Game;
                         player.ResetKeys();
-                        LevelManager.Instance.LoadLevel(GameLevels.TestLevel);
+                        LevelManager.Instance.LoadLevel(GameLevels.Hub);
                     }
 
                     break;
