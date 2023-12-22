@@ -156,28 +156,28 @@ namespace Adumbration
             // If W is pressed Direction points up
             if (currentKbState.IsKeyDown(Keys.W))
             {
-                direction -= Vector2.UnitY;
+                direction.Y -= 1;
                 upDownState = PlayerState.FacingUp;
+            }
+
+            // If S is pressed Direction points down
+            else if (currentKbState.IsKeyDown(Keys.S))
+            {
+                direction.Y += 1;
+                upDownState = PlayerState.FacingDown;
             }
 
             // If A is pressed Direction points Left
             if (currentKbState.IsKeyDown(Keys.A))
             {
-                direction -= Vector2.UnitX;
+                direction.X -= 1;
                 playerIsFlipped = true;
             }
 
-            // If S is pressed Direction points down
-            if (currentKbState.IsKeyDown(Keys.S))
-            {
-                direction += Vector2.UnitY;
-                upDownState = PlayerState.FacingDown;
-            }
-
             // If D is pressed Direction points right
-            if (currentKbState.IsKeyDown(Keys.D))
+            else if (currentKbState.IsKeyDown(Keys.D))
             {
-                direction += Vector2.UnitX;
+                direction.X += 1;
                 playerIsFlipped = false;
             }
             #endregion
@@ -229,9 +229,19 @@ namespace Adumbration
             velocity = direction * speed;
 
             // Apply velocity to position
-            if(velocity.X < 0 && velocity.Y < 0)
+            if (velocity.X < 0 && velocity.Y < 0)
             {
                 position += Vector2.Floor(velocity);
+            }
+            else if(velocity.X >  0 && velocity.Y < 0)
+            {
+                position.X += MathF.Floor(velocity.X) * 2;
+                position.Y += MathF.Ceiling(velocity.Y) * 2;
+            }
+            else if(velocity.X < 0 && velocity.Y > 0)
+            {
+                position.X += MathF.Ceiling(velocity.X) * 2 ;
+                position.Y += MathF.Floor(velocity.Y) * 2;
             }
             else
             {
