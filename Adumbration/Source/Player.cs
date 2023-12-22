@@ -39,7 +39,6 @@ namespace Adumbration
         // Player's input and state
         private KeyboardState previousKbState;
         private PlayerState upDownState;
-        private PlayerState directionState;
 
         // Player variables
         private float speed;
@@ -59,8 +58,6 @@ namespace Adumbration
 
         // Animation fields
         private double fps;
-        private double secondsPerFrame;
-        private double timeCounter;
 
         // Position centered in screen
         public Rectangle CenterRect { get; set; }
@@ -168,7 +165,7 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.A))
             {
                 direction -= Vector2.UnitX;
-                directionState = PlayerState.WalkingLeft;
+                playerIsFlipped = true;
             }
 
             // If S is pressed Direction points down
@@ -182,7 +179,7 @@ namespace Adumbration
             if (currentKbState.IsKeyDown(Keys.D))
             {
                 direction += Vector2.UnitX;
-                directionState = PlayerState.WalkingRight;
+                playerIsFlipped = false;
             }
             #endregion
 
