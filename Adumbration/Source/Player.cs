@@ -112,8 +112,6 @@ namespace Adumbration
 
             // Animation data
             fps = 2.0;
-            secondsPerFrame = 1.0 / fps;
-            timeCounter = 0;
 
             // set up sound effects
             this.deathSound = deathSound.CreateInstance();
