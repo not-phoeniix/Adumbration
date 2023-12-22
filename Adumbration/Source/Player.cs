@@ -233,15 +233,15 @@ namespace Adumbration
             {
                 position += Vector2.Floor(velocity);
             }
-            else if(velocity.X >  0 && velocity.Y < 0)
+            else if(velocity.X >  0 && velocity.Y < 0) // Ensures player is going in correct 45 deg angle
             {
-                position.X += MathF.Floor(velocity.X) * 2;
-                position.Y += MathF.Ceiling(velocity.Y) * 2;
+                position.X += MathF.Floor(velocity.X) * speed;
+                position.Y += MathF.Ceiling(velocity.Y) * speed;
             }
-            else if(velocity.X < 0 && velocity.Y > 0)
+            else if(velocity.X < 0 && velocity.Y > 0) // Ensures player is going in correct 45 deg angle
             {
-                position.X += MathF.Ceiling(velocity.X) * 2 ;
-                position.Y += MathF.Floor(velocity.Y) * 2;
+                position.X += MathF.Ceiling(velocity.X) * speed;
+                position.Y += MathF.Floor(velocity.Y) * speed;
             }
             else
             {
