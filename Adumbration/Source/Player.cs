@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SharpDX.Direct2D1.Effects;
+using SharpDX.MediaFoundation;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -228,7 +229,15 @@ namespace Adumbration
             velocity = direction * speed;
 
             // Apply velocity to position
-            position += velocity;
+            if(velocity.X < 0 && velocity.Y < 0)
+            {
+                position += Vector2.Floor(velocity);
+            }
+            else
+            {
+                position += Vector2.Ceiling(velocity);
+            }
+
 
             #region === Collision Detection and Response ===
 
