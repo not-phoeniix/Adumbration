@@ -214,25 +214,43 @@ namespace Adumbration
                     // adds main beam if not null
                     if (emitter.Beam != null)
                     {
-                        if (!allBeams.Contains(emitter.Beam))
-                        {
-                            allBeams.Add(emitter.Beam);
-                        }
+                        //// The emitter's beam is the head node of that particular line of beams
+                        //LightBeam headBeam = emitter.Beam;
 
-                        // adds the beam's reflection as well if not null
-                        if (emitter.Beam.ReflectedBeam != null &&
-                            !allBeams.Contains(emitter.Beam.ReflectedBeam))
-                        {
-                            allBeams.Add(emitter.Beam.ReflectedBeam);
-                        }
+                        //// Current points to the head beam
+                        //LightBeam currentBeam = headBeam;
 
-                        //if(emitter.Beam.ReflectedBeam != null && 
-                        //    emitter.Beam.ReflectedBeam.ReflectedBeam != null &&
-                        //    !allBeams.Contains(emitter.Beam.ReflectedBeam.ReflectedBeam))
+                        ////Find the beam at the end of the reflections
+                        //while(currentBeam.ReflectedBeam != null)
                         //{
-                        //    allBeams.Add(emitter.Beam.ReflectedBeam.ReflectedBeam);
+                        //    currentBeam = currentBeam.ReflectedBeam;
                         //}
+
+                        //// If that beam doesn't exist in the list, add it
+                        //if (!allBeams.Contains(currentBeam))
+                        //{
+                        //    allBeams.Add(currentBeam);
+                        //}
+
+                    if (!allBeams.Contains(emitter.Beam))
+                    {
+                        allBeams.Add(emitter.Beam);
                     }
+
+                    // adds the beam's reflection as well if not null
+                    if (emitter.Beam.ReflectedBeam != null &&
+                        !allBeams.Contains(emitter.Beam.ReflectedBeam))
+                    {
+                        allBeams.Add(emitter.Beam.ReflectedBeam);
+                    }
+
+                    //if (emitter.Beam.ReflectedBeam != null &&
+                    //    emitter.Beam.ReflectedBeam.ReflectedBeam != null &&
+                    //    !allBeams.Contains(emitter.Beam.ReflectedBeam.ReflectedBeam))
+                    //{
+                    //    allBeams.Add(emitter.Beam.ReflectedBeam.ReflectedBeam);
+                    //}
+                }
                 }
 
                 // updating all Light Receptors

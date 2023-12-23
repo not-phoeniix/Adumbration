@@ -580,20 +580,20 @@ namespace Adumbration
         }
 
         #region// ================ EXPERIMENTAL RECURSIVE REFLECTION METHODS ================
-        private void UpdateBeam(LightBeam beam, GameTime gameTime)
-        {
-            if( reflectedBeam != null)
-            {
-                UpdateBeam(reflectedBeam, gameTime);
-            }
+        //private void UpdateBeam(LightBeam beam, GameTime gameTime)
+        //{
+        //    if( reflectedBeam != null)
+        //    {
+        //        UpdateBeam(reflectedBeam, gameTime);
+        //    }
 
-            this.Update(gameTime);
-        }
+        //    this.Update(gameTime);
+        //}
 
-        public void UpdateBeam(GameTime gameTime)
-        {
-            UpdateBeam(this, gameTime);
-        }
+        //public void UpdateBeam(GameTime gameTime)
+        //{
+        //    UpdateBeam(this, gameTime);
+        //}
 
         //private void Draw(SpriteBatch sb, LightBeam beam)
         //{

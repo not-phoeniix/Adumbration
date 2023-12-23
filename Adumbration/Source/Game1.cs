@@ -489,7 +489,7 @@ namespace Adumbration
 
             _spriteBatch.Begin();
 
-            _spriteBatch.DrawString(font, string.Format("X: {0}\n Y: {1}", player.Velocity.X, player.Velocity.Y), new Vector2(0, 0), Color.White);
+            _spriteBatch.DrawString(font, string.Format("Number of Beams: {0}", LevelManager.Instance.CurrentLevel.Beams.Count), new Vector2(0, 0), Color.White);
 
             _spriteBatch.End();
 
